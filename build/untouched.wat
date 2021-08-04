@@ -1,16 +1,276 @@
 (module
- (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
- (global $~lib/memory/__data_end i32 (i32.const 8))
- (global $~lib/memory/__stack_pointer (mut i32) (i32.const 16392))
- (global $~lib/memory/__heap_base i32 (i32.const 16392))
- (memory $0 0)
+ (type $f64_=>_f64 (func (param f64) (result f64)))
+ (type $f64_f64_f64_=>_f64 (func (param f64 f64 f64) (result f64)))
+ (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
+ (import "env" "memory" (memory $0 0))
+ (import "Math" "log" (func $~lib/bindings/Math/log (param f64) (result f64)))
+ (import "Math" "log2" (func $~lib/bindings/Math/log2 (param f64) (result f64)))
+ (global $assembly/mandelbrot/NUM_COLORS i32 (i32.const 2048))
  (table $0 1 funcref)
  (elem $0 (i32.const 1))
- (export "add" (func $assembly/index/add))
+ (export "update" (func $assembly/mandelbrot/update))
  (export "memory" (memory $0))
- (func $assembly/index/add (param $0 i32) (param $1 i32) (result i32)
+ (func $assembly/mandelbrot/clamp<f64> (param $0 f64) (param $1 f64) (param $2 f64) (result f64)
   local.get $0
   local.get $1
-  i32.add
+  f64.max
+  local.get $2
+  f64.min
+ )
+ (func $assembly/mandelbrot/update (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 f64)
+  (local $4 f64)
+  (local $5 i32)
+  (local $6 i32)
+  (local $7 f64)
+  (local $8 f64)
+  (local $9 f64)
+  (local $10 i32)
+  (local $11 f64)
+  (local $12 i32)
+  (local $13 i32)
+  (local $14 i32)
+  (local $15 f64)
+  (local $16 f64)
+  (local $17 f64)
+  (local $18 f64)
+  (local $19 f64)
+  (local $20 i32)
+  (local $21 i32)
+  (local $22 f64)
+  (local $23 f64)
+  (local $24 f64)
+  local.get $0
+  f64.convert_i32_u
+  f64.const 1
+  f64.const 1.6
+  f64.div
+  f64.mul
+  local.set $3
+  local.get $1
+  f64.convert_i32_u
+  f64.const 1
+  f64.const 2
+  f64.div
+  f64.mul
+  local.set $4
+  f64.const 10
+  i32.const 3
+  local.get $0
+  i32.mul
+  local.tee $5
+  i32.const 4
+  local.get $1
+  i32.mul
+  local.tee $6
+  local.get $5
+  local.get $6
+  i32.lt_s
+  select
+  f64.convert_i32_s
+  f64.div
+  local.set $7
+  local.get $3
+  local.get $7
+  f64.mul
+  local.set $8
+  f64.const 1
+  local.get $2
+  f64.convert_i32_u
+  f64.div
+  local.set $9
+  i32.const 8
+  local.tee $6
+  local.get $2
+  local.tee $5
+  local.get $6
+  local.get $5
+  i32.lt_u
+  select
+  local.set $10
+  i32.const 0
+  local.set $6
+  loop $for-loop|0
+   local.get $6
+   local.get $1
+   i32.lt_u
+   local.set $5
+   local.get $5
+   if
+    local.get $6
+    f64.convert_i32_u
+    local.get $4
+    f64.sub
+    local.get $7
+    f64.mul
+    local.set $11
+    local.get $6
+    local.get $0
+    i32.mul
+    i32.const 1
+    i32.shl
+    local.set $12
+    i32.const 0
+    local.set $13
+    loop $for-loop|1
+     local.get $13
+     local.get $0
+     i32.lt_u
+     local.set $14
+     local.get $14
+     if
+      local.get $13
+      f64.convert_i32_u
+      local.get $7
+      f64.mul
+      local.get $8
+      f64.sub
+      local.set $15
+      f64.const 0
+      local.set $16
+      f64.const 0
+      local.set $17
+      i32.const 0
+      local.set $20
+      block $while-break|2
+       loop $while-continue|2
+        local.get $16
+        local.get $16
+        f64.mul
+        local.tee $18
+        local.get $17
+        local.get $17
+        f64.mul
+        local.tee $19
+        f64.add
+        f64.const 4
+        f64.le
+        local.set $21
+        local.get $21
+        if
+         f64.const 2
+         local.get $16
+         f64.mul
+         local.get $17
+         f64.mul
+         local.get $11
+         f64.add
+         local.set $17
+         local.get $18
+         local.get $19
+         f64.sub
+         local.get $15
+         f64.add
+         local.set $16
+         local.get $20
+         local.get $2
+         i32.ge_u
+         if
+          br $while-break|2
+         end
+         local.get $20
+         i32.const 1
+         i32.add
+         local.set $20
+         br $while-continue|2
+        end
+       end
+      end
+      loop $while-continue|3
+       local.get $20
+       local.get $10
+       i32.lt_u
+       local.set $21
+       local.get $21
+       if
+        local.get $16
+        local.get $16
+        f64.mul
+        local.get $17
+        local.get $17
+        f64.mul
+        f64.sub
+        local.get $15
+        f64.add
+        local.set $22
+        f64.const 2
+        local.get $16
+        f64.mul
+        local.get $17
+        f64.mul
+        local.get $11
+        f64.add
+        local.set $17
+        local.get $22
+        local.set $16
+        local.get $20
+        i32.const 1
+        i32.add
+        local.set $20
+        br $while-continue|3
+       end
+      end
+      global.get $assembly/mandelbrot/NUM_COLORS
+      i32.const 1
+      i32.sub
+      local.set $21
+      local.get $16
+      local.get $16
+      f64.mul
+      local.get $17
+      local.get $17
+      f64.mul
+      f64.add
+      local.set $23
+      local.get $23
+      f64.const 1
+      f64.gt
+      if
+       f64.const 0.5
+       local.get $23
+       call $~lib/bindings/Math/log
+       f64.mul
+       call $~lib/bindings/Math/log2
+       local.set $24
+       global.get $assembly/mandelbrot/NUM_COLORS
+       i32.const 1
+       i32.sub
+       f64.convert_i32_s
+       local.get $20
+       i32.const 1
+       i32.add
+       f64.convert_i32_u
+       local.get $24
+       f64.sub
+       local.get $9
+       f64.mul
+       f64.const 0
+       f64.const 1
+       call $assembly/mandelbrot/clamp<f64>
+       f64.mul
+       i32.trunc_f64_u
+       local.set $21
+      end
+      local.get $12
+      local.get $13
+      i32.const 1
+      i32.shl
+      i32.add
+      local.get $21
+      i32.store16
+      local.get $13
+      i32.const 1
+      i32.add
+      local.set $13
+      br $for-loop|1
+     end
+    end
+    local.get $6
+    i32.const 1
+    i32.add
+    local.set $6
+    br $for-loop|0
+   end
+  end
  )
 )
