@@ -32,48 +32,48 @@
   const bufferASM = new Uint16Array(memoryASM.buffer);
   const imageData = ctx.createImageData(width, height);
   const argb = new Uint32Array(imageData.data.buffer);
-  fetch('./build/mandelbrot.wasm')
-    .then(i => i.arrayBuffer())
-    .then(b => {
-      loader
-        .instantiate(b, {
-          env: {
-            memory,
-          },
-        })
-        .then(({ exports }) => {
-          console.log(exports);
-          // Update state
-          const t = performance.now();
-          exports.update(width, height, 40);
-          console.log('cost', performance.now() - t); // chrome 227 firefox 465
 
-          // Translate 16-bit color indices to colors
-          for (let y = 0; y < height; ++y) {
-            const yx = y * width;
-            for (let x = 0; x < width; ++x) {
-              argb[yx + x] = colors[buffer[yx + x]];
-            }
-          }
-          // Render the image buffer.
-          ctx.putImageData(imageData, 0, 0);
+  loader
+    .instantiate(
+      fetch('./build/mandelbrot.wasm').then(i => i.arrayBuffer()),
+      {
+        env: {
+          memory,
+        },
+      },
+    )
+    .then(({ exports }) => {
+      console.log(exports);
+      // Update state
+      const t = performance.now();
+      exports.update(width, height, 40);
+      console.log('cost', performance.now() - t); // chrome 227 firefox 465
 
-          // asm version
-          const t1 = performance.now();
-          updateASM(width, height, 40);
-          console.log('cost', performance.now() - t1); // chrome 148 firefox 156
+      // Translate 16-bit color indices to colors
+      for (let y = 0; y < height; ++y) {
+        const yx = y * width;
+        for (let x = 0; x < width; ++x) {
+          argb[yx + x] = colors[buffer[yx + x]];
+        }
+      }
+      // Render the image buffer.
+      ctx.putImageData(imageData, 0, 0);
 
-          // Translate 16-bit color indices to colors
-          for (let y = 0; y < height; ++y) {
-            const yx = y * width;
-            for (let x = 0; x < width; ++x) {
-              argb[yx + x] = colors[bufferASM[yx + x]];
-            }
-          }
-          // ctx.putImageData(imageData, 0, 0);
-          // 不知道asm如何取memory数据。。。要么就是写入失败，不知道什么原因了，也可能是这个原因导致的耗时少
-          // 并且已经是release build了耗时没什么变化
-        });
+      // asm version
+      const t1 = performance.now();
+      updateASM(width, height, 40);
+      console.log('cost', performance.now() - t1); // chrome 148 firefox 156
+
+      // Translate 16-bit color indices to colors
+      for (let y = 0; y < height; ++y) {
+        const yx = y * width;
+        for (let x = 0; x < width; ++x) {
+          argb[yx + x] = colors[bufferASM[yx + x]];
+        }
+      }
+      // ctx.putImageData(imageData, 0, 0);
+      // 不知道asm如何取memory数据。。。要么就是写入失败，不知道什么原因了，也可能是这个原因导致的耗时少
+      // 并且已经是release build了耗时没什么变化
     });
 
   /** Computes a nice set of colors using a gradient. */

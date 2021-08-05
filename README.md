@@ -92,7 +92,7 @@ export declare function doSomething(foo: i32): void
 可以看到 js 到 wasm 的数据是需要做转换的
 
 ```js
-const { concat } = myModule.exports
+const { concat } = myModule.exports;
 const { __newString, __getString } = myModule.exports;
 
 function doConcat(aStr, bStr) {
@@ -103,3 +103,73 @@ function doConcat(aStr, bStr) {
   return cStr;
 }
 ```
+
+## 2021-8-5
+
+0. Q&A
+1. Memory （不太懂
+
+静态方法是初始化实例用以及给 wasm export 输入类型读取转换的工具方法
+
+类型关联, 构建命令增加`-d ./build/types.d.ts`
+
+```ts
+import type * as MyModule from "myModule"; // pointing at the generated d.ts
+
+loader.instantiate<typeof MyModule>(
+  fetch("myModule.wasm"),
+  { ... }
+).then(({ exports }) => {
+  ...
+})
+```
+
+### Q&A
+
+使用 wasm 之前还得确定场景，所以还是得先确定原本 js 里那些运算是高消耗的运算
+
+| Scenario                      | Recommendation                                         |
+| ----------------------------- | ------------------------------------------------------ |
+| Compute-heavy algorithm       | Use WebAssembly                                        |
+| Mostly interacts with the DOM | Mostly use JavaScript                                  |
+| Games                         | Use WebAssembly for CPU-intensive parts                |
+| WebGL                         | Depends how much of it is calling APIs. Probably both. |
+| Websites, Blogs, ...          | JavaScript is your friend                              |
+
+#### WebAssembly is little endian
+
+little endian 存储是低位在前，big endian 则是高位在前
+
+Little-Endian stores most significant bytes from right to left.
+
+Big-Endian stores most significant bytes from left to right.
+
+| address | big-endian | little-endian |
+| ------- | ---------- | ------------- |
+| 0x0000  | 0x12       | 0xcd          |
+| 0x0001  | 0x34       | 0xab          |
+| 0x0002  | 0xab       | 0x34          |
+| 0x0003  | 0xcd       | 0x12          |
+
+> 为什么 game-of-life 需要把 RGB 转成 BGR 呢？
+
+instantiate wasm 时候所 import 的数据都是 wasm 存储格式，非运行时的值，需要设置需要按照存储格式赋值，而非运行时赋值
+（验证方式，assembly loader 把 number 变成 integer 时是否也需要做这个转换。。。但貌似没看到这个转换，只有字符串，数组的转换）
+
+1. https://blog.csdn.net/waitingbb123/article/details/80504093
+2. https://riptutorial.com/javascript/example/13317/little---big-endian-for-typed-arrays-when-using-bitwise-operators
+
+canvas 绘制像素风格需要特殊设置：
+
+```js
+canvas.style.imageRendering = 'pixelated';
+ctx.imageSmoothingEnabled = false;
+```
+
+## Memory
+
+| Region          | Description                                                 |
+| --------------- | ----------------------------------------------------------- |
+| Reserved memory | As specified with --memoryBase                              |
+| Static memory   | Starting right after reserved memory, ends at \_\_heap_base |
+| Dynamic memory  | Starting right after static memory, starts at \_\_heap_base |

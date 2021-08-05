@@ -8,10 +8,15 @@
     "pretest": "npm run asbuild:untouched",
     "mandelbrot:wasm": "asc assembly/mandelbrot.ts --target release --runtime stub --use Math=JSMath --importMemory -b build/mandelbrot.wasm",
     "mandelbrot:asm": "asc assembly/mandelbrot.ts --target release --runtime stub --use Math=JSMath --importMemory -j build/mandelbrot.js",
+    "game-of-life:wasm": "asc assembly/game-of-life.ts --target release --runtime stub --use Math=JSMath --importMemory -b build/game-of-life.wasm",
+    "game-of-life:asm": "asc assembly/game-of-life.ts --target release --runtime stub --use Math=JSMath --importMemory -j build/game-of-life.js",
+    "array:wasm": "asc assembly/array.ts --target release --runtime stub --use Math=JSMath --importMemory -b build/array.wasm --exportRuntime",
+    "array:asm": "asc assembly/array.ts --target release --runtime stub --use Math=JSMath --importMemory -j build/array.js",
     "asbuild:untouched": "asc assembly/index.ts --target debug",
-    "asbuild:optimized": "asc assembly/index.ts --target release",
+    "asbuild:optimized": "asc assembly/index.ts --target release -d ./build/types.d.ts",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized"
   },
+  "types": "./build/types.d.ts",
   "author": "DeepKolos <deepkolos@qq.com>",
   "license": "MIT",
   "dependencies": {

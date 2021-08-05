@@ -8,7 +8,7 @@ assert.strictEqual(myModule.bitShiftI8_(-1, -2), -64);
 assert.strictEqual(myModule.bitShiftI8Right(-5, 1), -3);
 assert.strictEqual(myModule.bitShiftI8Right_(-5, 1), -3);
 
-const bar = myModule.foo.Bar();
+const bar = new myModule.foo.Bar();
 assert.strictEqual(bar.a, 1);
 assert.strictEqual(bar.getA(), 1);
 
