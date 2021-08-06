@@ -166,10 +166,113 @@ canvas.style.imageRendering = 'pixelated';
 ctx.imageSmoothingEnabled = false;
 ```
 
-## Memory
+### Memory
 
 | Region          | Description                                                 |
 | --------------- | ----------------------------------------------------------- |
 | Reserved memory | As specified with --memoryBase                              |
 | Static memory   | Starting right after reserved memory, ends at \_\_heap_base |
 | Dynamic memory  | Starting right after static memory, starts at \_\_heap_base |
+
+## 2021-8-6
+
+0. Memory
+1. Garbage Collection
+2. Peculiarities(独特性)
+3. Portability(可移植性)
+4. Debugging
+
+描述了一个初始化 wasm 时访问 memory 的问题：会默认把 top level 的语句隐式当作 start 函数
+
+> Since the implicit start function executes immediately upon instantiation, this leads to a special case because control flow has not yet yielded back to the host, so the module's exported memory only becomes available externally after the implicit start function completes.
+
+import 的 memory 和 export 的 memory 是同一份
+
+export runtime 可以让 wasm 外部（js）创建 wasm 的数据，以及生命周期管理（标记和取消标记），触发 GC
+
+### Runtime
+
+```
+--runtime             Specifies the runtime variant to include in the program.
+
+                      incremental  TLSF + incremental GC (default) 对未稳定wasm的gc做了polyfill可自动GC
+                      minimal      TLSF + lightweight GC invoked externally 手动GC
+                      stub         Minimal runtime stub (never frees) 没GC
+                      ...          Path to a custom runtime implementation
+```
+
+> TODO: 有空了解下[TLSF 内存管理算法](https://www.jianshu.com/p/01743e834432)
+> go to lengths (to do something): put a lot of effort, energy or work to do achieve something
+
+```ts
+function compute() {
+  exports.doSomeHeavyWorkProducingGarbage();
+}
+compute();
+// throw away the entire module instance
+// 执行完就扔掉instance ??, 每次执行重新创建么, 不过用mandelbrot测试，stub(227)比minimal(266)快
+```
+
+### Peculiarities(独特性)
+
+装饰器, 也可以自定义装饰器
+
+0. @inline 把函数 inline 到调用地方
+1. @lazy 懒编译，用于避免不必要全局变量（是因为顶层声明的都是全局变量么
+2. @global
+3. @external 修改引入模块标识符，引入模块到本地标识符的映射
+4. @operator
+5. @operator.binary
+6. @operator.prefix
+7. @operator.postfix
+
+运算符重载，只能用于类的方法
+
+二元重载：[] []= {} {}= == != > >= < <= >> >>> << & | ^ + - \* / \*\* %
+一元重载：! ~ + - ++ --
+
+Tree Shaking
+
+0. Module-level
+1. Branch-level
+
+编译器提供一些环境的常量，其中一个值得注意的是 SIMD 的支持，不过是编译时的 fallback，而非运行时检测的 fallback
+
+```ts
+const ASC_FEATURE_SIGN_EXTENSION: bool;
+const ASC_FEATURE_MUTABLE_GLOBALS: bool;
+const ASC_FEATURE_NONTRAPPING_F2I: bool;
+const ASC_FEATURE_BULK_MEMORY: bool;
+const ASC_FEATURE_SIMD: bool;
+const ASC_FEATURE_THREADS: bool;
+const ASC_FEATURE_EXCEPTION_HANDLING: bool;
+const ASC_FEATURE_TAIL_CALLS: bool;
+const ASC_FEATURE_REFERENCE_TYPES: bool;
+const ASC_FEATURE_MULTI_VALUE: bool;
+const ASC_FEATURE_GC: bool;
+const ASC_FEATURE_MEMORY64: bool;
+
+// Whether the respective feature is enabled.
+
+// For example, if a library supports SIMD but also wants to provide a fallback when being compiled without SIMD support:
+
+if (ASC_FEATURE_SIMD) {
+  // compute with SIMD operations
+} else {
+  // fallback without SIMD operations
+}
+```
+
+### Portability
+
+通过 tsc 编译给 asc 编写的 ts 代码（work in progress 中，这个方式产出的 js 版本的性能对比更加合理
+
+```js
+require('assemblyscript/std/portable');
+```
+
+限制
+
+0. 数字精度达不到 i64 u64
+1. js 没有 memory，没有 load store 操作（asm 如何处理的呢？
+

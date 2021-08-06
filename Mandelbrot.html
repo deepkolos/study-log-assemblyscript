@@ -47,7 +47,7 @@
       // Update state
       const t = performance.now();
       exports.update(width, height, 40);
-      console.log('cost', performance.now() - t); // chrome 227 firefox 465
+      console.log('cost', performance.now() - t); // stub: chrome 227 firefox 465 minimal: chrome: 266
 
       // Translate 16-bit color indices to colors
       for (let y = 0; y < height; ++y) {
@@ -62,7 +62,7 @@
       // asm version
       const t1 = performance.now();
       updateASM(width, height, 40);
-      console.log('cost', performance.now() - t1); // chrome 148 firefox 156
+      console.log('cost', performance.now() - t1); // stub: chrome 148 firefox 156 minimal: 189
 
       // Translate 16-bit color indices to colors
       for (let y = 0; y < height; ++y) {
