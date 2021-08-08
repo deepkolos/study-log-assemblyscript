@@ -276,3 +276,7 @@ require('assemblyscript/std/portable');
 0. 数字精度达不到 i64 u64
 1. js 没有 memory，没有 load store 操作（asm 如何处理的呢？
 
+## 2021-8-8
+
+0. add wasm call js func test
+1. webgl 40%

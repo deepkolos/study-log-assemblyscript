@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Performance</title>
+    <script src="https://cdn.jsdelivr.net/npm/@assemblyscript/loader/umd/index.js"></script>
+  </head>
+  <body>
+    <script>
+      const memory = new WebAssembly.Memory({
+        initial: 1,
+      });
+
+      let t;
+      let wasmCallJsCostSum;
+      let JsCallCostSum;
+
+      loader
+        .instantiate(
+          fetch('./build/performance.wasm').then(i => i.arrayBuffer()),
+          {
+            env: { memory },
+            performance: {
+              output(arg) {
+                // console.log(arg);
+                wasmCallJsCostSum += performance.now() - t;
+              },
+            },
+          },
+        )
+        .then(mod => {
+          const {
+            instance: { exports },
+          } = mod;
+
+          wasmCallJsCostSum = 0;
+          for (let i = 0; i < 1_000_000; i++) {
+            t = performance.now();
+            exports.input(i);
+          }
+          console.log('wasm call js func cost sum', wasmCallJsCostSum);
+
+          JsCallCostSum = 0;
+          function output() {
+            JsCallCostSum += performance.now() - t;
+          }
+          function input(i) {
+            output(i);
+          }
+          for (let i = 0; i < 1_000_000; i++) {
+            t = performance.now();
+            input(i);
+          }
+          console.log('js func call cost sum', JsCallCostSum);
+          console.log('diff', wasmCallJsCostSum / JsCallCostSum);
+          /**
+           * | browser | wasm | js  | diff |
+           * |---------|------|-----|------|
+           * | chrome  | 509  | 499 | 2.1% |
+           * | edge    | 318  | 311 | 2.4% |
+           * | firefox | 113  | 89  | 27%  |
+           */
+        });
+    </script>
+  </body>
+</html>
