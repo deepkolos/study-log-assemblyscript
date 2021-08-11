@@ -105,6 +105,7 @@ void main() {
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   const bufferData: StaticArray<f32> = [0, 0.5, -0.5, 0, 0.5, 0];
   gl.bufferData<f32>(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
+  
   const t1 = Date.now()
   for (let i = 0; i < 1_000; i++) {
     gl.useProgram(program);

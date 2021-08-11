@@ -283,4 +283,4 @@ require('assemblyscript/std/portable');
 
 ## 2021-8-11
 
-0. webgl 80% add webgl wasm demo
+0. webgl 70% add webgl wasm demo

@@ -195,10 +195,11 @@
 
       let parseGLCallArgCost = 0;
       function parseGLCallArg(arg) {
-        const t = Date.now();
+        // const t = performance.now();
 
         if (
           typeof arg === 'number' &&
+          // Number.isInteger(arg)  &&
           arg & 0b11100000000000000000000000000000
         ) {
           const classIndex = (arg & 0b00011111000000000000000000000000) >> 24;
@@ -209,34 +210,47 @@
             ];
           }
         }
-        parseGLCallArgCost += Date.now() - t;
+        // parseGLCallArgCost += performance.now() - t;
 
         return arg;
       }
 
       let parseGLCallReturnCost = 0;
+      let WebGLClassArrayFindCost = 0;
+      let WebGLClassInstanceNameCost = 0;
       function parseGLCallReturn(ret) {
-        const t = Date.now();
+        // const t = performance.now();
 
-        const WebGLClassInstanceName = WebGLClassArray.find(
-          i => ret instanceof window[i],
-        );
+        // find太耗时了
+        // const WebGLClassInstanceName = WebGLClassArray.find(
+        //   i => ret instanceof window[i],
+        // );
+        if (
+          typeof ret === 'object' &&
+          ret.constructor.name.startsWith('WebGL')
+        ) {
+          const WebGLClassInstanceName = ret.constructor.name;
+          // WebGLClassArrayFindCost += Date.now() - t;
 
-        if (WebGLClassInstanceName) {
-          WebGLClassInstanceMap[WebGLClassInstanceName] ??= [];
-          const classIndex = WebGLClassArray.indexOf(WebGLClassInstanceName);
-          const instanceIndex =
-            WebGLClassInstanceMap[WebGLClassInstanceName].push(ret) - 1;
+          if (WebGLClassInstanceName) {
+            // const t = Date.now();
 
-          // 3位    5位           24位
-          // 标识符 instanceIndex classIndex
+            WebGLClassInstanceMap[WebGLClassInstanceName] ??= [];
+            const classIndex = WebGLClassArray.indexOf(WebGLClassInstanceName);
+            const instanceIndex =
+              WebGLClassInstanceMap[WebGLClassInstanceName].push(ret) - 1;
 
-          // prettier-ignore
-          const binaryStr = `111${classIndex.toString(2).padStart(5, '0')}${instanceIndex.toString(2).padStart(24, '0')}`;
-          ret = parseInt(binaryStr, 2);
+            // 3位    5位           24位
+            // 标识符 instanceIndex classIndex
+
+            // prettier-ignore
+            const binaryStr = `111${classIndex.toString(2).padStart(5, '0')}${instanceIndex.toString(2).padStart(24, '0')}`;
+            ret = parseInt(binaryStr, 2);
+            // WebGLClassInstanceNameCost += Date.now() - t;
+          }
         }
 
-        parseGLCallReturnCost += Date.now() - t;
+        // parseGLCallReturnCost += performance.now() - t;
         return ret;
       }
 
@@ -294,8 +308,16 @@
           exports.main();
           const t2 = performance.now();
           console.log('t2 - t0', t2 - t0);
-          console.log('parseGLCallArgCost', parseGLCallArgCost)
-          console.log('parseGLCallReturnCost', parseGLCallReturnCost) // 目前的实现太耗时了
+          console.log('parseGLCallArgCost', parseGLCallArgCost);
+          console.log('parseGLCallReturnCost', parseGLCallReturnCost); // 24 目前的实现太耗时了
+          console.log('WebGLClassInstanceNameCost', WebGLClassInstanceNameCost);
+          console.log('WebGLClassArrayFindCost', WebGLClassArrayFindCost); // 12 主要因为用find + instanceof 替换掉就好了，能直接获取
+          // 加上细分性能打点会非常耗时，取消性能打点之后耗时大幅下降, 是值得留意一个现象
+          // 只保留 最开始结尾 和 wasm内，耗时只有4.5 最低
+          // 只保留 最开始结尾，耗时只有3.5 最低
+          // 3.5 / 1000 也就是平均每个gl call 的耗时增加是很小的，但是循环多起来，累加多起来就会比较明显
+
+          // 后面需要尝试command buffer的方式，或者wasm是结构运算部分
         });
     </script>
   </body>
