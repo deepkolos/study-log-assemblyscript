@@ -105,15 +105,14 @@ void main() {
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   const bufferData: StaticArray<f32> = [0, 0.5, -0.5, 0, 0.5, 0];
   gl.bufferData<f32>(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
-  
-  const t1 = Date.now()
-  for (let i = 0; i < 1_000; i++) {
-    gl.useProgram(program);
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, 0, 0, 0);
-  
+  gl.useProgram(program);
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, 0, 0, 0);
+
+  // const t1 = Date.now()
+  for (let i = 0; i < 1_000_000; i++) {
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
-  const t2 = Date.now()
-  console.log((t2 - t1).toString())
+  // const t2 = Date.now()
+  // console.log((t2 - t1).toString())
 }

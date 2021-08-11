@@ -70,18 +70,18 @@
           new Float32Array([0, 0.5, -0.5, 0, 0.5, 0]),
           gl.STATIC_DRAW,
         );
+        gl.useProgram(program);
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
         const t1 = performance.now();
-        for (let i = 0; i < 1_000; i++) {
-          gl.useProgram(program);
-          gl.enableVertexAttribArray(positionLocation);
-          gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
+        for (let i = 0; i < 1_000_000; i++) {
           gl.drawArrays(gl.TRIANGLES, 0, 3);
         }
         const t2 = performance.now();
         console.log('t1 - t0', t1 - t0);
         console.log('t2 - t1', t2 - t1);
+        console.log('t2 - t0', t2 - t0);
         // 这是最基本的webgl使用方式，其实就是一堆修改webgl状态机的API
       })();
     </script>
@@ -185,6 +185,13 @@
         'WebGLUniformLocation',
         'WebGLVertexArrayObject',
       ];
+      let WebGLClassArrayMap = {};
+      WebGLClassArray.forEach((v, k) => {
+        WebGLClassArrayMap[v] = k;
+        WebGLClassInstanceMap[v] ??= [];
+      });
+
+      const MAGIC_HEAD = 0b111 << 29;
 
       function parseString(strPtr) {
         return wasmExports.__getString(strPtr);
@@ -198,8 +205,8 @@
         // const t = performance.now();
 
         if (
-          typeof arg === 'number' &&
-          // Number.isInteger(arg)  &&
+          // typeof arg === 'number' &&
+          Number.isInteger(arg) &&
           arg & 0b11100000000000000000000000000000
         ) {
           const classIndex = (arg & 0b00011111000000000000000000000000) >> 24;
@@ -226,8 +233,10 @@
         //   i => ret instanceof window[i],
         // );
         if (
+          // ret instanceof Object &&
           typeof ret === 'object' &&
-          ret.constructor.name.startsWith('WebGL')
+          ret.constructor.name.indexOf('WebGL') === 0
+          // ret.constructor.name.startsWith('WebGL')
         ) {
           const WebGLClassInstanceName = ret.constructor.name;
           // WebGLClassArrayFindCost += Date.now() - t;
@@ -235,17 +244,19 @@
           if (WebGLClassInstanceName) {
             // const t = Date.now();
 
-            WebGLClassInstanceMap[WebGLClassInstanceName] ??= [];
-            const classIndex = WebGLClassArray.indexOf(WebGLClassInstanceName);
+            // const classIndex = WebGLClassArray.indexOf(WebGLClassInstanceName);
+            const classIndex = WebGLClassArrayMap[WebGLClassInstanceName];
             const instanceIndex =
               WebGLClassInstanceMap[WebGLClassInstanceName].push(ret) - 1;
 
             // 3位    5位           24位
             // 标识符 instanceIndex classIndex
 
+            // 使用位移运算出来结果
             // prettier-ignore
-            const binaryStr = `111${classIndex.toString(2).padStart(5, '0')}${instanceIndex.toString(2).padStart(24, '0')}`;
-            ret = parseInt(binaryStr, 2);
+            // const binaryStr = `111${classIndex.toString(2).padStart(5, '0')}${instanceIndex.toString(2).padStart(24, '0')}`;
+            // ret = parseInt(binaryStr, 2);
+            ret = 0b11100000000000000000000000000000 | (classIndex << 24) | instanceIndex;
             // WebGLClassInstanceNameCost += Date.now() - t;
           }
         }
@@ -267,10 +278,12 @@
                 const glFnName = 'gl.' + fnName;
 
                 if (FN_CUSTOM_PARSER[fnName]) {
-                  acc[glFnName] = (...args) => {
-                    const argsParsed = FN_CUSTOM_PARSER[fnName].parseArgs(args);
+                  acc[glFnName] = function () {
+                    const argsParsed =
+                      FN_CUSTOM_PARSER[fnName].parseArgs(arguments);
                     const ret = FN_CUSTOM_PARSER[fnName].parseReturn(
                       gl[fnName](...argsParsed),
+                      // gl[fnName].apply(gl, argsParsed),
                     );
 
                     // console.log('gl', fnName, argsParsed, ret);
@@ -280,9 +293,14 @@
                     return ret;
                   };
                 } else {
-                  acc[glFnName] = (...args) => {
-                    const argsParsed = args.map(parseGLCallArg);
+                  acc[glFnName] = function () {
+                    const argsParsed = new Array(arguments.length);
+                    for (let i = 0; i < arguments.length; i++) {
+                      argsParsed[i] = parseGLCallArg(arguments[i]);
+                    }
+                    // const argsParsed = args.map(parseGLCallArg);
                     const ret = parseGLCallReturn(gl[fnName](...argsParsed));
+                    // const ret = parseGLCallReturn(gl[fnName].apply(gl, argsParsed));
 
                     // console.log('gl', fnName, argsParsed, ret);
                     // const error = gl.getError();
@@ -316,8 +334,16 @@
           // 只保留 最开始结尾 和 wasm内，耗时只有4.5 最低
           // 只保留 最开始结尾，耗时只有3.5 最低
           // 3.5 / 1000 也就是平均每个gl call 的耗时增加是很小的，但是循环多起来，累加多起来就会比较明显
+          // 如果想要避免wasm2js的耗时，估计就是减少这类的调用，或者batch的方式
 
           // 后面需要尝试command buffer的方式，或者wasm是结构运算部分
+
+          // 新发现！把这3行移出循环外，WASM耗时稳定低于JS，wasm稳定470 ~ 490 JS最低490，但是优势600+ 700+ 800+
+          // gl.useProgram(program);
+          // gl.enableVertexAttribArray(positionLocation);
+          // gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, 0, 0, 0);
+
+          // 循环里的JS CALL合并成一个可能会更好？？说到底还是batch的方式
         });
     </script>
   </body>

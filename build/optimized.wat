@@ -1,15 +1,13 @@
 (module
  (type $i32_=>_none (func (param i32)))
  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
- (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
  (type $i32_i32_=>_none (func (param i32 i32)))
+ (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
  (type $i32_=>_i32 (func (param i32) (result i32)))
  (type $none_=>_none (func))
  (type $none_=>_i32 (func (result i32)))
  (type $i32_i32_i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32 i32 i32)))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
- (type $none_=>_f64 (func (result f64)))
- (type $i64_=>_i32 (func (param i64) (result i32)))
  (import "env" "memory" (memory $0 1))
  (data (i32.const 1036) "\bc\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\a8\00\00\00\n\00a\00t\00t\00r\00i\00b\00u\00t\00e\00 \00v\00e\00c\002\00 \00a\00_\00p\00o\00s\00i\00t\00i\00o\00n\00;\00\n\00\n\00v\00o\00i\00d\00 \00m\00a\00i\00n\00(\00)\00 \00{\00\n\00 \00 \00g\00l\00_\00P\00o\00s\00i\00t\00i\00o\00n\00 \00=\00 \00v\00e\00c\004\00(\00a\00_\00p\00o\00s\00i\00t\00i\00o\00n\00,\00 \000\00,\00 \001\00)\00;\00\n\00}\00\00\00\00\00")
  (data (i32.const 1228) "\bc\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\9e\00\00\00\n\00p\00r\00e\00c\00i\00s\00i\00o\00n\00 \00m\00e\00d\00i\00u\00m\00p\00 \00f\00l\00o\00a\00t\00;\00\n\00\n\00v\00o\00i\00d\00 \00m\00a\00i\00n\00(\00)\00 \00{\00\n\00 \00 \00g\00l\00_\00F\00r\00a\00g\00C\00o\00l\00o\00r\00 \00=\00 \00v\00e\00c\004\00(\000\00,\00 \000\00.\005\00,\00 \001\00,\00 \001\00)\00;\00\n\00}\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
@@ -23,17 +21,11 @@
  (data (i32.const 1820) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\"\00\00\00l\00i\00n\00k\00 \00p\00r\00o\00g\00r\00a\00m\00 \00f\00a\00i\00l\00\00\00\00\00\00\00\00\00\00\00")
  (data (i32.const 1884) ",\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\14\00\00\00a\00_\00p\00o\00s\00i\00t\00i\00o\00n\00\00\00\00\00\00\00\00\00")
  (data (i32.const 1932) ",\00\00\00\00\00\00\00\00\00\00\00\03\00\00\00\18\00\00\00\00\00\00\00\00\00\00?\00\00\00\bf\00\00\00\00\00\00\00?\00\00\00\00\00\00\00\00")
- (data (i32.const 1980) "|\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00d\00\00\00t\00o\00S\00t\00r\00i\00n\00g\00(\00)\00 \00r\00a\00d\00i\00x\00 \00a\00r\00g\00u\00m\00e\00n\00t\00 \00m\00u\00s\00t\00 \00b\00e\00 \00b\00e\00t\00w\00e\00e\00n\00 \002\00 \00a\00n\00d\00 \003\006\00\00\00\00\00\00\00\00\00")
- (data (i32.const 2108) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00&\00\00\00~\00l\00i\00b\00/\00u\00t\00i\00l\00/\00n\00u\00m\00b\00e\00r\00.\00t\00s\00\00\00\00\00\00\00")
- (data (i32.const 2172) "\1c\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\02\00\00\000\00\00\00\00\00\00\00\00\00\00\00")
- (data (i32.const 2204) "0\000\000\001\000\002\000\003\000\004\000\005\000\006\000\007\000\008\000\009\001\000\001\001\001\002\001\003\001\004\001\005\001\006\001\007\001\008\001\009\002\000\002\001\002\002\002\003\002\004\002\005\002\006\002\007\002\008\002\009\003\000\003\001\003\002\003\003\003\004\003\005\003\006\003\007\003\008\003\009\004\000\004\001\004\002\004\003\004\004\004\005\004\006\004\007\004\008\004\009\005\000\005\001\005\002\005\003\005\004\005\005\005\006\005\007\005\008\005\009\006\000\006\001\006\002\006\003\006\004\006\005\006\006\006\007\006\008\006\009\007\000\007\001\007\002\007\003\007\004\007\005\007\006\007\007\007\008\007\009\008\000\008\001\008\002\008\003\008\004\008\005\008\006\008\007\008\008\008\009\009\000\009\001\009\002\009\003\009\004\009\005\009\006\009\007\009\008\009\009\00")
- (data (i32.const 2604) "\1c\04\00\00\00\00\00\00\00\00\00\00\01\00\00\00\00\04\00\000\000\000\001\000\002\000\003\000\004\000\005\000\006\000\007\000\008\000\009\000\00a\000\00b\000\00c\000\00d\000\00e\000\00f\001\000\001\001\001\002\001\003\001\004\001\005\001\006\001\007\001\008\001\009\001\00a\001\00b\001\00c\001\00d\001\00e\001\00f\002\000\002\001\002\002\002\003\002\004\002\005\002\006\002\007\002\008\002\009\002\00a\002\00b\002\00c\002\00d\002\00e\002\00f\003\000\003\001\003\002\003\003\003\004\003\005\003\006\003\007\003\008\003\009\003\00a\003\00b\003\00c\003\00d\003\00e\003\00f\004\000\004\001\004\002\004\003\004\004\004\005\004\006\004\007\004\008\004\009\004\00a\004\00b\004\00c\004\00d\004\00e\004\00f\005\000\005\001\005\002\005\003\005\004\005\005\005\006\005\007\005\008\005\009\005\00a\005\00b\005\00c\005\00d\005\00e\005\00f\006\000\006\001\006\002\006\003\006\004\006\005\006\006\006\007\006\008\006\009\006\00a\006\00b\006\00c\006\00d\006\00e\006\00f\007\000\007\001\007\002\007\003\007\004\007\005\007\006\007\007\007\008\007\009\007\00a\007\00b\007\00c\007\00d\007\00e\007\00f\008\000\008\001\008\002\008\003\008\004\008\005\008\006\008\007\008\008\008\009\008\00a\008\00b\008\00c\008\00d\008\00e\008\00f\009\000\009\001\009\002\009\003\009\004\009\005\009\006\009\007\009\008\009\009\009\00a\009\00b\009\00c\009\00d\009\00e\009\00f\00a\000\00a\001\00a\002\00a\003\00a\004\00a\005\00a\006\00a\007\00a\008\00a\009\00a\00a\00a\00b\00a\00c\00a\00d\00a\00e\00a\00f\00b\000\00b\001\00b\002\00b\003\00b\004\00b\005\00b\006\00b\007\00b\008\00b\009\00b\00a\00b\00b\00b\00c\00b\00d\00b\00e\00b\00f\00c\000\00c\001\00c\002\00c\003\00c\004\00c\005\00c\006\00c\007\00c\008\00c\009\00c\00a\00c\00b\00c\00c\00c\00d\00c\00e\00c\00f\00d\000\00d\001\00d\002\00d\003\00d\004\00d\005\00d\006\00d\007\00d\008\00d\009\00d\00a\00d\00b\00d\00c\00d\00d\00d\00e\00d\00f\00e\000\00e\001\00e\002\00e\003\00e\004\00e\005\00e\006\00e\007\00e\008\00e\009\00e\00a\00e\00b\00e\00c\00e\00d\00e\00e\00e\00f\00f\000\00f\001\00f\002\00f\003\00f\004\00f\005\00f\006\00f\007\00f\008\00f\009\00f\00a\00f\00b\00f\00c\00f\00d\00f\00e\00f\00f\00\00\00\00\00\00\00\00\00\00\00\00\00")
- (data (i32.const 3660) "\\\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00H\00\00\000\001\002\003\004\005\006\007\008\009\00a\00b\00c\00d\00e\00f\00g\00h\00i\00j\00k\00l\00m\00n\00o\00p\00q\00r\00s\00t\00u\00v\00w\00x\00y\00z\00\00\00\00\00")
- (data (i32.const 3756) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00*\00\00\00O\00b\00j\00e\00c\00t\00 \00a\00l\00r\00e\00a\00d\00y\00 \00p\00i\00n\00n\00e\00d\00\00\00")
- (data (i32.const 3824) "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
- (data (i32.const 3852) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00(\00\00\00O\00b\00j\00e\00c\00t\00 \00i\00s\00 \00n\00o\00t\00 \00p\00i\00n\00n\00e\00d\00\00\00\00\00")
- (data (i32.const 3920) "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
- (data (i32.const 3952) "\04\00\00\00 \00\00\00\00\00\00\00 \00\00\00\00\00\00\00\00\00\00\00\00\00\00\00$\19\00\00\00\00\00\00")
+ (data (i32.const 1980) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00*\00\00\00O\00b\00j\00e\00c\00t\00 \00a\00l\00r\00e\00a\00d\00y\00 \00p\00i\00n\00n\00e\00d\00\00\00")
+ (data (i32.const 2048) "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
+ (data (i32.const 2076) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00(\00\00\00O\00b\00j\00e\00c\00t\00 \00i\00s\00 \00n\00o\00t\00 \00p\00i\00n\00n\00e\00d\00\00\00\00\00")
+ (data (i32.const 2144) "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
+ (data (i32.const 2176) "\04\00\00\00 \00\00\00\00\00\00\00 \00\00\00\00\00\00\00\00\00\00\00\00\00\00\00$\19\00\00\00\00\00\00")
  (import "webgl" "gl.createShader" (func $assembly/webgl/gl.createShader (param i32) (result i32)))
  (import "webgl" "gl.shaderSource" (func $assembly/webgl/gl.shaderSource (param i32 i32)))
  (import "webgl" "gl.compileShader" (func $assembly/webgl/gl.compileShader (param i32)))
@@ -54,7 +46,6 @@
  (import "webgl" "console.log" (func $assembly/webgl/console.log (param i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (import "webgl" "gl.bufferData<f32>" (func $assembly/webgl/gl.bufferData<f32> (param i32 i32 i32)))
- (import "Date" "now" (func $~lib/bindings/Date/now (result f64)))
  (global $assembly/webgl/gl.FLOAT i32 (i32.const 5126))
  (global $assembly/webgl/gl.ARRAY_BUFFER i32 (i32.const 34962))
  (global $assembly/webgl/gl.COMPILE_STATUS i32 (i32.const 35713))
@@ -69,7 +60,7 @@
  (global $~lib/rt/tcms/total (mut i32) (i32.const 0))
  (global $~lib/rt/tcms/pinSpace (mut i32) (i32.const 0))
  (global $~lib/rt/tcms/toSpace (mut i32) (i32.const 0))
- (global $~lib/rt/__rtti_base i32 (i32.const 3952))
+ (global $~lib/rt/__rtti_base i32 (i32.const 2176))
  (export "gl.FLOAT" (global $assembly/webgl/gl.FLOAT))
  (export "gl.ARRAY_BUFFER" (global $assembly/webgl/gl.ARRAY_BUFFER))
  (export "gl.COMPILE_STATUS" (global $assembly/webgl/gl.COMPILE_STATUS))
@@ -641,10 +632,10 @@
   if
    unreachable
   end
-  i32.const 4000
+  i32.const 2224
   i32.const 0
   i32.store
-  i32.const 5568
+  i32.const 3792
   i32.const 0
   i32.store
   loop $for-loop|0
@@ -655,7 +646,7 @@
     local.get $1
     i32.const 2
     i32.shl
-    i32.const 4000
+    i32.const 2224
     i32.add
     i32.const 0
     i32.store offset=4
@@ -673,7 +664,7 @@
       i32.add
       i32.const 2
       i32.shl
-      i32.const 4000
+      i32.const 2224
       i32.add
       i32.const 0
       i32.store offset=96
@@ -691,13 +682,13 @@
     br $for-loop|0
    end
   end
-  i32.const 4000
-  i32.const 5572
+  i32.const 2224
+  i32.const 3796
   memory.size
   i32.const 16
   i32.shl
   call $~lib/rt/tlsf/addMemory
-  i32.const 4000
+  i32.const 2224
   global.set $~lib/rt/tlsf/ROOT
  )
  (func $~lib/rt/tlsf/searchBlock (param $0 i32) (param $1 i32) (result i32)
@@ -2086,356 +2077,11 @@
   call $~lib/memory/memory.copy
   local.get $2
  )
- (func $~lib/util/number/utoa32_dec_lut (param $0 i32) (param $1 i32) (param $2 i32)
-  (local $3 i32)
-  loop $while-continue|0
-   local.get $1
-   i32.const 10000
-   i32.ge_u
-   if
-    local.get $1
-    i32.const 10000
-    i32.rem_u
-    local.set $3
-    local.get $1
-    i32.const 10000
-    i32.div_u
-    local.set $1
-    local.get $0
-    local.get $2
-    i32.const 4
-    i32.sub
-    local.tee $2
-    i32.const 1
-    i32.shl
-    i32.add
-    local.get $3
-    i32.const 100
-    i32.div_u
-    i32.const 2
-    i32.shl
-    i32.const 2204
-    i32.add
-    i64.load32_u
-    local.get $3
-    i32.const 100
-    i32.rem_u
-    i32.const 2
-    i32.shl
-    i32.const 2204
-    i32.add
-    i64.load32_u
-    i64.const 32
-    i64.shl
-    i64.or
-    i64.store
-    br $while-continue|0
-   end
-  end
-  local.get $1
-  i32.const 100
-  i32.ge_u
-  if
-   local.get $0
-   local.get $2
-   i32.const 2
-   i32.sub
-   local.tee $2
-   i32.const 1
-   i32.shl
-   i32.add
-   local.get $1
-   i32.const 100
-   i32.rem_u
-   i32.const 2
-   i32.shl
-   i32.const 2204
-   i32.add
-   i32.load
-   i32.store
-   local.get $1
-   i32.const 100
-   i32.div_u
-   local.set $1
-  end
-  local.get $1
-  i32.const 10
-  i32.ge_u
-  if
-   local.get $0
-   local.get $2
-   i32.const 2
-   i32.sub
-   i32.const 1
-   i32.shl
-   i32.add
-   local.get $1
-   i32.const 2
-   i32.shl
-   i32.const 2204
-   i32.add
-   i32.load
-   i32.store
-  else
-   local.get $0
-   local.get $2
-   i32.const 1
-   i32.sub
-   i32.const 1
-   i32.shl
-   i32.add
-   local.get $1
-   i32.const 48
-   i32.add
-   i32.store16
-  end
- )
- (func $~lib/util/number/itoa64 (param $0 i64) (result i32)
-  (local $1 i32)
-  (local $2 i32)
-  (local $3 i32)
-  (local $4 i32)
-  (local $5 i32)
-  (local $6 i32)
-  local.get $0
-  i64.eqz
-  if
-   i32.const 2192
-   return
-  end
-  i64.const 0
-  local.get $0
-  i64.sub
-  local.get $0
-  local.get $0
-  i64.const 63
-  i64.shr_u
-  i32.wrap_i64
-  local.tee $3
-  select
-  local.tee $0
-  i64.const 4294967295
-  i64.le_u
-  if
-   local.get $0
-   i32.wrap_i64
-   local.tee $2
-   local.tee $1
-   i32.const 100000
-   i32.lt_u
-   if (result i32)
-    local.get $1
-    i32.const 100
-    i32.lt_u
-    if (result i32)
-     local.get $1
-     i32.const 10
-     i32.ge_u
-     i32.const 1
-     i32.add
-    else
-     local.get $1
-     i32.const 10000
-     i32.ge_u
-     i32.const 3
-     i32.add
-     local.get $1
-     i32.const 1000
-     i32.ge_u
-     i32.add
-    end
-   else
-    local.get $1
-    i32.const 10000000
-    i32.lt_u
-    if (result i32)
-     local.get $1
-     i32.const 1000000
-     i32.ge_u
-     i32.const 6
-     i32.add
-    else
-     local.get $1
-     i32.const 1000000000
-     i32.ge_u
-     i32.const 8
-     i32.add
-     local.get $1
-     i32.const 100000000
-     i32.ge_u
-     i32.add
-    end
-   end
-   local.get $3
-   i32.add
-   local.tee $1
-   i32.const 1
-   i32.shl
-   i32.const 1
-   call $~lib/rt/tcms/__new
-   local.tee $4
-   local.get $2
-   local.get $1
-   call $~lib/util/number/utoa32_dec_lut
-  else
-   local.get $0
-   i64.const 1000000000000000
-   i64.lt_u
-   if (result i32)
-    local.get $0
-    i64.const 1000000000000
-    i64.lt_u
-    if (result i32)
-     local.get $0
-     i64.const 100000000000
-     i64.ge_u
-     i32.const 10
-     i32.add
-     local.get $0
-     i64.const 10000000000
-     i64.ge_u
-     i32.add
-    else
-     local.get $0
-     i64.const 100000000000000
-     i64.ge_u
-     i32.const 13
-     i32.add
-     local.get $0
-     i64.const 10000000000000
-     i64.ge_u
-     i32.add
-    end
-   else
-    local.get $0
-    i64.const 100000000000000000
-    i64.lt_u
-    if (result i32)
-     local.get $0
-     i64.const 10000000000000000
-     i64.ge_u
-     i32.const 16
-     i32.add
-    else
-     local.get $0
-     i64.const -8446744073709551616
-     i64.ge_u
-     i32.const 18
-     i32.add
-     local.get $0
-     i64.const 1000000000000000000
-     i64.ge_u
-     i32.add
-    end
-   end
-   local.get $3
-   i32.add
-   local.tee $1
-   i32.const 1
-   i32.shl
-   i32.const 1
-   call $~lib/rt/tcms/__new
-   local.tee $4
-   local.set $2
-   loop $while-continue|0
-    local.get $0
-    i64.const 100000000
-    i64.ge_u
-    if
-     local.get $2
-     local.get $1
-     i32.const 4
-     i32.sub
-     local.tee $1
-     i32.const 1
-     i32.shl
-     i32.add
-     local.get $0
-     local.get $0
-     i64.const 100000000
-     i64.div_u
-     local.tee $0
-     i64.const 100000000
-     i64.mul
-     i64.sub
-     i32.wrap_i64
-     local.tee $5
-     i32.const 10000
-     i32.rem_u
-     local.tee $6
-     i32.const 100
-     i32.div_u
-     i32.const 2
-     i32.shl
-     i32.const 2204
-     i32.add
-     i64.load32_u
-     local.get $6
-     i32.const 100
-     i32.rem_u
-     i32.const 2
-     i32.shl
-     i32.const 2204
-     i32.add
-     i64.load32_u
-     i64.const 32
-     i64.shl
-     i64.or
-     i64.store
-     local.get $2
-     local.get $1
-     i32.const 4
-     i32.sub
-     local.tee $1
-     i32.const 1
-     i32.shl
-     i32.add
-     local.get $5
-     i32.const 10000
-     i32.div_u
-     local.tee $5
-     i32.const 100
-     i32.div_u
-     i32.const 2
-     i32.shl
-     i32.const 2204
-     i32.add
-     i64.load32_u
-     local.get $5
-     i32.const 100
-     i32.rem_u
-     i32.const 2
-     i32.shl
-     i32.const 2204
-     i32.add
-     i64.load32_u
-     i64.const 32
-     i64.shl
-     i64.or
-     i64.store
-     br $while-continue|0
-    end
-   end
-   local.get $2
-   local.get $0
-   i32.wrap_i64
-   local.get $1
-   call $~lib/util/number/utoa32_dec_lut
-  end
-  local.get $3
-  if
-   local.get $4
-   i32.const 45
-   i32.store16
-  end
-  local.get $4
- )
  (func $assembly/webgl/main
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
-  (local $4 i64)
   i32.const 35633
   call $assembly/webgl/gl.createShader
   local.tee $0
@@ -2513,25 +2159,22 @@
   local.get $1
   i32.const 35044
   call $assembly/webgl/gl.bufferData<f32>
-  call $~lib/bindings/Date/now
-  i64.trunc_f64_s
-  local.set $4
+  local.get $2
+  call $assembly/webgl/gl.useProgram
+  local.get $0
+  call $assembly/webgl/gl.enableVertexAttribArray
+  local.get $0
+  i32.const 2
+  i32.const 5126
+  i32.const 0
+  i32.const 0
+  i32.const 0
+  call $assembly/webgl/gl.vertexAttribPointer
   loop $for-loop|0
    local.get $3
-   i32.const 1000
+   i32.const 1000000
    i32.lt_s
    if
-    local.get $2
-    call $assembly/webgl/gl.useProgram
-    local.get $0
-    call $assembly/webgl/gl.enableVertexAttribArray
-    local.get $0
-    i32.const 2
-    i32.const 5126
-    i32.const 0
-    i32.const 0
-    i32.const 0
-    call $assembly/webgl/gl.vertexAttribPointer
     i32.const 4
     i32.const 0
     i32.const 3
@@ -2543,12 +2186,6 @@
     br $for-loop|0
    end
   end
-  call $~lib/bindings/Date/now
-  i64.trunc_f64_s
-  local.get $4
-  i64.sub
-  call $~lib/util/number/itoa64
-  call $assembly/webgl/console.log
  )
  (func $~lib/rt/tcms/Object#unlink (param $0 i32)
   (local $1 i32)
@@ -2561,7 +2198,7 @@
   if
    i32.const 0
    local.get $0
-   i32.const 3988
+   i32.const 2212
    i32.lt_u
    local.get $0
    i32.load offset=8
@@ -2617,7 +2254,7 @@
    i32.const 3
    i32.eq
    if
-    i32.const 3776
+    i32.const 2000
     i32.const 1616
     i32.const 181
     i32.const 7
@@ -2670,7 +2307,7 @@
   i32.const 3
   i32.ne
   if
-   i32.const 3872
+   i32.const 2096
    i32.const 1616
    i32.const 195
    i32.const 5
@@ -2713,13 +2350,9 @@
   (local $6 i32)
   i32.const 1552
   call $~lib/rt/tcms/__visit
-  i32.const 3776
+  i32.const 2000
   call $~lib/rt/tcms/__visit
-  i32.const 3872
-  call $~lib/rt/tcms/__visit
-  i32.const 2624
-  call $~lib/rt/tcms/__visit
-  i32.const 3680
+  i32.const 2096
   call $~lib/rt/tcms/__visit
   global.get $~lib/rt/tcms/pinSpace
   local.tee $1
@@ -2828,7 +2461,7 @@
     i32.const -4
     i32.and
     local.get $0
-    i32.const 3988
+    i32.const 2212
     i32.lt_u
     if
      local.get $0
@@ -2851,7 +2484,7 @@
      i32.const 4
      i32.add
      local.tee $0
-     i32.const 3988
+     i32.const 2212
      i32.ge_u
      if
       global.get $~lib/rt/tlsf/ROOT
@@ -2997,21 +2630,21 @@
   i32.store
   i32.const 1728
   global.set $~lib/rt/tcms/fromSpace
-  i32.const 3828
-  i32.const 3824
+  i32.const 2052
+  i32.const 2048
   i32.store
-  i32.const 3832
-  i32.const 3824
+  i32.const 2056
+  i32.const 2048
   i32.store
-  i32.const 3824
+  i32.const 2048
   global.set $~lib/rt/tcms/pinSpace
-  i32.const 3924
-  i32.const 3920
+  i32.const 2148
+  i32.const 2144
   i32.store
-  i32.const 3928
-  i32.const 3920
+  i32.const 2152
+  i32.const 2144
   i32.store
-  i32.const 3920
+  i32.const 2144
   global.set $~lib/rt/tcms/toSpace
  )
 )
