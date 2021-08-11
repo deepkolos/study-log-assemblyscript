@@ -280,3 +280,7 @@ require('assemblyscript/std/portable');
 
 0. add wasm call js func test
 1. webgl 40%
+
+## 2021-8-11
+
+0. webgl 80% add webgl wasm demo

@@ -14,6 +14,7 @@
         const gl = canvas.getContext('webgl');
         document.body.append(canvas);
 
+        const t0 = performance.now();
         let success;
 
         const VS_SHADER = `
@@ -70,11 +71,17 @@
           gl.STATIC_DRAW,
         );
 
-        gl.useProgram(program);
-        gl.enableVertexAttribArray(positionLocation);
-        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+        const t1 = performance.now();
+        for (let i = 0; i < 1_000; i++) {
+          gl.useProgram(program);
+          gl.enableVertexAttribArray(positionLocation);
+          gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
+          gl.drawArrays(gl.TRIANGLES, 0, 3);
+        }
+        const t2 = performance.now();
+        console.log('t1 - t0', t1 - t0);
+        console.log('t2 - t1', t2 - t1);
         // 这是最基本的webgl使用方式，其实就是一堆修改webgl状态机的API
       })();
     </script>
@@ -84,9 +91,10 @@
       const gl = canvas.getContext('webgl');
       document.body.append(canvas);
 
-      const memory = new WebAssembly.Memory({ initial: 1 });
+      const memory = new WebAssembly.Memory({ initial: 64 });
+      let wasmExports;
 
-      const FN_MAP = [
+      const FN_LIST = [
         'createShader',
         'shaderSource',
         'compileShader',
@@ -108,14 +116,187 @@
         'drawArrays',
         'vertexAttribPointer',
       ];
-
-      loader.instantiate(
-        fetch('./build/webgl.wasm').then(i => i.arrayBuffer()),
-        {
-          env: { memory },
-          webgl: { glCall() {} },
+      const FN_CUSTOM_PARSER = {
+        shaderSource: {
+          parseArgs(args) {
+            args[0] = parseGLCallArg(args[0]);
+            args[1] = wasmExports.__getString(args[1]);
+            return args;
+          },
+          parseReturn: parseGLCallReturn,
         },
-      );
+        getAttribLocation: {
+          parseArgs(args) {
+            args[0] = parseGLCallArg(args[0]);
+            args[1] = wasmExports.__getString(args[1]);
+            return args;
+          },
+          parseReturn: parseGLCallReturn,
+        },
+        getShaderInfoLog: {
+          parseArgs(args) {
+            args[0] = parseGLCallArg(args[0]);
+            return args;
+          },
+          parseReturn: parseString,
+        },
+        getProgramInfoLog: {
+          parseArgs(args) {
+            args[0] = parseGLCallArg(args[0]);
+            return args;
+          },
+          parseReturn: parseString,
+        },
+        bufferData: {
+          parseArgs(args) {
+            args[1] = parseArrayView(args[1]);
+            return args;
+          },
+          parseReturn: parseGLCallReturn,
+        },
+      };
+
+      // 无法传递的数据需要新建mapping
+      // 所以叫做binding，数据状态的实际存储均是js层，暴露给wasm是等效的操作，但是同时是native也是这样暴露操作方式给js也是一个binding
+      // 这个binding应该是批量实现的，要么就是分类，一个是默认转发的另一个是固定转发，但是需要很多类型的切换
+      // 那么如果是一样的话，也是一对一的转发了，不能实现成批量转发看看是否支持overload, 貌似不支持函数的overload，即便支持了，也会有非常多的类型，一样不好实现
+      // webgl的类型能做映射，但是字符串就尴尬了，返回的是一个offset地址，都是number类型
+      // 感觉as还需要生成js类型转换部分逻辑，现在这部分需要手动判断处理，非常不利于批量的转换机制
+      // 需要反射类，知道gl api的参数类型，返回类型，这样也是可以实现通用的数据格式转换机制, 不过涉及字符串的API比较少，所以还可以接受
+      // 需要定制格式化的类型有 StaticArray(很多) 和 string(6) DOMString
+      // 虽然性能上面会比手写一一对应的慢一些，但是机制化，代码量少，貌似还是慢不少的感觉。。。
+
+      const WebGLClassInstanceMap = {};
+      const WebGLClassArray = [
+        'WebGLActiveInfo',
+        'WebGLBuffer',
+        'WebGLContextEvent',
+        'WebGLFramebuffer',
+        'WebGLProgram',
+        'WebGLQuery',
+        'WebGLRenderbuffer',
+        'WebGLRenderingContext',
+        'WebGLSampler',
+        'WebGLShader',
+        'WebGLShaderPrecisionFormat',
+        'WebGLSync',
+        'WebGLTexture',
+        'WebGLTransformFeedback',
+        'WebGLUniformLocation',
+        'WebGLVertexArrayObject',
+      ];
+
+      function parseString(strPtr) {
+        return wasmExports.__getString(strPtr);
+      }
+      function parseArrayView(ptr) {
+        return wasmExports.__getArrayView(ptr);
+      }
+
+      let parseGLCallArgCost = 0;
+      function parseGLCallArg(arg) {
+        const t = Date.now();
+
+        if (
+          typeof arg === 'number' &&
+          arg & 0b11100000000000000000000000000000
+        ) {
+          const classIndex = (arg & 0b00011111000000000000000000000000) >> 24;
+          const instanceIndex = arg & 0b00000000111111111111111111111111;
+          if (classIndex < WebGLClassArray.length) {
+            return WebGLClassInstanceMap[WebGLClassArray[classIndex]][
+              instanceIndex
+            ];
+          }
+        }
+        parseGLCallArgCost += Date.now() - t;
+
+        return arg;
+      }
+
+      let parseGLCallReturnCost = 0;
+      function parseGLCallReturn(ret) {
+        const t = Date.now();
+
+        const WebGLClassInstanceName = WebGLClassArray.find(
+          i => ret instanceof window[i],
+        );
+
+        if (WebGLClassInstanceName) {
+          WebGLClassInstanceMap[WebGLClassInstanceName] ??= [];
+          const classIndex = WebGLClassArray.indexOf(WebGLClassInstanceName);
+          const instanceIndex =
+            WebGLClassInstanceMap[WebGLClassInstanceName].push(ret) - 1;
+
+          // 3位    5位           24位
+          // 标识符 instanceIndex classIndex
+
+          // prettier-ignore
+          const binaryStr = `111${classIndex.toString(2).padStart(5, '0')}${instanceIndex.toString(2).padStart(24, '0')}`;
+          ret = parseInt(binaryStr, 2);
+        }
+
+        parseGLCallReturnCost += Date.now() - t;
+        return ret;
+      }
+
+      loader
+        .instantiate(
+          fetch('./build/webgl.wasm').then(i => i.arrayBuffer()),
+          {
+            env: { memory },
+            webgl: {
+              'console.log'(strPtr) {
+                console.log(parseString(strPtr));
+              },
+              ...FN_LIST.reduce((acc, fnName) => {
+                const glFnName = 'gl.' + fnName;
+
+                if (FN_CUSTOM_PARSER[fnName]) {
+                  acc[glFnName] = (...args) => {
+                    const argsParsed = FN_CUSTOM_PARSER[fnName].parseArgs(args);
+                    const ret = FN_CUSTOM_PARSER[fnName].parseReturn(
+                      gl[fnName](...argsParsed),
+                    );
+
+                    // console.log('gl', fnName, argsParsed, ret);
+                    // const error = gl.getError();
+                    // if (error !== gl.NO_ERROR) console.error(error);
+
+                    return ret;
+                  };
+                } else {
+                  acc[glFnName] = (...args) => {
+                    const argsParsed = args.map(parseGLCallArg);
+                    const ret = parseGLCallReturn(gl[fnName](...argsParsed));
+
+                    // console.log('gl', fnName, argsParsed, ret);
+                    // const error = gl.getError();
+                    // if (error !== gl.NO_ERROR) console.error(error);
+
+                    return ret;
+                  };
+                }
+
+                if (fnName === 'bufferData') {
+                  acc[glFnName + '<f32>'] = acc[glFnName];
+                  acc[glFnName + '<f64>'] = acc[glFnName];
+                  acc[glFnName + '<i32>'] = acc[glFnName];
+                }
+                return acc;
+              }, {}),
+            },
+          },
+        )
+        .then(({ exports }) => {
+          wasmExports = exports;
+          const t0 = performance.now();
+          exports.main();
+          const t2 = performance.now();
+          console.log('t2 - t0', t2 - t0);
+          console.log('parseGLCallArgCost', parseGLCallArgCost)
+          console.log('parseGLCallReturnCost', parseGLCallReturnCost) // 目前的实现太耗时了
+        });
     </script>
   </body>
 </html>
