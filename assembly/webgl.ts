@@ -16,7 +16,7 @@ export type WebGLRenderingContextId = u32;
 export type DOMString = string;
 
 // prettier-ignore
-export namespace gl {
+namespace gl {
   export const FLOAT: GLenum = 0x1406;
 
   export const ARRAY_BUFFER: GLenum = 0x8892;

@@ -16,6 +16,8 @@
     "webgl:asm": "asc assembly/webgl.ts --target release --runtime minimal --use Math=JSMath --importMemory -j build/webgl.js",
     "performance:wasm": "asc assembly/performance.ts --target release --runtime stub --use Math=JSMath --importMemory -b build/performance.wasm --exportRuntime",
     "performance:asm": "asc assembly/performance.ts --target release --runtime stub --use Math=JSMath --importMemory -j build/performance.js",
+    "as-bind:wasm": "asc assembly/as-bind.ts --target release --transform as-bind --runtime minimal --use Math=JSMath --importMemory -b build/as-bind.wasm --exportRuntime",
+    "base64:wasm": "asc assembly/base64.ts --target release --transform as-bind --runtime minimal -b build/base64.wasm --exportRuntime",
     "asbuild:untouched": "asc assembly/index.ts --target debug",
     "asbuild:optimized": "asc assembly/index.ts --target release -d ./build/types.d.ts",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized"
@@ -24,7 +26,9 @@
   "author": "DeepKolos <deepkolos@qq.com>",
   "license": "MIT",
   "dependencies": {
-    "@assemblyscript/loader": "^0.19.10"
+    "@assemblyscript/loader": "^0.19.10",
+    "as-bind": "^0.8.0",
+    "as-string-sink": "^0.4.2"
   },
   "devDependencies": {
     "assemblyscript": "^0.19.10"

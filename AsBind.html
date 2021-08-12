@@ -1,0 +1,16 @@
+<script type="module">
+  import * as AsBind from './node_modules/as-bind/dist/as-bind.esm.js';
+  const memory = new WebAssembly.Memory({ initial: 1 });
+  AsBind.instantiate(
+    fetch('./build/as-bind.wasm').then(i => i.arrayBuffer()),
+    {
+      env: { memory },
+      'as-bind': {
+        'console.log': str => console.log(str),
+        consoleLog: str => console.log(str),
+      },
+    },
+  ).then(exports => {
+    exports.exports.log('test');
+  });
+</script>

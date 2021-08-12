@@ -284,3 +284,19 @@ require('assemblyscript/std/portable');
 ## 2021-8-11
 
 0. webgl 70% add webgl wasm demo
+
+## 2021-8-12
+
+1. 发现 as 的 StringBuilder as-string-sink 之前测试的 base64 encode 耗时果然大大降低了！！
+2. 测试 as-bind 发现不支持 namespace 里面的 declare function
+
+### wasm 使用不当导致的额外耗时
+
+0. 使用原生字符串拼接 × 使用 as-string-sink √
+1. ArrayBuffer 作为参数 × 先\_\_newArrayBuffer 写到 memory，其返回的指针做参数 √ 4mb 的图片单数据传递就需要 56ms
+2. 多用 unchecked(TBD) StaticArray @inline
+
+说不定 js 版本的字符串拼接也是可以做类似的优化来达到提速
+
+> https://mrale.ph/blog/2018/02/03/maybe-you-dont-need-rust-to-speed-up-your-js.html#getting-the-code
+> https://emscripten.org/docs/optimizing/Optimizing-WebGL.html

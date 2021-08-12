@@ -87,6 +87,8 @@
     </script>
 
     <script type="module">
+      import * as AsBind from './node_modules/as-bind/dist/as-bind.esm.js';
+
       const canvas = document.createElement('canvas');
       const gl = canvas.getContext('webgl');
       document.body.append(canvas);
@@ -265,7 +267,8 @@
         return ret;
       }
 
-      loader
+      // loader
+      AsBind
         .instantiate(
           fetch('./build/webgl.wasm').then(i => i.arrayBuffer()),
           {
@@ -337,6 +340,7 @@
           // 如果想要避免wasm2js的耗时，估计就是减少这类的调用，或者batch的方式
 
           // 后面需要尝试command buffer的方式，或者wasm是结构运算部分
+          // https://zhuanlan.zhihu.com/p/102692865 里也有人提到用command buffer来优化了
 
           // 新发现！把这3行移出循环外，WASM耗时稳定低于JS，wasm稳定470 ~ 490 JS最低490，但是优势600+ 700+ 800+
           // gl.useProgram(program);
@@ -344,6 +348,9 @@
           // gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, 0, 0, 0);
 
           // 循环里的JS CALL合并成一个可能会更好？？说到底还是batch的方式
+          // 本来以为wasm 体积上面会有优势，但是发现并没有，可能目前gl api的也占用了不少体积吧
+
+          // 可以使用as-bind实现基础数据的互通string statictype array
         });
     </script>
   </body>

@@ -2,10 +2,14 @@ lockfileVersion: 5.3
 
 specifiers:
   '@assemblyscript/loader': ^0.19.10
+  as-bind: ^0.8.0
+  as-string-sink: ^0.4.2
   assemblyscript: ^0.19.10
 
 dependencies:
   '@assemblyscript/loader': 0.19.10
+  as-bind: 0.8.0_610acc235769f48bf392578dd2d5a015
+  as-string-sink: 0.4.2
 
 devDependencies:
   assemblyscript: 0.19.10
@@ -14,6 +18,21 @@ packages:
 
   /@assemblyscript/loader/0.19.10:
     resolution: {integrity: sha512-YPWDWrEl9lsHIMfY2w968kEthfSq5SVEypBoPT/NcbNeefLZoHjRVQTepmqi9ZaQijekk/3NTiFKafJqGh/OXA==}
+    dev: false
+
+  /as-bind/0.8.0_610acc235769f48bf392578dd2d5a015:
+    resolution: {integrity: sha512-TGQ0/9LtAFmSMzafSTupLjcw3OuzmHsKg9KEI52MZsj9MzjPP59JzglsznHFQI+cMqnvxC7SivedZ/7wZChkew==}
+    peerDependencies:
+      '@assemblyscript/loader': 0.19.x
+      assemblyscript: 0.19.x
+    dependencies:
+      '@assemblyscript/loader': 0.19.10
+      assemblyscript: 0.19.10
+      visitor-as: 0.5.0
+    dev: false
+
+  /as-string-sink/0.4.2:
+    resolution: {integrity: sha512-eOuOYPUwwv4QumoJIa7XxyS0OjXI6CyZz2dtba/hTeG5hzhq58HzAPD2FbHhjfYUXQaSAacFnJ9g2Zlfw56LgQ==}
     dev: false
 
   /assemblyscript/0.19.10:
@@ -29,6 +48,21 @@ packages:
     hasBin: true
     dev: true
 
+  /lodash.clonedeep/4.5.0:
+    resolution: {integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=}
+    dev: false
+
   /long/4.0.0:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
     dev: true
+
+  /ts-mixer/5.4.1:
+    resolution: {integrity: sha512-Zo9HgPCtNouDgJ+LGtrzVOjSg8+7WGQktIKLwAfaNrlOK1mWGlz1ejsAF/YqUEqAGjUTeB5fEg8gH9Aui6w9xA==}
+    dev: false
+
+  /visitor-as/0.5.0:
+    resolution: {integrity: sha512-U2P13pa7BAnfj6IEbP4feS1Rci6NT4GlDcwpqkk90u7LGalc5jH9aMuWnxTC8RJJ92iZzDQ8Lea5/OnLDsgzlw==}
+    dependencies:
+      lodash.clonedeep: 4.5.0
+      ts-mixer: 5.4.1
+    dev: false
