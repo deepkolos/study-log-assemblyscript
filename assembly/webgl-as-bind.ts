@@ -42,7 +42,8 @@ namespace gl {
   export declare function getAttribLocation(program: WebGLProgram, name: string): GLint;
   export declare function createBuffer(): WebGLBuffer;
   export declare function bindBuffer(target: GLenum, buffer: WebGLBuffer): void;
-  export declare function bufferData<T>(target: GLenum, data: StaticArray<T>, usage: GLenum): void;
+  // export declare function bufferData<T>(target: GLenum, data: StaticArray<T>, usage: GLenum): void;
+  export declare function bufferData(target: GLenum, data: Float32Array, usage: GLenum): void;
   export declare function useProgram(program: WebGLProgram): void;
   export declare function enableVertexAttribArray(index: GLuint): void;
   export declare function drawArrays(mode: GLenum, first: GLint, count: GLsizei): void;
@@ -103,8 +104,15 @@ void main() {
   const positionBuffer = gl.createBuffer();
 
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  const bufferData: StaticArray<f32> = [0, 0.5, -0.5, 0, 0.5, 0];
-  gl.bufferData<f32>(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
+  // const bufferData: StaticArray<f32> = [0, 0.5, -0.5, 0, 0.5, 0];
+  const bufferData = new Float32Array(6);
+  bufferData[0] = 0;
+  bufferData[1] = 0.5;
+  bufferData[2] = -0.5;
+  bufferData[3] = 0;
+  bufferData[4] = 0.5;
+  bufferData[5] = 0;
+  gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
   gl.useProgram(program);
   gl.enableVertexAttribArray(positionLocation);
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, 0, 0, 0);

@@ -14,7 +14,7 @@
     "array:wasm": "asc assembly/array.ts --target release --runtime stub --use Math=JSMath --importMemory -b build/array.wasm --exportRuntime",
     "array:asm": "asc assembly/array.ts --target release --runtime stub --use Math=JSMath --importMemory -j build/array.js",
     "webgl:wasm": "asc assembly/webgl.ts --target release --runtime minimal --use Math=JSMath --importMemory -b build/webgl.wasm --exportRuntime",
-    "webgl:asm": "asc assembly/webgl.ts --target release --runtime minimal --use Math=JSMath --importMemory -j build/webgl.js",
+    "webgl-as-bind:wasm": "asc assembly/webgl-as-bind.ts --target release --runtime minimal --transform as-bind --use Math=JSMath --importMemory -b build/webgl-as-bind.wasm --exportRuntime",
     "performance:wasm": "asc assembly/performance.ts --target release --runtime stub --use Math=JSMath --importMemory -b build/performance.wasm --exportRuntime",
     "performance:asm": "asc assembly/performance.ts --target release --runtime stub --use Math=JSMath --importMemory -j build/performance.js",
     "as-bind:wasm": "asc assembly/as-bind.ts --target release --transform as-bind --runtime minimal --use Math=JSMath --importMemory -b build/as-bind.wasm --exportRuntime",

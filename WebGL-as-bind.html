@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebGL</title>
+    <script src="https://cdn.jsdelivr.net/npm/@assemblyscript/loader/umd/index.js"></script>
+  </head>
+  <body>
+    <script type="module">
+      (async function main() {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl');
+        document.body.append(canvas);
+
+        const t0 = performance.now();
+        let success;
+
+        const VS_SHADER = `
+        attribute vec2 a_position;
+
+        void main() {
+          gl_Position = vec4(a_position, 0, 1);
+        }
+        `;
+        const FS_SHADER = `
+        precision mediump float;
+
+        void main() {
+          gl_FragColor = vec4(0, 0.5, 1, 1);
+        }
+        `;
+
+        // 先回忆一下怎么绘制三角形的。。。这东西不使用就会忘记的了
+        const vs = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vs, VS_SHADER);
+        gl.compileShader(vs);
+        success = gl.getShaderParameter(vs, gl.COMPILE_STATUS);
+        if (!success)
+          return console.log(
+            'compile   vs shader fail',
+            gl.getShaderInfoLog(vs),
+          );
+
+        const fs = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fs, FS_SHADER);
+        gl.compileShader(fs);
+        success = gl.getShaderParameter(fs, gl.COMPILE_STATUS);
+        if (!success)
+          return console.log('compile fs shader fail', gl.getShaderInfoLog(fs));
+
+        const program = gl.createProgram();
+        gl.attachShader(program, vs);
+        gl.attachShader(program, fs);
+        gl.linkProgram(program);
+        success = gl.getProgramParameter(program, gl.LINK_STATUS);
+        if (!success)
+          return console.log(
+            'link program fail',
+            gl.getProgramInfoLog(program),
+          );
+
+        const positionLocation = gl.getAttribLocation(program, 'a_position');
+        const positionBuffer = gl.createBuffer();
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array([0, 0.5, -0.5, 0, 0.5, 0]),
+          gl.STATIC_DRAW,
+        );
+        gl.useProgram(program);
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        const t1 = performance.now();
+        for (let i = 0; i < 1_000_000; i++) {
+          gl.drawArrays(gl.TRIANGLES, 0, 3);
+        }
+        const t2 = performance.now();
+        console.log('t1 - t0', t1 - t0);
+        console.log('t2 - t1', t2 - t1);
+        console.log('t2 - t0', t2 - t0);
+        // 这是最基本的webgl使用方式，其实就是一堆修改webgl状态机的API
+      })();
+    </script>
+
+    <script type="module">
+      import * as AsBind from './node_modules/as-bind/dist/as-bind.esm.js';
+
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl');
+      document.body.append(canvas);
+
+      const memory = new WebAssembly.Memory({ initial: 64 });
+
+      const FN_LIST = [
+        'createShader',
+        'shaderSource',
+        'compileShader',
+        'getShaderParameter',
+        'getShaderInfoLog',
+
+        'createProgram',
+        'attachShader',
+        'linkProgram',
+        'getProgramParameter',
+        'getProgramInfoLog',
+
+        'getAttribLocation',
+        'createBuffer',
+        'bindBuffer',
+        'bufferData',
+        'useProgram',
+        'enableVertexAttribArray',
+        'drawArrays',
+        'vertexAttribPointer',
+      ];
+
+      const WebGLClassInstanceMap = {};
+      const WebGLClassArray = [
+        'WebGLActiveInfo',
+        'WebGLBuffer',
+        'WebGLContextEvent',
+        'WebGLFramebuffer',
+        'WebGLProgram',
+        'WebGLQuery',
+        'WebGLRenderbuffer',
+        'WebGLRenderingContext',
+        'WebGLSampler',
+        'WebGLShader',
+        'WebGLShaderPrecisionFormat',
+        'WebGLSync',
+        'WebGLTexture',
+        'WebGLTransformFeedback',
+        'WebGLUniformLocation',
+        'WebGLVertexArrayObject',
+      ];
+      let WebGLClassArrayMap = {};
+      WebGLClassArray.forEach((v, k) => {
+        WebGLClassArrayMap[v] = k;
+        WebGLClassInstanceMap[v] ??= [];
+      });
+
+      let parseGLCallArgCost = 0;
+      function parseGLCallArg(arg) {
+        if (Number.isInteger(arg) && arg & 0b11100000000000000000000000000000) {
+          const classIndex = (arg & 0b00011111000000000000000000000000) >> 24;
+          const instanceIndex = arg & 0b00000000111111111111111111111111;
+          if (classIndex < WebGLClassArray.length)
+            return WebGLClassInstanceMap[WebGLClassArray[classIndex]][
+              instanceIndex
+            ];
+        }
+
+        return arg;
+      }
+
+      let parseGLCallReturnCost = 0;
+      let WebGLClassArrayFindCost = 0;
+      let WebGLClassInstanceNameCost = 0;
+      function parseGLCallReturn(ret) {
+        if (
+          typeof ret === 'object' &&
+          ret.constructor.name.indexOf('WebGL') === 0
+        ) {
+          const WebGLClassInstanceName = ret.constructor.name;
+
+          if (WebGLClassInstanceName) {
+            const classIndex = WebGLClassArrayMap[WebGLClassInstanceName];
+            const instanceIndex =
+              WebGLClassInstanceMap[WebGLClassInstanceName].push(ret) - 1;
+
+            // 3位    5位           24位
+            // 标识符 instanceIndex classIndex
+            // prettier-ignore
+            ret = 0b11100000000000000000000000000000 | (classIndex << 24) | instanceIndex;
+          }
+        }
+
+        return ret;
+      }
+
+      // loader
+      AsBind.instantiate(
+        fetch('./build/webgl-as-bind.wasm').then(i => i.arrayBuffer()),
+        {
+          env: { memory },
+          'webgl-as-bind': {
+            'console.log'(strPtr) {
+              console.log(parseString(strPtr));
+            },
+            ...FN_LIST.reduce((acc, fnName) => {
+              const glFnName = 'gl.' + fnName;
+
+              acc[glFnName] = function () {
+                const argsParsed = new Array(arguments.length);
+                for (let i = 0; i < arguments.length; i++)
+                  argsParsed[i] = parseGLCallArg(arguments[i]);
+
+                return parseGLCallReturn(gl[fnName](...argsParsed));
+              };
+
+              return acc;
+            }, {}),
+          },
+        },
+      ).then(({ exports }) => {
+        const t0 = performance.now();
+        exports.main();
+        const t2 = performance.now();
+        console.log('t2 - t0', t2 - t0);
+        // 加上细分性能打点会非常耗时，取消性能打点之后耗时大幅下降, 是值得留意一个现象
+        // 只保留 最开始结尾 和 wasm内，耗时只有4.5 最低
+        // 只保留 最开始结尾，耗时只有3.5 最低
+        // 3.5 / 1000 也就是平均每个gl call 的耗时增加是很小的，但是循环多起来，累加多起来就会比较明显
+        // 如果想要避免wasm2js的耗时，估计就是减少这类的调用，或者batch的方式
+
+        // 后面需要尝试command buffer的方式，或者wasm是结构运算部分
+        // https://zhuanlan.zhihu.com/p/102692865 里也有人提到用command buffer来优化了
+
+        // 新发现！把这3行移出循环外，WASM耗时稳定低于JS，wasm稳定470 ~ 490 JS最低490，但是优势600+ 700+ 800+
+        // gl.useProgram(program);
+        // gl.enableVertexAttribArray(positionLocation);
+        // gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, 0, 0, 0);
+
+        // 循环里的JS CALL合并成一个可能会更好？？说到底还是batch的方式
+        // 本来以为wasm 体积上面会有优势，但是发现并没有，可能目前gl api的也占用了不少体积吧
+
+        // 可以使用as-bind实现基础数据的互通string statictype array
+        // 先尝试提个PR 给as-bind吧 done 没想到这么简单就支持了
+        // 然而缺泛型的支持。。。Float32Array还报错了。。。不太成熟的写法
+        // 修了Float32Array的问题，性能上面没有明显变化，不过as-bind.esm.js 28k 体积上面比较庞大了（去除sourcemap
+        // 还差泛型，现在相当于bufferData接口仅仅支持Float32Array
+      });
+    </script>
+  </body>
+</html>

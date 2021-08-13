@@ -167,6 +167,7 @@
       // 需要反射类，知道gl api的参数类型，返回类型，这样也是可以实现通用的数据格式转换机制, 不过涉及字符串的API比较少，所以还可以接受
       // 需要定制格式化的类型有 StaticArray(很多) 和 string(6) DOMString
       // 虽然性能上面会比手写一一对应的慢一些，但是机制化，代码量少，貌似还是慢不少的感觉。。。
+      // 还是需要使用as-bind比较好，额外的开销并不大
 
       const WebGLClassInstanceMap = {};
       const WebGLClassArray = [
@@ -267,8 +268,8 @@
         return ret;
       }
 
-      // loader
-      AsBind
+      loader
+      // AsBind
         .instantiate(
           fetch('./build/webgl.wasm').then(i => i.arrayBuffer()),
           {
@@ -351,6 +352,7 @@
           // 本来以为wasm 体积上面会有优势，但是发现并没有，可能目前gl api的也占用了不少体积吧
 
           // 可以使用as-bind实现基础数据的互通string statictype array
+          // 先尝试提个PR 给as-bind吧 done 没想到这么简单就支持了
         });
     </script>
   </body>

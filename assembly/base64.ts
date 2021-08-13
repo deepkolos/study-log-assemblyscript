@@ -67,9 +67,6 @@ export function base64ArrayBuffer(bytes: Uint8Array): string {
     // arr[i + 2] = encodings[c];
     // arr[i + 3] = encodings[d];
 
-    // TODO: use writeCodePoint
-    // encodings[a].codePointAt(0);
-
     // stringSink.write(
     //   unchecked(encodings[a]) +
     //     unchecked(encodings[b]) +
