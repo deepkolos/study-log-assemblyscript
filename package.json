@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node tests",
+    "test:base64": "npm run base64:wasm && node tests/base64",
     "pretest": "npm run asbuild:untouched",
     "mandelbrot:wasm": "asc assembly/mandelbrot.ts --target release --runtime stub --use Math=JSMath --importMemory -b build/mandelbrot.wasm",
     "mandelbrot:asm": "asc assembly/mandelbrot.ts --target release --runtime stub --use Math=JSMath --importMemory -j build/mandelbrot.js",
@@ -17,7 +18,7 @@
     "performance:wasm": "asc assembly/performance.ts --target release --runtime stub --use Math=JSMath --importMemory -b build/performance.wasm --exportRuntime",
     "performance:asm": "asc assembly/performance.ts --target release --runtime stub --use Math=JSMath --importMemory -j build/performance.js",
     "as-bind:wasm": "asc assembly/as-bind.ts --target release --transform as-bind --runtime minimal --use Math=JSMath --importMemory -b build/as-bind.wasm --exportRuntime",
-    "base64:wasm": "asc assembly/base64.ts --target release --transform as-bind --runtime minimal -b build/base64.wasm --exportRuntime",
+    "base64:wasm": "asc assembly/base64.ts --target release --transform as-bind --runtime stub -b build/base64.wasm --exportRuntime",
     "asbuild:untouched": "asc assembly/index.ts --target debug",
     "asbuild:optimized": "asc assembly/index.ts --target release -d ./build/types.d.ts",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized"

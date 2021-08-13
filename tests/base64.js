@@ -49,6 +49,11 @@ assert.equal(wasmOut, jsOut);
   // 4屏   57    328
   // dk    2     10
   // 效果确实可以了
+  // 如果改为stringSink.write(unchecked(encodings[a]) + unchecked(encodings[b]) + '==');
+  // 4屏 耗时将会上升到298
+
+  // 不过体积上面wasm 把字符串去掉后大概7kb, js版只有1.5kb, 体积大不少
+  // runtime设置为stub后wasm 4kb,GC也占据不少体积
 }
 
 {

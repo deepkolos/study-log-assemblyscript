@@ -1,29 +1,26 @@
 import { StringSink } from 'as-string-sink';
 
-declare function consoleLog(t: string): void;
-
 // prettier-ignore
 // const encodings: Array<string> = [
-const encodings: StaticArray<string> = [
-  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
-  'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-  'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a',
-  'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-  'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
-  't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1',
-  '2', '3', '4', '5', '6', '7', '8', '9', '+',
-  '/',
-];
+// const encodings: StaticArray<string> = [
+//   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+//   'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+//   'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a',
+//   'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+//   'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+//   't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1',
+//   '2', '3', '4', '5', '6', '7', '8', '9', '+',
+//   '/',
+// ];
 // prettier-ignore
 const encodingsCodePoint: StaticArray<i32> = [
-  'A'.codePointAt(0), 'B'.codePointAt(0), 'C'.codePointAt(0), 'D'.codePointAt(0), 'E'.codePointAt(0), 'F'.codePointAt(0), 'G'.codePointAt(0), 'H'.codePointAt(0), 'I'.codePointAt(0),
-  'J'.codePointAt(0), 'K'.codePointAt(0), 'L'.codePointAt(0), 'M'.codePointAt(0), 'N'.codePointAt(0), 'O'.codePointAt(0), 'P'.codePointAt(0), 'Q'.codePointAt(0), 'R'.codePointAt(0),
-  'S'.codePointAt(0), 'T'.codePointAt(0), 'U'.codePointAt(0), 'V'.codePointAt(0), 'W'.codePointAt(0), 'X'.codePointAt(0), 'Y'.codePointAt(0), 'Z'.codePointAt(0), 'a'.codePointAt(0),
-  'b'.codePointAt(0), 'c'.codePointAt(0), 'd'.codePointAt(0), 'e'.codePointAt(0), 'f'.codePointAt(0), 'g'.codePointAt(0), 'h'.codePointAt(0), 'i'.codePointAt(0), 'j'.codePointAt(0),
-  'k'.codePointAt(0), 'l'.codePointAt(0), 'm'.codePointAt(0), 'n'.codePointAt(0), 'o'.codePointAt(0), 'p'.codePointAt(0), 'q'.codePointAt(0), 'r'.codePointAt(0), 's'.codePointAt(0),
-  't'.codePointAt(0), 'u'.codePointAt(0), 'v'.codePointAt(0), 'w'.codePointAt(0), 'x'.codePointAt(0), 'y'.codePointAt(0), 'z'.codePointAt(0), '0'.codePointAt(0), '1'.codePointAt(0),
-  '2'.codePointAt(0), '3'.codePointAt(0), '4'.codePointAt(0), '5'.codePointAt(0), '6'.codePointAt(0), '7'.codePointAt(0), '8'.codePointAt(0), '9'.codePointAt(0), '+'.codePointAt(0),
-  '/'.codePointAt(0),
+  65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 
+  76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 
+  87, 88, 89, 90, 97, 98, 99, 100, 101, 102, 
+  103, 104, 105, 106, 107, 108, 109, 110, 111, 
+  112, 113, 114, 115, 116, 117, 118, 119, 120, 
+  121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 
+  57, 43, 47
 ];
 
 // const encodingCodeMap: u8[] = encodings.map<u8>(
@@ -32,17 +29,16 @@ const encodingsCodePoint: StaticArray<i32> = [
 // const encodingsCodePoint: u8[] = encodings.map<u8>(
 //   (i: string) => <u8>i.codePointAt(0),
 // );
-const tailCodePoint: i32 = '='.codePointAt(0);
+const tailCodePoint: i32 = 61 // '='.codePointAt(0);
 var a: u32, b: u32, c: u32, d: u32;
 var e: u32 = 0;
 var chunk: u32;
 
-// export function base64ArrayBuffer(bytes: Uint8Array): string {
-export function base64ArrayBuffer(buffer: ArrayBuffer): string {
+export function base64ArrayBuffer(bytes: Uint8Array): string {
   const stringSink = new StringSink();
   // var base64 = '';
 
-  const bytes = Uint8Array.wrap(buffer);
+  // const bytes = Uint8Array.wrap(buffer);
   var byteLength = bytes.byteLength;
   var byteRemainder = byteLength % 3;
   var mainLength = byteLength - byteRemainder;
@@ -146,13 +142,13 @@ export function base64ArrayBuffer(buffer: ArrayBuffer): string {
   // const t2 = Date.now();
 
   // return arr.join('');
-  // return stringSink.toString();
-  const str: string = stringSink.toString();
+  return stringSink.toString();
+  // const str: string = stringSink.toString();
   // consoleLog(str.length.toString())
   // const t3 = Date.now();
   // consoleLog((t1 - t0).toString());
   // consoleLog((t2 - t1).toString());
   // consoleLog((t3 - t2).toString());
   // consoleLog((t3 - t0).toString());
-  return str;
+  // return str;
 }

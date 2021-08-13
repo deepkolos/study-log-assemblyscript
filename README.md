@@ -300,3 +300,9 @@ require('assemblyscript/std/portable');
 
 > https://mrale.ph/blog/2018/02/03/maybe-you-dont-need-rust-to-speed-up-your-js.html#getting-the-code
 > https://emscripten.org/docs/optimizing/Optimizing-WebGL.html
+
+## 2021-8-13
+
+0. 减少base64 wasm版体积(14kb -> 4kb)
+
+minimal的runtime大概需要3k
