@@ -233,6 +233,9 @@
         // 然而缺泛型的支持。。。Float32Array还报错了。。。不太成熟的写法
         // 修了Float32Array的问题，性能上面没有明显变化，不过as-bind.esm.js 28k 体积上面比较庞大了（去除sourcemap
         // 还差泛型，现在相当于bufferData接口仅仅支持Float32Array
+
+        // command buffer是减少js call的损耗,但是数字类型的损耗依然存在，js call的损耗在chrome下面非常少，5%左右
+        // 火狐下面是比较明显的损耗，这里还仅仅是调用，还没涉及数据格式的转换
       });
     </script>
   </body>

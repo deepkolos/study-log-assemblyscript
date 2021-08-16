@@ -1,33 +1,33 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@assemblyscript/loader': ^0.19.10
+  '@assemblyscript/loader': ^0.19.11
   as-bind: ^0.8.0
   as-string-sink: ^0.4.2
-  assemblyscript: ^0.19.10
+  assemblyscript: ^0.19.11
 
 dependencies:
-  '@assemblyscript/loader': 0.19.10
-  as-bind: 0.8.0_610acc235769f48bf392578dd2d5a015
+  '@assemblyscript/loader': 0.19.11
+  as-bind: 0.8.0_55a9af1b8ebfa5e3b7527e2ea13a6c42
   as-string-sink: 0.4.2
 
 devDependencies:
-  assemblyscript: 0.19.10
+  assemblyscript: 0.19.11
 
 packages:
 
-  /@assemblyscript/loader/0.19.10:
-    resolution: {integrity: sha512-YPWDWrEl9lsHIMfY2w968kEthfSq5SVEypBoPT/NcbNeefLZoHjRVQTepmqi9ZaQijekk/3NTiFKafJqGh/OXA==}
+  /@assemblyscript/loader/0.19.11:
+    resolution: {integrity: sha512-LYchnZeBMkd42r1JTyh3atB3P4y/jr/9wdODVAvnaRlLha0jo1ONEHbKlETKrMvg2i0xPiKe1a4Hlcvy68Kq2w==}
     dev: false
 
-  /as-bind/0.8.0_610acc235769f48bf392578dd2d5a015:
+  /as-bind/0.8.0_55a9af1b8ebfa5e3b7527e2ea13a6c42:
     resolution: {integrity: sha512-TGQ0/9LtAFmSMzafSTupLjcw3OuzmHsKg9KEI52MZsj9MzjPP59JzglsznHFQI+cMqnvxC7SivedZ/7wZChkew==}
     peerDependencies:
       '@assemblyscript/loader': 0.19.x
       assemblyscript: 0.19.x
     dependencies:
-      '@assemblyscript/loader': 0.19.10
-      assemblyscript: 0.19.10
+      '@assemblyscript/loader': 0.19.11
+      assemblyscript: 0.19.11
       visitor-as: 0.5.0
     dev: false
 
@@ -35,8 +35,8 @@ packages:
     resolution: {integrity: sha512-eOuOYPUwwv4QumoJIa7XxyS0OjXI6CyZz2dtba/hTeG5hzhq58HzAPD2FbHhjfYUXQaSAacFnJ9g2Zlfw56LgQ==}
     dev: false
 
-  /assemblyscript/0.19.10:
-    resolution: {integrity: sha512-HavcUBXB3mBTRGJcpvaQjmnmaqKHBGREjSPNsIvnAk2f9dj78y4BkMaSSdvBQYWcDDzsHQjyUC8stICFkD1Odg==}
+  /assemblyscript/0.19.11:
+    resolution: {integrity: sha512-Z121H4rHkrHhOswQQ6Nvv0y3UVqBm3Z6ZSYKF7dNDoR608Axd/gJPkPLGI6fVnqZT+fH6s3/erx4P2vUseMa7w==}
     hasBin: true
     dependencies:
       binaryen: 101.0.0-nightly.20210723

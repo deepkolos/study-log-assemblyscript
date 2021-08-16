@@ -298,9 +298,14 @@ require('assemblyscript/std/portable');
 
 说不定 js 版本的字符串拼接也是可以做类似的优化来达到提速
 
-> https://mrale.ph/blog/2018/02/03/maybe-you-dont-need-rust-to-speed-up-your-js.html#getting-the-code > https://emscripten.org/docs/optimizing/Optimizing-WebGL.html
+> https://mrale.ph/blog/2018/02/03/maybe-you-dont-need-rust-to-speed-up-your-js.html#getting-the-code \
+> https://emscripten.org/docs/optimizing/Optimizing-WebGL.html
 
 ## 2021-8-13
 
 0. 减少 base64 wasm 版体积(14kb -> 4kb) （minimal 的 runtime 大概需要 3k
-1. webgl 使用 as-bind, 适配层变简单了，但是需要引入 28k 的 as-bind，性能倒没什么变化
+1. webgl 使用 as-bind, 适配层变简单了，但是需要引入 28k 的 as-bind，性能倒没什么变化，相比于 ASWebGLue 的 65k 还是好一半
+
+## 2021-8-16
+
+0. 增加 performance 测试字符串和 Uint8Array 测试用例，发现格式转换十分耗时（感觉wasm并不适合高频数据交换的场景

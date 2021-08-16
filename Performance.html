@@ -10,12 +10,13 @@
   <body>
     <script>
       const memory = new WebAssembly.Memory({
-        initial: 1,
+        initial: 64,
       });
 
       let t;
       let wasmCallJsCostSum;
       let JsCallCostSum;
+      let module;
 
       loader
         .instantiate(
@@ -27,41 +28,134 @@
                 // console.log(arg);
                 wasmCallJsCostSum += performance.now() - t;
               },
+              outputStr(str) {
+                // 有bug了，declare function不支持字符串么??不应该。。
+                // 不支持从js转发string ?? 如果改为实际的as内产生的字符串是支持的
+                // console.log(module.__getString(str), str);
+                module.__getString(str);
+                wasmCallJsCostSum += performance.now() - t;
+              },
+              outputTypedArray(arrayPtr) {
+                // console.log(arrayPtr);
+                // console.log(module.__getUint8Array(arrayPtr), arrayPtr);
+                module.__getUint8Array(arrayPtr);
+                wasmCallJsCostSum += performance.now() - t;
+              },
             },
           },
         )
         .then(mod => {
-          const {
-            instance: { exports },
-          } = mod;
+          const { exports } = mod;
+          console.log(exports);
 
-          wasmCallJsCostSum = 0;
-          for (let i = 0; i < 1_000_000; i++) {
-            t = performance.now();
-            exports.input(i);
-          }
-          console.log('wasm call js func cost sum', wasmCallJsCostSum);
+          module = exports;
+          const loopCount = 1_000_000;
 
-          JsCallCostSum = 0;
-          function output() {
-            JsCallCostSum += performance.now() - t;
+          console.warn('test num');
+          {
+            wasmCallJsCostSum = 0;
+            for (let i = 0; i < loopCount; i++) {
+              t = performance.now();
+              exports.input(i);
+            }
+            console.log('wasm cost sum', wasmCallJsCostSum);
+
+            JsCallCostSum = 0;
+            function output() {
+              JsCallCostSum += performance.now() - t;
+            }
+            function input(i) {
+              output(i);
+            }
+            for (let i = 0; i < loopCount; i++) {
+              t = performance.now();
+              input(i);
+            }
+            console.log('js cost sum', JsCallCostSum);
+            console.log('diff', wasmCallJsCostSum / JsCallCostSum);
+            /**
+             * | browser | wasm | js  | diff |
+             * |---------|------|-----|------|
+             * | chrome  | 509  | 499 | 2.1% |
+             * | edge    | 318  | 311 | 2.4% |
+             * | firefox | 113  | 89  | 27%  |
+             */
           }
-          function input(i) {
-            output(i);
+
+          console.warn('test str');
+          {
+            wasmCallJsCostSum = 0;
+            for (let i = 0; i < loopCount; i++) {
+              t = performance.now();
+              const outString = exports.inputString('test string');
+              exports.__getString(outString);
+            }
+            console.log('wasm cost sum', wasmCallJsCostSum);
+
+            JsCallCostSum = 0;
+            function output() {
+              JsCallCostSum += performance.now() - t;
+            }
+            function input(i) {
+              output('input string');
+              return 'return string';
+            }
+            for (let i = 0; i < loopCount; i++) {
+              t = performance.now();
+              input('test string');
+            }
+            console.log('js cost sum', JsCallCostSum);
+            console.log('diff', wasmCallJsCostSum / JsCallCostSum);
+            /**
+             * | browser | wasm | js  | diff |
+             * |---------|------|-----|------|
+             * | chrome  | 1436 | 561 | 255% |
+             * | edge    | 973  | 289 | 335% |
+             * | firefox | 993  | 107 | 928% |
+             */
           }
-          for (let i = 0; i < 1_000_000; i++) {
-            t = performance.now();
-            input(i);
+
+          console.warn('test Uint8Array');
+          {
+            wasmCallJsCostSum = 0;
+            for (let i = 0; i < loopCount; i++) {
+              t = performance.now();
+              const arrayPtr = exports.__newArray(
+                exports.Uint8Array_ID.value,
+                new Uint8Array([1, 2, 3]),
+              );
+              const outArray = exports.intputTypedArray(arrayPtr);
+              exports.__getUint8Array(outArray);
+            }
+            console.log('wasm cost sum', wasmCallJsCostSum);
+
+            JsCallCostSum = 0;
+            function output() {
+              JsCallCostSum += performance.now() - t;
+            }
+            function input(i) {
+              const u8Array = new Uint8Array(3);
+              u8Array[0] = i[2];
+              u8Array[1] = i[1];
+              u8Array[2] = i[0];
+              output(u8Array);
+
+              return u8Array;
+            }
+            for (let i = 0; i < loopCount; i++) {
+              t = performance.now();
+              input(new Uint8Array([1, 2, 3]));
+            }
+            console.log('js cost sum', JsCallCostSum);
+            console.log('diff', wasmCallJsCostSum / JsCallCostSum);
+            /**
+             * | browser | wasm | js  | diff |
+             * |---------|------|-----|------|
+             * | chrome  | 2336 | 743 | 314% |
+             * | edge    | 1200 | 440 | 272% |
+             * | firefox | 1882 | 195 | 965% |
+             */
           }
-          console.log('js func call cost sum', JsCallCostSum);
-          console.log('diff', wasmCallJsCostSum / JsCallCostSum);
-          /**
-           * | browser | wasm | js  | diff |
-           * |---------|------|-----|------|
-           * | chrome  | 509  | 499 | 2.1% |
-           * | edge    | 318  | 311 | 2.4% |
-           * | firefox | 113  | 89  | 27%  |
-           */
         });
     </script>
   </body>
