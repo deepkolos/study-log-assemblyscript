@@ -235,7 +235,22 @@
         // 还差泛型，现在相当于bufferData接口仅仅支持Float32Array
 
         // command buffer是减少js call的损耗,但是数字类型的损耗依然存在，js call的损耗在chrome下面非常少，5%左右
-        // 火狐下面是比较明显的损耗，这里还仅仅是调用，还没涉及数据格式的转换
+        // 火狐下面是比较明显的损耗，这里还仅仅是调用，还没涉及数据格式的转换，增加了数据的格式转换测试，确实比较耗时
+
+        // 接下来需要测试command buffer，但是我不知道command buffer是大概怎么实现的，触发规则等等，是buffer满了发送，还是手动触发发送
+        // 额，简单想了一下，command buffer只能操作那些无返回值的API，比如createShader这些资源管理相关的就不支持到合并js call了
+        // 那么就是定协议，只能是无返回值API支持，有返回值的还是直接触发，但是有没有可能有返回值依赖无返回值api呢
+        // 有返回值1api exec
+        // 无返回值2api stash
+        // 有返回值3api exec
+        // 无返回值4api stash
+
+        // flush
+        // 无返回值2api exec
+        // 无返回值4api exec
+
+        // 修改实行顺序了
+        // 是有依赖的比如createProgram和useProgram，需要等program link完成之后在use？
       });
     </script>
   </body>

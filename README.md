@@ -309,3 +309,7 @@ require('assemblyscript/std/portable');
 ## 2021-8-16
 
 0. 增加 performance 测试字符串和 Uint8Array 测试用例，发现格式转换十分耗时（感觉wasm并不适合高频数据交换的场景
+
+## 2021-8-18
+
+0. 想一下command buffer的实现，发现只有无返回值的api支持合并，但是api之间的执行顺序就会打乱也会出错
