@@ -313,3 +313,7 @@ require('assemblyscript/std/portable');
 ## 2021-8-18
 
 0. 想一下command buffer的实现，发现只有无返回值的api支持合并，但是api之间的执行顺序就会打乱也会出错
+
+## 2021-8-19
+
+0. 发现非常难从js传递复杂数据到wasm，gltf不太希望像three-d那样完全wasm内解析包括json的decode，先打算使用js调用wasm api来组装gltf

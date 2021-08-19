@@ -19,6 +19,7 @@
     "performance:asm": "asc assembly/performance.ts --target release --runtime stub --use Math=JSMath --importMemory -j build/performance.js",
     "as-bind:wasm": "asc assembly/as-bind.ts --target release --transform as-bind --runtime minimal --use Math=JSMath --importMemory -b build/as-bind.wasm --exportRuntime",
     "base64:wasm": "asc assembly/base64.ts --target release --transform as-bind --runtime stub -b build/base64.wasm --exportRuntime",
+    "gltf-renderer:wasm": "asc assembly/gltf-renderer.ts --target release --transform as-bind --runtime minimal -b build/gltf-renderer.wasm --exportRuntime",
     "asbuild:untouched": "asc assembly/index.ts --target debug",
     "asbuild:optimized": "asc assembly/index.ts --target release -d ./build/types.d.ts",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized"

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WebGL</title>
+    <title>glTF-Renderer</title>
     <script src="https://cdn.jsdelivr.net/npm/@assemblyscript/loader/umd/index.js"></script>
   </head>
   <body>
@@ -184,12 +184,12 @@
 
       // loader
       AsBind.instantiate(
-        fetch('./build/webgl-as-bind.wasm').then(i => i.arrayBuffer()),
+        fetch('./build/gltf-renderer.wasm').then(i => i.arrayBuffer()),
         {
           env: { memory },
-          'webgl-as-bind': {
-            'console.log'(strPtr) {
-              console.log(parseString(strPtr));
+          'gltf-renderer': {
+            'console.log'(str) {
+              console.log(str);
             },
             ...FN_LIST.reduce((acc, fnName) => {
               const glFnName = 'gl.' + fnName;
@@ -207,6 +207,7 @@
           },
         },
       ).then(({ exports }) => {
+        console.log(exports);
         const t0 = performance.now();
         exports.main();
         const t2 = performance.now();
