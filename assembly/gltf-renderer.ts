@@ -56,10 +56,10 @@ namespace console {
 }
 
 class GLTFAccessor {
-  bufferView: u32 = 0;
-  byteOffset: u32 = 0;
-  componentType: u32 = 0;
-  count: u32 = 0;
+  bufferView: u32;
+  byteOffset: u32;
+  componentType: u32;
+  count: u32;
   max: u32[] = [];
   min: u32[] = [];
   type: string = '';
@@ -70,23 +70,74 @@ class GLTFAsset {
   generator: string = '';
 }
 
-class GLTFBufferView {}
+class GLTFBufferView {
+  buffer: u32;
+  byteLength: u32;
+  byteOffset: u32;
+  target: u32;
+}
 
-class GLTFBuffer {}
+class GLTFBuffer {
+  byteLength: u32;
+  uri: string = '';
+  // data: ArrayBuffer;
+}
 
-class GLTFImage {}
+class GLTFImage {
+  uri: string = '';
+}
 
-class GLTFMaterial {}
+class GLTFMaterialpbrMetallicRoughness {
+  baseColorTexture: GLTFMaterialpbrMetallicRoughnessTexture =
+    new GLTFMaterialpbrMetallicRoughnessTexture();
+  metallicRoughnessTexture: GLTFMaterialpbrMetallicRoughnessTexture =
+    new GLTFMaterialpbrMetallicRoughnessTexture();
+}
 
-class GLTFMesh {}
+class GLTFMaterialpbrMetallicRoughnessTexture {
+  index: u32;
+}
 
-class GLTFNode {}
+class GLTFMaterial {
+  name: string = '';
+  pbrMetallicRoughness: GLTFMaterialpbrMetallicRoughness =
+    new GLTFMaterialpbrMetallicRoughness();
+}
+class GLTFMeshPrimitiveAttributes {
+  NORMAL: u32;
+  POSITION: u32;
+  TANGENT: u32;
+  TEXCOORD_0: u32;
+}
+
+class GLTFMeshPrimitive {
+  attributes: GLTFMeshPrimitiveAttributes = new GLTFMeshPrimitiveAttributes();
+  indices: u32;
+  material: u32;
+  mode: u32;
+}
+
+class GLTFMesh {
+  name: string = '';
+  primitives: Array<GLTFMeshPrimitive> = [];
+}
+
+class GLTFNode {
+  mesh: u32;
+  name: string = '';
+}
 
 class GLTFSampler {}
 
-class GLTFScene {}
+class GLTFScene {
+  name: string = '';
+  nodes: Array<u32> = [];
+}
 
-class GLTFTexture {}
+class GLTFTexture {
+  sampler: u32;
+  source: u32;
+}
 
 class GLTF {
   accessors: Array<GLTFAccessor> = [];
@@ -101,21 +152,6 @@ class GLTF {
   scene: u32 = 0;
   scenes: Array<GLTFScene> = [];
   textures: Array<GLTFTexture> = [];
-
-  // constructor() {
-  //   this.accessors = [];
-  //   this.asset = new GLTFAsset();
-  //   this.bufferViews = [];
-  //   this.buffers = [];
-  //   this.images = [];
-  //   this.materials = [];
-  //   this.meshes = [];
-  //   this.nodes = [];
-  //   this.samplers = [];
-  //   this.scenes = [];
-  //   this.textures = [];
-  //   this.scene = 0;
-  // }
 }
 
 const gltf = new GLTF();
@@ -124,47 +160,122 @@ export function glTFSetAsset(version: string, generator: string): void {
   gltf.asset.version = version;
   gltf.asset.generator = generator;
 }
-export function glTFAddAccessor(): void {
+export function glTFAddAccessor(
+  bufferView: u32,
+  byteOffset: u32,
+  componentType: u32,
+  count: u32,
+  type: string,
+  max: Array<u32>,
+  min: Array<u32>,
+): void {
   const accessor = new GLTFAccessor();
+  accessor.bufferView = bufferView;
+  accessor.byteOffset = byteOffset;
+  accessor.componentType = componentType;
+  accessor.count = count;
+  accessor.type = type;
+  accessor.max = max;
+  accessor.max = min;
   gltf.accessors.push(accessor);
 }
-export function glTFAddBufferView(): void {
+export function glTFAddBufferView(
+  buffer: u32,
+  byteLength: u32,
+  byteOffset: u32,
+  target: u32,
+): void {
   const bufferView = new GLTFBufferView();
+  bufferView.buffer = buffer;
+  bufferView.byteLength = byteLength;
+  bufferView.byteOffset = byteOffset;
+  bufferView.target = target;
   gltf.bufferViews.push(bufferView);
 }
-export function glTFAddBuffer(): void {
+// export function glTFAddBuffer(byteLength: u32, data: ArrayBuffer): void {
+//   const buffer = new GLTFBuffer();
+//   buffer.byteLength = byteLength;
+//   buffer.data = data;
+//   gltf.buffers.push(buffer);
+// }
+export function glTFAddBuffer(byteLength: u32): void {
   const buffer = new GLTFBuffer();
+  buffer.byteLength = byteLength;
   gltf.buffers.push(buffer);
 }
 export function glTFAddImage(): void {
   const image = new GLTFImage();
   gltf.images.push(image);
 }
-export function glTFAddMaterial(): void {
+export function glTFAddMaterial(
+  name: string,
+  pbrMetallicRoughnessBaseColorTextureIndex: u32,
+  pbrMetallicRoughnessMetallicRoughnessTextureIndex: u32,
+): void {
   const material = new GLTFMaterial();
+  material.name = name;
+  material.pbrMetallicRoughness.baseColorTexture.index =
+    pbrMetallicRoughnessBaseColorTextureIndex;
+  material.pbrMetallicRoughness.metallicRoughnessTexture.index =
+    pbrMetallicRoughnessMetallicRoughnessTextureIndex;
   gltf.materials.push(material);
 }
-export function glTFAddMesh(): void {
+export function glTFAddMesh(name: string): u32 {
   const mesh = new GLTFMesh();
-  gltf.meshes.push(mesh);
+  mesh.name = name;
+  return gltf.meshes.push(mesh);
 }
-export function glTFAddNode(): void {
+export function glTFAddMeshPrimitive(
+  meshIndex: u32,
+  attributesNORMAL: u32,
+  attributesPOSITION: u32,
+  attributesTANGENT: u32,
+  attributesTEXCOORD_0: u32,
+  indices: u32,
+  material: u32,
+  mode: u32,
+): u32 {
+  const primitive = new GLTFMeshPrimitive();
+  primitive.attributes.NORMAL = attributesNORMAL;
+  primitive.attributes.POSITION = attributesPOSITION;
+  primitive.attributes.TANGENT = attributesTANGENT;
+  primitive.attributes.TEXCOORD_0 = attributesTEXCOORD_0;
+  primitive.indices = indices;
+  primitive.material = material;
+  primitive.mode = mode;
+
+  return gltf.meshes[meshIndex].primitives.push(primitive);
+}
+export function glTFAddNode(name: string, mesh: u32): void {
   const node = new GLTFNode();
+  node.name = name;
+  node.mesh = mesh;
   gltf.nodes.push(node);
 }
 export function glTFAddSampler(): void {
   const sampler = new GLTFSampler();
   gltf.samplers.push(sampler);
 }
-export function glTFAddScene(): void {
+export function glTFAddScene(name: string, nodes: Array<u32>): void {
   const scene = new GLTFScene();
+  scene.name = name;
+  scene.nodes = nodes;
   gltf.scenes.push(scene);
 }
-export function glTFAddTexture(): void {
+export function glTFAddTexture(sampler: u32, source: u32): void {
   const texture = new GLTFTexture();
+  texture.sampler = sampler;
+  texture.source = source;
   gltf.textures.push(texture);
 }
 
 export function main(): void {
-  console.log('here');
+  // 只适合局部资源的解析逻辑在wasm里做，结构复杂的都比较繁琐，js处理方便
+  // wasm没有基础设施，引入这些基础设置就会导致非常巨大的体积，全wasm显然是不理想的
+  // wasm 和 js之间的复杂数据结构通信必须是序列化的形式，这也太难了，要么就是有东西能够自定创建这些复杂数据传递的胶水代码，不然太不方便了
+  console.log('gltf info:');
+  console.log(gltf.asset.generator + gltf.asset.version);
+  console.log(gltf.accessors.length.toString());
+  console.log(gltf.bufferViews.length.toString());
+  console.log(gltf.buffers.length.toString());
 }

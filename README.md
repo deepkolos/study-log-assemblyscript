@@ -317,3 +317,7 @@ require('assemblyscript/std/portable');
 ## 2021-8-19
 
 0. 发现非常难从js传递复杂数据到wasm，gltf不太希望像three-d那样完全wasm内解析包括json的decode，先打算使用js调用wasm api来组装gltf
+
+## 2021-8-23
+
+0. 初步实现基础GLTF结构写入到as

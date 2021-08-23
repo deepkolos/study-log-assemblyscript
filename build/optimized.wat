@@ -1,12 +1,14 @@
 (module
- (type $none_=>_none (func))
  (type $i32_i32_=>_none (func (param i32 i32)))
+ (type $none_=>_none (func))
  (type $i32_=>_none (func (param i32)))
  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
- (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
  (type $i32_=>_i32 (func (param i32) (result i32)))
+ (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
+ (type $i32_i32_i32_i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32 i32 i32 i32)))
+ (type $i32_i32_i32_i32_i32_i32_i32_i32_=>_i32 (func (param i32 i32 i32 i32 i32 i32 i32 i32) (result i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (import "gltf-renderer" "console.log" (func $assembly/gltf-renderer/console.log (param i32)))
  (global $~lib/rt/tlsf/ROOT (mut i32) (i32.const 0))
@@ -16,7 +18,7 @@
  (global $assembly/gltf-renderer/gltf (mut i32) (i32.const 0))
  (global $~lib/rt/tcms/pinSpace (mut i32) (i32.const 0))
  (global $~lib/rt/tcms/toSpace (mut i32) (i32.const 0))
- (global $~lib/rt/__rtti_base i32 (i32.const 1936))
+ (global $~lib/rt/__rtti_base i32 (i32.const 4048))
  (memory $0 1)
  (data (i32.const 1036) "<")
  (data (i32.const 1048) "\01\00\00\00(\00\00\00A\00l\00l\00o\00c\00a\00t\00i\00o\00n\00 \00t\00o\00o\00 \00l\00a\00r\00g\00e")
@@ -36,19 +38,44 @@
  (data (i32.const 1516) "\1c")
  (data (i32.const 1548) "\1c")
  (data (i32.const 1580) "\1c")
- (data (i32.const 1612) ",")
- (data (i32.const 1624) "\01\00\00\00\1c\00\00\00I\00n\00v\00a\00l\00i\00d\00 \00l\00e\00n\00g\00t\00h")
- (data (i32.const 1660) ",")
- (data (i32.const 1672) "\01\00\00\00\1a\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00.\00t\00s")
- (data (i32.const 1708) "\1c")
- (data (i32.const 1720) "\01\00\00\00\08\00\00\00h\00e\00r\00e")
- (data (i32.const 1740) "<")
- (data (i32.const 1752) "\01\00\00\00*\00\00\00O\00b\00j\00e\00c\00t\00 \00a\00l\00r\00e\00a\00d\00y\00 \00p\00i\00n\00n\00e\00d")
- (data (i32.const 1836) "<")
- (data (i32.const 1848) "\01\00\00\00(\00\00\00O\00b\00j\00e\00c\00t\00 \00i\00s\00 \00n\00o\00t\00 \00p\00i\00n\00n\00e\00d")
- (data (i32.const 1936) "\1a\00\00\00 \00\00\00\00\00\00\00 ")
- (data (i32.const 1972) " \00\00\00\00\00\00\00\02A")
- (data (i32.const 1996) " \00\00\00\00\00\00\00\02A\00\00\00\00\00\00 \00\00\00\00\00\00\00\02A\00\00\00\00\00\00 \00\00\00\00\00\00\00\02A\00\00\00\00\00\00 \00\00\00\00\00\00\00\02A\00\00\00\00\00\00 \00\00\00\00\00\00\00\02A\00\00\00\00\00\00 \00\00\00\00\00\00\00\02A\00\00\00\00\00\00 \00\00\00\00\00\00\00\02A\00\00\00\00\00\00 \00\00\00\00\00\00\00\02A\00\00\00\00\00\00 \00\00\00\00\00\00\00\02A\00\00\00\00\00\00\02\t")
+ (data (i32.const 1612) "\1c")
+ (data (i32.const 1644) "\1c")
+ (data (i32.const 1676) ",")
+ (data (i32.const 1688) "\01\00\00\00\1c\00\00\00I\00n\00v\00a\00l\00i\00d\00 \00l\00e\00n\00g\00t\00h")
+ (data (i32.const 1724) ",")
+ (data (i32.const 1736) "\01\00\00\00\1a\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00.\00t\00s")
+ (data (i32.const 1772) "\1c")
+ (data (i32.const 1804) "<")
+ (data (i32.const 1816) "\01\00\00\00$\00\00\00I\00n\00d\00e\00x\00 \00o\00u\00t\00 \00o\00f\00 \00r\00a\00n\00g\00e")
+ (data (i32.const 1868) "|")
+ (data (i32.const 1880) "\01\00\00\00^\00\00\00E\00l\00e\00m\00e\00n\00t\00 \00t\00y\00p\00e\00 \00m\00u\00s\00t\00 \00b\00e\00 \00n\00u\00l\00l\00a\00b\00l\00e\00 \00i\00f\00 \00a\00r\00r\00a\00y\00 \00i\00s\00 \00h\00o\00l\00e\00y")
+ (data (i32.const 1996) "\1c")
+ (data (i32.const 2028) ",")
+ (data (i32.const 2040) "\01\00\00\00\14\00\00\00g\00l\00t\00f\00 \00i\00n\00f\00o\00:")
+ (data (i32.const 2076) "|")
+ (data (i32.const 2088) "\01\00\00\00d\00\00\00t\00o\00S\00t\00r\00i\00n\00g\00(\00)\00 \00r\00a\00d\00i\00x\00 \00a\00r\00g\00u\00m\00e\00n\00t\00 \00m\00u\00s\00t\00 \00b\00e\00 \00b\00e\00t\00w\00e\00e\00n\00 \002\00 \00a\00n\00d\00 \003\006")
+ (data (i32.const 2204) "<")
+ (data (i32.const 2216) "\01\00\00\00&\00\00\00~\00l\00i\00b\00/\00u\00t\00i\00l\00/\00n\00u\00m\00b\00e\00r\00.\00t\00s")
+ (data (i32.const 2268) "\1c")
+ (data (i32.const 2280) "\01\00\00\00\02\00\00\000")
+ (data (i32.const 2300) "0\000\000\001\000\002\000\003\000\004\000\005\000\006\000\007\000\008\000\009\001\000\001\001\001\002\001\003\001\004\001\005\001\006\001\007\001\008\001\009\002\000\002\001\002\002\002\003\002\004\002\005\002\006\002\007\002\008\002\009\003\000\003\001\003\002\003\003\003\004\003\005\003\006\003\007\003\008\003\009\004\000\004\001\004\002\004\003\004\004\004\005\004\006\004\007\004\008\004\009\005\000\005\001\005\002\005\003\005\004\005\005\005\006\005\007\005\008\005\009\006\000\006\001\006\002\006\003\006\004\006\005\006\006\006\007\006\008\006\009\007\000\007\001\007\002\007\003\007\004\007\005\007\006\007\007\007\008\007\009\008\000\008\001\008\002\008\003\008\004\008\005\008\006\008\007\008\008\008\009\009\000\009\001\009\002\009\003\009\004\009\005\009\006\009\007\009\008\009\009")
+ (data (i32.const 2700) "\1c\04")
+ (data (i32.const 2712) "\01\00\00\00\00\04\00\000\000\000\001\000\002\000\003\000\004\000\005\000\006\000\007\000\008\000\009\000\00a\000\00b\000\00c\000\00d\000\00e\000\00f\001\000\001\001\001\002\001\003\001\004\001\005\001\006\001\007\001\008\001\009\001\00a\001\00b\001\00c\001\00d\001\00e\001\00f\002\000\002\001\002\002\002\003\002\004\002\005\002\006\002\007\002\008\002\009\002\00a\002\00b\002\00c\002\00d\002\00e\002\00f\003\000\003\001\003\002\003\003\003\004\003\005\003\006\003\007\003\008\003\009\003\00a\003\00b\003\00c\003\00d\003\00e\003\00f\004\000\004\001\004\002\004\003\004\004\004\005\004\006\004\007\004\008\004\009\004\00a\004\00b\004\00c\004\00d\004\00e\004\00f\005\000\005\001\005\002\005\003\005\004\005\005\005\006\005\007\005\008\005\009\005\00a\005\00b\005\00c\005\00d\005\00e\005\00f\006\000\006\001\006\002\006\003\006\004\006\005\006\006\006\007\006\008\006\009\006\00a\006\00b\006\00c\006\00d\006\00e\006\00f\007\000\007\001\007\002\007\003\007\004\007\005\007\006\007\007\007\008\007\009\007\00a\007\00b\007\00c\007\00d\007\00e\007\00f\008\000\008\001\008\002\008\003\008\004\008\005\008\006\008\007\008\008\008\009\008\00a\008\00b\008\00c\008\00d\008\00e\008\00f\009\000\009\001\009\002\009\003\009\004\009\005\009\006\009\007\009\008\009\009\009\00a\009\00b\009\00c\009\00d\009\00e\009\00f\00a\000\00a\001\00a\002\00a\003\00a\004\00a\005\00a\006\00a\007\00a\008\00a\009\00a\00a\00a\00b\00a\00c\00a\00d\00a\00e\00a\00f\00b\000\00b\001\00b\002\00b\003\00b\004\00b\005\00b\006\00b\007\00b\008\00b\009\00b\00a\00b\00b\00b\00c\00b\00d\00b\00e\00b\00f\00c\000\00c\001\00c\002\00c\003\00c\004\00c\005\00c\006\00c\007\00c\008\00c\009\00c\00a\00c\00b\00c\00c\00c\00d\00c\00e\00c\00f\00d\000\00d\001\00d\002\00d\003\00d\004\00d\005\00d\006\00d\007\00d\008\00d\009\00d\00a\00d\00b\00d\00c\00d\00d\00d\00e\00d\00f\00e\000\00e\001\00e\002\00e\003\00e\004\00e\005\00e\006\00e\007\00e\008\00e\009\00e\00a\00e\00b\00e\00c\00e\00d\00e\00e\00e\00f\00f\000\00f\001\00f\002\00f\003\00f\004\00f\005\00f\006\00f\007\00f\008\00f\009\00f\00a\00f\00b\00f\00c\00f\00d\00f\00e\00f\00f")
+ (data (i32.const 3756) "\\")
+ (data (i32.const 3768) "\01\00\00\00H\00\00\000\001\002\003\004\005\006\007\008\009\00a\00b\00c\00d\00e\00f\00g\00h\00i\00j\00k\00l\00m\00n\00o\00p\00q\00r\00s\00t\00u\00v\00w\00x\00y\00z")
+ (data (i32.const 3852) "<")
+ (data (i32.const 3864) "\01\00\00\00*\00\00\00O\00b\00j\00e\00c\00t\00 \00a\00l\00r\00e\00a\00d\00y\00 \00p\00i\00n\00n\00e\00d")
+ (data (i32.const 3948) "<")
+ (data (i32.const 3960) "\01\00\00\00(\00\00\00O\00b\00j\00e\00c\00t\00 \00i\00s\00 \00n\00o\00t\00 \00p\00i\00n\00n\00e\00d")
+ (data (i32.const 4048) " \00\00\00 \00\00\00\00\00\00\00 ")
+ (data (i32.const 4092) "\02\01\00\00\00\00\00\00\02A")
+ (data (i32.const 4116) " \00\00\00\00\00\00\00\02A")
+ (data (i32.const 4140) "\02A")
+ (data (i32.const 4156) "\02A")
+ (data (i32.const 4180) " \00\00\00\00\00\00\00\02A")
+ (data (i32.const 4212) " \00\00\00\00\00\00\00\02A\00\00\00\00\00\00\02A")
+ (data (i32.const 4244) "\02A\00\00\00\00\00\00 \00\00\00\00\00\00\00\02A")
+ (data (i32.const 4276) "\02A\00\00\00\00\00\00 \00\00\00\00\00\00\00\02A\00\00\00\00\00\00\02\t")
  (export "glTFSetAsset" (func $assembly/gltf-renderer/glTFSetAsset))
  (export "glTFAddAccessor" (func $assembly/gltf-renderer/glTFAddAccessor))
  (export "glTFAddBufferView" (func $assembly/gltf-renderer/glTFAddBufferView))
@@ -56,6 +83,7 @@
  (export "glTFAddImage" (func $assembly/gltf-renderer/glTFAddImage))
  (export "glTFAddMaterial" (func $assembly/gltf-renderer/glTFAddMaterial))
  (export "glTFAddMesh" (func $assembly/gltf-renderer/glTFAddMesh))
+ (export "glTFAddMeshPrimitive" (func $assembly/gltf-renderer/glTFAddMeshPrimitive))
  (export "glTFAddNode" (func $assembly/gltf-renderer/glTFAddNode))
  (export "glTFAddSampler" (func $assembly/gltf-renderer/glTFAddSampler))
  (export "glTFAddScene" (func $assembly/gltf-renderer/glTFAddScene))
@@ -604,10 +632,10 @@
   if
    unreachable
   end
-  i32.const 2160
+  i32.const 4320
   i32.const 0
   i32.store
-  i32.const 3728
+  i32.const 5888
   i32.const 0
   i32.store
   loop $for-loop|0
@@ -618,7 +646,7 @@
     local.get $1
     i32.const 2
     i32.shl
-    i32.const 2160
+    i32.const 4320
     i32.add
     i32.const 0
     i32.store offset=4
@@ -636,7 +664,7 @@
       i32.add
       i32.const 2
       i32.shl
-      i32.const 2160
+      i32.const 4320
       i32.add
       i32.const 0
       i32.store offset=96
@@ -654,13 +682,13 @@
     br $for-loop|0
    end
   end
-  i32.const 2160
-  i32.const 3732
+  i32.const 4320
+  i32.const 5892
   memory.size
   i32.const 16
   i32.shl
   call $~lib/rt/tlsf/addMemory
-  i32.const 2160
+  i32.const 4320
   global.set $~lib/rt/tlsf/ROOT
  )
  (func $~lib/rt/tlsf/prepareSize (param $0 i32) (result i32)
@@ -2106,7 +2134,7 @@
   i32.and
   call $~lib/memory/memory.copy
   local.get $1
-  i32.const 2148
+  i32.const 4308
   i32.ge_u
   if
    local.get $1
@@ -2145,8 +2173,8 @@
    i32.const 268435455
    i32.gt_u
    if
-    i32.const 1632
-    i32.const 1680
+    i32.const 1696
+    i32.const 1744
     i32.const 17
     i32.const 48
     call $~lib/builtins/abort
@@ -2188,7 +2216,7 @@
    local.set $2
    block $__inlined_func$~lib/rt/tcms/__renew
     local.get $6
-    i32.const 2148
+    i32.const 4308
     i32.lt_u
     if
      local.get $4
@@ -2242,7 +2270,7 @@
      call $~lib/rt/tlsf/initialize
     end
     local.get $1
-    i32.const 2148
+    i32.const 4308
     i32.lt_u
     if
      global.get $~lib/rt/tlsf/ROOT
@@ -2554,141 +2582,662 @@
    i32.store offset=8
   end
  )
- (func $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push (param $0 i32) (param $1 i32)
+ (func $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 i32)
   local.get $0
   local.get $0
   i32.load offset=12
-  local.tee $2
+  local.tee $3
   i32.const 1
   i32.add
-  local.tee $3
+  local.tee $2
   call $~lib/array/ensureCapacity
   local.get $0
   i32.load offset=4
-  local.get $2
+  local.get $3
   i32.const 2
   i32.shl
   i32.add
   local.get $1
   i32.store
   local.get $0
-  local.get $3
+  local.get $2
   i32.store offset=12
+  local.get $2
  )
- (func $assembly/gltf-renderer/glTFAddAccessor
-  (local $0 i32)
-  i32.const 0
+ (func $assembly/gltf-renderer/glTFAddAccessor (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32)
+  (local $7 i32)
+  i32.const 28
   i32.const 4
   call $~lib/rt/tcms/__new
-  local.set $0
+  local.tee $7
+  i32.const 0
+  i32.store
+  local.get $7
+  i32.const 0
+  i32.store offset=4
+  local.get $7
+  i32.const 0
+  i32.store offset=8
+  local.get $7
+  i32.const 0
+  i32.store offset=12
+  local.get $7
+  i32.const 5
+  i32.const 1632
+  call $~lib/rt/__newArray
+  i32.store offset=16
+  local.get $7
+  i32.const 5
+  i32.const 1664
+  call $~lib/rt/__newArray
+  i32.store offset=20
+  local.get $7
+  i32.const 1312
+  i32.store offset=24
+  local.get $7
+  local.get $0
+  i32.store
+  local.get $7
+  local.get $1
+  i32.store offset=4
+  local.get $7
+  local.get $2
+  i32.store offset=8
+  local.get $7
+  local.get $3
+  i32.store offset=12
+  local.get $7
+  local.get $4
+  i32.store offset=24
+  local.get $7
+  local.get $5
+  i32.store offset=16
+  local.get $7
+  local.get $6
+  i32.store offset=16
   global.get $assembly/gltf-renderer/gltf
   i32.load
-  local.get $0
+  local.get $7
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
+  drop
  )
- (func $assembly/gltf-renderer/glTFAddBufferView
-  (local $0 i32)
-  i32.const 0
-  i32.const 7
+ (func $assembly/gltf-renderer/glTFAddBufferView (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+  (local $4 i32)
+  i32.const 16
+  i32.const 8
   call $~lib/rt/tcms/__new
-  local.set $0
+  local.tee $4
+  i32.const 0
+  i32.store
+  local.get $4
+  i32.const 0
+  i32.store offset=4
+  local.get $4
+  i32.const 0
+  i32.store offset=8
+  local.get $4
+  i32.const 0
+  i32.store offset=12
+  local.get $4
+  local.get $0
+  i32.store
+  local.get $4
+  local.get $1
+  i32.store offset=4
+  local.get $4
+  local.get $2
+  i32.store offset=8
+  local.get $4
+  local.get $3
+  i32.store offset=12
   global.get $assembly/gltf-renderer/gltf
   i32.load offset=8
-  local.get $0
+  local.get $4
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
+  drop
  )
- (func $assembly/gltf-renderer/glTFAddBuffer
-  (local $0 i32)
-  i32.const 0
-  i32.const 9
+ (func $assembly/gltf-renderer/glTFAddBuffer (param $0 i32)
+  (local $1 i32)
+  i32.const 8
+  i32.const 10
   call $~lib/rt/tcms/__new
-  local.set $0
+  local.tee $1
+  i32.const 0
+  i32.store
+  local.get $1
+  i32.const 1312
+  i32.store offset=4
+  local.get $1
+  local.get $0
+  i32.store
   global.get $assembly/gltf-renderer/gltf
   i32.load offset=12
-  local.get $0
+  local.get $1
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
+  drop
  )
  (func $assembly/gltf-renderer/glTFAddImage
   (local $0 i32)
-  i32.const 0
-  i32.const 11
+  i32.const 4
+  i32.const 12
   call $~lib/rt/tcms/__new
-  local.set $0
+  local.tee $0
+  i32.const 1312
+  i32.store
   global.get $assembly/gltf-renderer/gltf
   i32.load offset=16
   local.get $0
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
+  drop
  )
- (func $assembly/gltf-renderer/glTFAddMaterial
-  (local $0 i32)
-  i32.const 0
-  i32.const 13
+ (func $assembly/gltf-renderer/glTFAddMaterial (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  i32.const 8
+  i32.const 14
   call $~lib/rt/tcms/__new
-  local.set $0
-  global.get $assembly/gltf-renderer/gltf
-  i32.load offset=20
-  local.get $0
-  call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
- )
- (func $assembly/gltf-renderer/glTFAddMesh
-  (local $0 i32)
-  i32.const 0
+  local.tee $3
+  i32.const 1312
+  i32.store
+  i32.const 8
   i32.const 15
   call $~lib/rt/tcms/__new
-  local.set $0
+  local.set $4
+  i32.const 4
+  i32.const 16
+  call $~lib/rt/tcms/__new
+  local.tee $5
+  i32.const 0
+  i32.store
+  local.get $4
+  local.get $5
+  i32.store
+  i32.const 4
+  i32.const 16
+  call $~lib/rt/tcms/__new
+  local.tee $5
+  i32.const 0
+  i32.store
+  local.get $4
+  local.get $5
+  i32.store offset=4
+  local.get $3
+  local.get $4
+  i32.store offset=4
+  local.get $3
+  local.get $0
+  i32.store
+  local.get $3
+  i32.load offset=4
+  i32.load
+  local.get $1
+  i32.store
+  local.get $3
+  i32.load offset=4
+  i32.load offset=4
+  local.get $2
+  i32.store
+  global.get $assembly/gltf-renderer/gltf
+  i32.load offset=20
+  local.get $3
+  call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
+  drop
+ )
+ (func $assembly/gltf-renderer/glTFAddMesh (param $0 i32) (result i32)
+  (local $1 i32)
+  i32.const 8
+  i32.const 18
+  call $~lib/rt/tcms/__new
+  local.tee $1
+  i32.const 1312
+  i32.store
+  local.get $1
+  i32.const 21
+  i32.const 1792
+  call $~lib/rt/__newArray
+  i32.store offset=4
+  local.get $1
+  local.get $0
+  i32.store
   global.get $assembly/gltf-renderer/gltf
   i32.load offset=24
-  local.get $0
+  local.get $1
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
  )
- (func $assembly/gltf-renderer/glTFAddNode
-  (local $0 i32)
-  i32.const 0
-  i32.const 17
+ (func $assembly/gltf-renderer/glTFAddMeshPrimitive (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32) (param $7 i32) (result i32)
+  (local $8 i32)
+  (local $9 i32)
+  i32.const 16
+  i32.const 19
   call $~lib/rt/tcms/__new
-  local.set $0
+  local.set $8
+  i32.const 16
+  i32.const 20
+  call $~lib/rt/tcms/__new
+  local.tee $9
+  i32.const 0
+  i32.store
+  local.get $9
+  i32.const 0
+  i32.store offset=4
+  local.get $9
+  i32.const 0
+  i32.store offset=8
+  local.get $9
+  i32.const 0
+  i32.store offset=12
+  local.get $8
+  local.get $9
+  i32.store
+  local.get $8
+  i32.const 0
+  i32.store offset=4
+  local.get $8
+  i32.const 0
+  i32.store offset=8
+  local.get $8
+  i32.const 0
+  i32.store offset=12
+  local.get $8
+  i32.load
+  local.get $1
+  i32.store
+  local.get $8
+  i32.load
+  local.get $2
+  i32.store offset=4
+  local.get $8
+  i32.load
+  local.get $3
+  i32.store offset=8
+  local.get $8
+  i32.load
+  local.get $4
+  i32.store offset=12
+  local.get $8
+  local.get $5
+  i32.store offset=4
+  local.get $8
+  local.get $6
+  i32.store offset=8
+  local.get $8
+  local.get $7
+  i32.store offset=12
+  local.get $0
+  global.get $assembly/gltf-renderer/gltf
+  i32.load offset=24
+  local.tee $1
+  i32.load offset=12
+  i32.ge_u
+  if
+   i32.const 1824
+   i32.const 1744
+   i32.const 106
+   i32.const 42
+   call $~lib/builtins/abort
+   unreachable
+  end
+  local.get $1
+  i32.load offset=4
+  local.get $0
+  i32.const 2
+  i32.shl
+  i32.add
+  i32.load
+  local.tee $0
+  i32.eqz
+  if
+   i32.const 1888
+   i32.const 1744
+   i32.const 110
+   i32.const 40
+   call $~lib/builtins/abort
+   unreachable
+  end
+  local.get $0
+  i32.load offset=4
+  local.get $8
+  call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
+ )
+ (func $assembly/gltf-renderer/glTFAddNode (param $0 i32) (param $1 i32)
+  (local $2 i32)
+  i32.const 8
+  i32.const 23
+  call $~lib/rt/tcms/__new
+  local.tee $2
+  i32.const 0
+  i32.store
+  local.get $2
+  i32.const 1312
+  i32.store offset=4
+  local.get $2
+  local.get $0
+  i32.store offset=4
+  local.get $2
+  local.get $1
+  i32.store
   global.get $assembly/gltf-renderer/gltf
   i32.load offset=28
-  local.get $0
+  local.get $2
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
+  drop
  )
  (func $assembly/gltf-renderer/glTFAddSampler
   (local $0 i32)
   i32.const 0
-  i32.const 19
+  i32.const 25
   call $~lib/rt/tcms/__new
   local.set $0
   global.get $assembly/gltf-renderer/gltf
   i32.load offset=32
   local.get $0
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
+  drop
  )
- (func $assembly/gltf-renderer/glTFAddScene
-  (local $0 i32)
-  i32.const 0
-  i32.const 21
+ (func $assembly/gltf-renderer/glTFAddScene (param $0 i32) (param $1 i32)
+  (local $2 i32)
+  i32.const 8
+  i32.const 27
   call $~lib/rt/tcms/__new
-  local.set $0
+  local.tee $2
+  i32.const 1312
+  i32.store
+  local.get $2
+  i32.const 5
+  i32.const 2016
+  call $~lib/rt/__newArray
+  i32.store offset=4
+  local.get $2
+  local.get $0
+  i32.store
+  local.get $2
+  local.get $1
+  i32.store offset=4
   global.get $assembly/gltf-renderer/gltf
   i32.load offset=40
-  local.get $0
+  local.get $2
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
+  drop
  )
- (func $assembly/gltf-renderer/glTFAddTexture
-  (local $0 i32)
-  i32.const 0
-  i32.const 23
+ (func $assembly/gltf-renderer/glTFAddTexture (param $0 i32) (param $1 i32)
+  (local $2 i32)
+  i32.const 8
+  i32.const 29
   call $~lib/rt/tcms/__new
-  local.set $0
+  local.tee $2
+  i32.const 0
+  i32.store
+  local.get $2
+  i32.const 0
+  i32.store offset=4
+  local.get $2
+  local.get $0
+  i32.store
+  local.get $2
+  local.get $1
+  i32.store offset=4
   global.get $assembly/gltf-renderer/gltf
   i32.load offset=44
-  local.get $0
+  local.get $2
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
+  drop
+ )
+ (func $~lib/util/number/itoa32 (param $0 i32) (result i32)
+  (local $1 i32)
+  (local $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  local.get $0
+  i32.eqz
+  if
+   i32.const 2288
+   return
+  end
+  i32.const 0
+  local.get $0
+  i32.sub
+  local.get $0
+  local.get $0
+  i32.const 31
+  i32.shr_u
+  local.tee $3
+  select
+  local.tee $1
+  i32.const 100000
+  i32.lt_u
+  if (result i32)
+   local.get $1
+   i32.const 100
+   i32.lt_u
+   if (result i32)
+    local.get $1
+    i32.const 10
+    i32.ge_u
+    i32.const 1
+    i32.add
+   else
+    local.get $1
+    i32.const 10000
+    i32.ge_u
+    i32.const 3
+    i32.add
+    local.get $1
+    i32.const 1000
+    i32.ge_u
+    i32.add
+   end
+  else
+   local.get $1
+   i32.const 10000000
+   i32.lt_u
+   if (result i32)
+    local.get $1
+    i32.const 1000000
+    i32.ge_u
+    i32.const 6
+    i32.add
+   else
+    local.get $1
+    i32.const 1000000000
+    i32.ge_u
+    i32.const 8
+    i32.add
+    local.get $1
+    i32.const 100000000
+    i32.ge_u
+    i32.add
+   end
+  end
+  local.get $3
+  i32.add
+  local.tee $0
+  i32.const 1
+  i32.shl
+  i32.const 1
+  call $~lib/rt/tcms/__new
+  local.tee $4
+  local.set $2
+  loop $while-continue|0
+   local.get $1
+   i32.const 10000
+   i32.ge_u
+   if
+    local.get $1
+    i32.const 10000
+    i32.rem_u
+    local.set $5
+    local.get $1
+    i32.const 10000
+    i32.div_u
+    local.set $1
+    local.get $2
+    local.get $0
+    i32.const 4
+    i32.sub
+    local.tee $0
+    i32.const 1
+    i32.shl
+    i32.add
+    local.get $5
+    i32.const 100
+    i32.div_u
+    i32.const 2
+    i32.shl
+    i32.const 2300
+    i32.add
+    i64.load32_u
+    local.get $5
+    i32.const 100
+    i32.rem_u
+    i32.const 2
+    i32.shl
+    i32.const 2300
+    i32.add
+    i64.load32_u
+    i64.const 32
+    i64.shl
+    i64.or
+    i64.store
+    br $while-continue|0
+   end
+  end
+  local.get $1
+  i32.const 100
+  i32.ge_u
+  if
+   local.get $2
+   local.get $0
+   i32.const 2
+   i32.sub
+   local.tee $0
+   i32.const 1
+   i32.shl
+   i32.add
+   local.get $1
+   i32.const 100
+   i32.rem_u
+   i32.const 2
+   i32.shl
+   i32.const 2300
+   i32.add
+   i32.load
+   i32.store
+   local.get $1
+   i32.const 100
+   i32.div_u
+   local.set $1
+  end
+  local.get $1
+  i32.const 10
+  i32.ge_u
+  if
+   local.get $2
+   local.get $0
+   i32.const 2
+   i32.sub
+   i32.const 1
+   i32.shl
+   i32.add
+   local.get $1
+   i32.const 2
+   i32.shl
+   i32.const 2300
+   i32.add
+   i32.load
+   i32.store
+  else
+   local.get $2
+   local.get $0
+   i32.const 1
+   i32.sub
+   i32.const 1
+   i32.shl
+   i32.add
+   local.get $1
+   i32.const 48
+   i32.add
+   i32.store16
+  end
+  local.get $3
+  if
+   local.get $4
+   i32.const 45
+   i32.store16
+  end
+  local.get $4
  )
  (func $assembly/gltf-renderer/main
-  i32.const 1728
+  (local $0 i32)
+  (local $1 i32)
+  (local $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  i32.const 2048
+  call $assembly/gltf-renderer/console.log
+  global.get $assembly/gltf-renderer/gltf
+  local.tee $0
+  i32.load offset=4
+  i32.load offset=4
+  local.tee $2
+  i32.const 20
+  i32.sub
+  i32.load offset=16
+  i32.const 1
+  i32.shr_u
+  i32.const 1
+  i32.shl
+  local.tee $1
+  local.get $0
+  i32.load offset=4
+  i32.load
+  local.tee $3
+  i32.const 20
+  i32.sub
+  i32.load offset=16
+  i32.const 1
+  i32.shr_u
+  i32.const 1
+  i32.shl
+  local.tee $4
+  i32.add
+  local.tee $0
+  if (result i32)
+   local.get $0
+   i32.const 1
+   call $~lib/rt/tcms/__new
+   local.tee $0
+   local.get $2
+   local.get $1
+   call $~lib/memory/memory.copy
+   local.get $0
+   local.get $1
+   i32.add
+   local.get $3
+   local.get $4
+   call $~lib/memory/memory.copy
+   local.get $0
+  else
+   i32.const 1312
+  end
+  call $assembly/gltf-renderer/console.log
+  global.get $assembly/gltf-renderer/gltf
+  i32.load
+  i32.load offset=12
+  call $~lib/util/number/itoa32
+  call $assembly/gltf-renderer/console.log
+  global.get $assembly/gltf-renderer/gltf
+  i32.load offset=8
+  i32.load offset=12
+  call $~lib/util/number/itoa32
+  call $assembly/gltf-renderer/console.log
+  global.get $assembly/gltf-renderer/gltf
+  i32.load offset=12
+  i32.load offset=12
+  call $~lib/util/number/itoa32
   call $assembly/gltf-renderer/console.log
  )
  (func $~lib/rt/tcms/Object#unlink (param $0 i32)
@@ -2702,7 +3251,7 @@
   if
    i32.const 0
    local.get $0
-   i32.const 2148
+   i32.const 4308
    i32.lt_u
    local.get $0
    i32.load offset=8
@@ -2758,7 +3307,7 @@
    i32.const 3
    i32.eq
    if
-    i32.const 1760
+    i32.const 3872
     i32.const 1120
     i32.const 181
     i32.const 7
@@ -2811,7 +3360,7 @@
   i32.const 3
   i32.ne
   if
-   i32.const 1856
+   i32.const 3968
    i32.const 1120
    i32.const 195
    i32.const 5
@@ -2857,13 +3406,21 @@
    local.get $1
    call $~lib/rt/tcms/__visit
   end
-  i32.const 1632
+  i32.const 1824
+  call $~lib/rt/tcms/__visit
+  i32.const 1696
+  call $~lib/rt/tcms/__visit
+  i32.const 1888
   call $~lib/rt/tcms/__visit
   i32.const 1056
   call $~lib/rt/tcms/__visit
-  i32.const 1760
+  i32.const 3872
   call $~lib/rt/tcms/__visit
-  i32.const 1856
+  i32.const 3968
+  call $~lib/rt/tcms/__visit
+  i32.const 2720
+  call $~lib/rt/tcms/__visit
+  i32.const 3776
   call $~lib/rt/tcms/__visit
   global.get $~lib/rt/tcms/pinSpace
   local.tee $1
@@ -2972,7 +3529,7 @@
     i32.const -4
     i32.and
     local.get $0
-    i32.const 2148
+    i32.const 4308
     i32.lt_u
     if
      local.get $0
@@ -2995,7 +3552,7 @@
      i32.const 4
      i32.add
      local.tee $3
-     i32.const 2148
+     i32.const 4308
      i32.ge_u
      if
       global.get $~lib/rt/tlsf/ROOT
@@ -3083,119 +3640,26 @@
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
-  block $folding-inner0
-   block $invalid
-    block $~lib/array/Array<i32>
-     block $assembly/gltf-renderer/GLTFTexture
-      block $assembly/gltf-renderer/GLTFScene
-       block $assembly/gltf-renderer/GLTFSampler
-        block $assembly/gltf-renderer/GLTFNode
-         block $assembly/gltf-renderer/GLTFMesh
-          block $assembly/gltf-renderer/GLTFMaterial
-           block $assembly/gltf-renderer/GLTFImage
-            block $assembly/gltf-renderer/GLTFBuffer
-             block $assembly/gltf-renderer/GLTFBufferView
-              block $assembly/gltf-renderer/GLTFAsset
-               block $assembly/gltf-renderer/GLTFAccessor
-                block $assembly/gltf-renderer/GLTF
-                 block $~lib/arraybuffer/ArrayBufferView
-                  block $~lib/string/String
-                   block $~lib/arraybuffer/ArrayBuffer
-                    local.get $0
-                    i32.const 8
-                    i32.sub
-                    i32.load
-                    br_table $~lib/arraybuffer/ArrayBuffer $~lib/string/String $~lib/arraybuffer/ArrayBufferView $assembly/gltf-renderer/GLTF $assembly/gltf-renderer/GLTFAccessor $folding-inner0 $assembly/gltf-renderer/GLTFAsset $assembly/gltf-renderer/GLTFBufferView $folding-inner0 $assembly/gltf-renderer/GLTFBuffer $folding-inner0 $assembly/gltf-renderer/GLTFImage $folding-inner0 $assembly/gltf-renderer/GLTFMaterial $folding-inner0 $assembly/gltf-renderer/GLTFMesh $folding-inner0 $assembly/gltf-renderer/GLTFNode $folding-inner0 $assembly/gltf-renderer/GLTFSampler $folding-inner0 $assembly/gltf-renderer/GLTFScene $folding-inner0 $assembly/gltf-renderer/GLTFTexture $folding-inner0 $~lib/array/Array<i32> $invalid
-                   end
-                   return
-                  end
-                  return
-                 end
+  block $folding-inner4
+   block $folding-inner3
+    block $folding-inner2
+     block $folding-inner1
+      block $folding-inner0
+       block $invalid
+        block $assembly/gltf-renderer/GLTFTexture
+         block $assembly/gltf-renderer/GLTFSampler
+          block $assembly/gltf-renderer/GLTFMeshPrimitiveAttributes
+           block $assembly/gltf-renderer/GLTFMaterialpbrMetallicRoughnessTexture
+            block $assembly/gltf-renderer/GLTFBufferView
+             block $assembly/gltf-renderer/GLTFAccessor
+              block $assembly/gltf-renderer/GLTF
+               block $~lib/string/String
+                block $~lib/arraybuffer/ArrayBuffer
                  local.get $0
+                 i32.const 8
+                 i32.sub
                  i32.load
-                 local.tee $0
-                 if
-                  local.get $0
-                  call $~lib/rt/tcms/__visit
-                 end
-                 return
-                end
-                local.get $0
-                i32.load
-                local.tee $1
-                if
-                 local.get $1
-                 call $~lib/rt/tcms/__visit
-                end
-                local.get $0
-                i32.load offset=4
-                local.tee $1
-                if
-                 local.get $1
-                 call $~lib/rt/tcms/__visit
-                end
-                local.get $0
-                i32.load offset=8
-                local.tee $1
-                if
-                 local.get $1
-                 call $~lib/rt/tcms/__visit
-                end
-                local.get $0
-                i32.load offset=12
-                local.tee $1
-                if
-                 local.get $1
-                 call $~lib/rt/tcms/__visit
-                end
-                local.get $0
-                i32.load offset=16
-                local.tee $1
-                if
-                 local.get $1
-                 call $~lib/rt/tcms/__visit
-                end
-                local.get $0
-                i32.load offset=20
-                local.tee $1
-                if
-                 local.get $1
-                 call $~lib/rt/tcms/__visit
-                end
-                local.get $0
-                i32.load offset=24
-                local.tee $1
-                if
-                 local.get $1
-                 call $~lib/rt/tcms/__visit
-                end
-                local.get $0
-                i32.load offset=28
-                local.tee $1
-                if
-                 local.get $1
-                 call $~lib/rt/tcms/__visit
-                end
-                local.get $0
-                i32.load offset=32
-                local.tee $1
-                if
-                 local.get $1
-                 call $~lib/rt/tcms/__visit
-                end
-                local.get $0
-                i32.load offset=40
-                local.tee $1
-                if
-                 local.get $1
-                 call $~lib/rt/tcms/__visit
-                end
-                local.get $0
-                i32.load offset=44
-                local.tee $0
-                if
-                 local.get $0
-                 call $~lib/rt/tcms/__visit
+                 br_table $~lib/arraybuffer/ArrayBuffer $~lib/string/String $folding-inner0 $assembly/gltf-renderer/GLTF $assembly/gltf-renderer/GLTFAccessor $folding-inner1 $folding-inner2 $folding-inner3 $assembly/gltf-renderer/GLTFBufferView $folding-inner2 $folding-inner4 $folding-inner2 $folding-inner0 $folding-inner2 $folding-inner3 $folding-inner3 $assembly/gltf-renderer/GLTFMaterialpbrMetallicRoughnessTexture $folding-inner2 $folding-inner3 $folding-inner0 $assembly/gltf-renderer/GLTFMeshPrimitiveAttributes $folding-inner2 $folding-inner2 $folding-inner4 $folding-inner2 $assembly/gltf-renderer/GLTFSampler $folding-inner2 $folding-inner3 $folding-inner2 $assembly/gltf-renderer/GLTFTexture $folding-inner2 $folding-inner1 $invalid
                 end
                 return
                end
@@ -3210,12 +3674,96 @@
               end
               local.get $0
               i32.load offset=4
+              local.tee $1
+              if
+               local.get $1
+               call $~lib/rt/tcms/__visit
+              end
+              local.get $0
+              i32.load offset=8
+              local.tee $1
+              if
+               local.get $1
+               call $~lib/rt/tcms/__visit
+              end
+              local.get $0
+              i32.load offset=12
+              local.tee $1
+              if
+               local.get $1
+               call $~lib/rt/tcms/__visit
+              end
+              local.get $0
+              i32.load offset=16
+              local.tee $1
+              if
+               local.get $1
+               call $~lib/rt/tcms/__visit
+              end
+              local.get $0
+              i32.load offset=20
+              local.tee $1
+              if
+               local.get $1
+               call $~lib/rt/tcms/__visit
+              end
+              local.get $0
+              i32.load offset=24
+              local.tee $1
+              if
+               local.get $1
+               call $~lib/rt/tcms/__visit
+              end
+              local.get $0
+              i32.load offset=28
+              local.tee $1
+              if
+               local.get $1
+               call $~lib/rt/tcms/__visit
+              end
+              local.get $0
+              i32.load offset=32
+              local.tee $1
+              if
+               local.get $1
+               call $~lib/rt/tcms/__visit
+              end
+              local.get $0
+              i32.load offset=40
+              local.tee $1
+              if
+               local.get $1
+               call $~lib/rt/tcms/__visit
+              end
+              local.get $0
+              i32.load offset=44
               local.tee $0
               if
                local.get $0
                call $~lib/rt/tcms/__visit
               end
               return
+             end
+             local.get $0
+             i32.load offset=16
+             local.tee $1
+             if
+              local.get $1
+              call $~lib/rt/tcms/__visit
+             end
+             local.get $0
+             i32.load offset=20
+             local.tee $1
+             if
+              local.get $1
+              call $~lib/rt/tcms/__visit
+             end
+             local.get $0
+             i32.load offset=24
+             local.tee $0
+             if
+              local.get $0
+              call $~lib/rt/tcms/__visit
              end
              return
             end
@@ -3229,50 +3777,78 @@
         end
         return
        end
-       return
+       unreachable
+      end
+      local.get $0
+      i32.load
+      local.tee $0
+      if
+       local.get $0
+       call $~lib/rt/tcms/__visit
       end
       return
      end
+     local.get $0
+     i32.load
+     call $~lib/rt/tcms/__visit
      return
+    end
+    local.get $0
+    i32.load offset=4
+    local.tee $1
+    local.get $0
+    i32.load offset=12
+    i32.const 2
+    i32.shl
+    i32.add
+    local.set $2
+    loop $while-continue|0
+     local.get $1
+     local.get $2
+     i32.lt_u
+     if
+      local.get $1
+      i32.load
+      local.tee $3
+      if
+       local.get $3
+       call $~lib/rt/tcms/__visit
+      end
+      local.get $1
+      i32.const 4
+      i32.add
+      local.set $1
+      br $while-continue|0
+     end
     end
     local.get $0
     i32.load
     call $~lib/rt/tcms/__visit
     return
    end
-   unreachable
+   local.get $0
+   i32.load
+   local.tee $1
+   if
+    local.get $1
+    call $~lib/rt/tcms/__visit
+   end
+   local.get $0
+   i32.load offset=4
+   local.tee $0
+   if
+    local.get $0
+    call $~lib/rt/tcms/__visit
+   end
+   return
   end
   local.get $0
   i32.load offset=4
-  local.tee $1
-  local.get $0
-  i32.load offset=12
-  i32.const 2
-  i32.shl
-  i32.add
-  local.set $2
-  loop $while-continue|0
-   local.get $1
-   local.get $2
-   i32.lt_u
-   if
-    local.get $1
-    i32.load
-    local.tee $3
-    if
-     local.get $3
-     call $~lib/rt/tcms/__visit
-    end
-    local.get $1
-    i32.const 4
-    i32.add
-    local.set $1
-    br $while-continue|0
-   end
+  local.tee $0
+  if
+   local.get $0
+   call $~lib/rt/tcms/__visit
   end
-  local.get $0
-  i32.load
-  call $~lib/rt/tcms/__visit
  )
  (func $~start
   (local $0 i32)
@@ -3289,12 +3865,12 @@
   i32.const 3
   call $~lib/rt/tcms/__new
   local.tee $0
-  i32.const 5
+  i32.const 6
   i32.const 1280
   call $~lib/rt/__newArray
   i32.store
   i32.const 8
-  i32.const 6
+  i32.const 7
   call $~lib/rt/tcms/__new
   local.tee $1
   i32.const 1312
@@ -3306,37 +3882,37 @@
   local.get $1
   i32.store offset=4
   local.get $0
-  i32.const 8
+  i32.const 9
   i32.const 1344
   call $~lib/rt/__newArray
   i32.store offset=8
   local.get $0
-  i32.const 10
+  i32.const 11
   i32.const 1376
   call $~lib/rt/__newArray
   i32.store offset=12
   local.get $0
-  i32.const 12
+  i32.const 13
   i32.const 1408
   call $~lib/rt/__newArray
   i32.store offset=16
   local.get $0
-  i32.const 14
+  i32.const 17
   i32.const 1440
   call $~lib/rt/__newArray
   i32.store offset=20
   local.get $0
-  i32.const 16
+  i32.const 22
   i32.const 1472
   call $~lib/rt/__newArray
   i32.store offset=24
   local.get $0
-  i32.const 18
+  i32.const 24
   i32.const 1504
   call $~lib/rt/__newArray
   i32.store offset=28
   local.get $0
-  i32.const 20
+  i32.const 26
   i32.const 1536
   call $~lib/rt/__newArray
   i32.store offset=32
@@ -3344,33 +3920,33 @@
   i32.const 0
   i32.store offset=36
   local.get $0
-  i32.const 22
+  i32.const 28
   i32.const 1568
   call $~lib/rt/__newArray
   i32.store offset=40
   local.get $0
-  i32.const 24
+  i32.const 30
   i32.const 1600
   call $~lib/rt/__newArray
   i32.store offset=44
   local.get $0
   global.set $assembly/gltf-renderer/gltf
-  i32.const 1812
-  i32.const 1808
+  i32.const 3924
+  i32.const 3920
   i32.store
-  i32.const 1816
-  i32.const 1808
+  i32.const 3928
+  i32.const 3920
   i32.store
-  i32.const 1808
+  i32.const 3920
   global.set $~lib/rt/tcms/pinSpace
-  i32.const 1908
-  i32.const 1904
+  i32.const 4020
+  i32.const 4016
   i32.store
-  i32.const 1912
-  i32.const 1904
+  i32.const 4024
+  i32.const 4016
   i32.store
-  i32.const 1904
+  i32.const 4016
   global.set $~lib/rt/tcms/toSpace
  )
- ;; custom section "as-bind_bindings", size 865, contents: "{\"typeIds\":{\"~lib/string/String\":{\"id\":1,\"byteSize\":0}},\"importedFunctions\":{\"gltf-renderer\":{\"log\":{\"returnType\":\"void\",\"parameters\":[\"~lib/string/String\"]}}},\"exportedFunctions\":{\"glTFSetAsset\":{\"returnType\":\"void\",\"parameters\":[\"~lib/string/String\",\"~lib/string/String\"]},\"glTFAddAccessor\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddBufferView\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddBuffer\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddImage\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddMaterial\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddMesh\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddNode\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddSampler\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddScene\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddTexture\":{\"returnType\":\"void\",\"parameters\":[]},\"main\":{\"returnType\":\"void\",\"parameters\":[]}}}"
+ ;; custom section "as-bind_bindings", size 1271, contents: "{\"typeIds\":{\"~lib/string/String\":{\"id\":1,\"byteSize\":0},\"~lib/array/Array<u32>\":{\"id\":5,\"byteSize\":16}},\"importedFunctions\":{\"gltf-renderer\":{\"log\":{\"returnType\":\"void\",\"parameters\":[\"~lib/string/String\"]}}},\"exportedFunctions\":{\"glTFSetAsset\":{\"returnType\":\"void\",\"parameters\":[\"~lib/string/String\",\"~lib/string/String\"]},\"glTFAddAccessor\":{\"returnType\":\"void\",\"parameters\":[\"u32\",\"u32\",\"u32\",\"u32\",\"~lib/string/String\",\"~lib/array/Array<u32>\",\"~lib/array/Array<u32>\"]},\"glTFAddBufferView\":{\"returnType\":\"void\",\"parameters\":[\"u32\",\"u32\",\"u32\",\"u32\"]},\"glTFAddBuffer\":{\"returnType\":\"void\",\"parameters\":[\"u32\"]},\"glTFAddImage\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddMaterial\":{\"returnType\":\"void\",\"parameters\":[\"~lib/string/String\",\"u32\",\"u32\"]},\"glTFAddMesh\":{\"returnType\":\"u32\",\"parameters\":[\"~lib/string/String\"]},\"glTFAddMeshPrimitive\":{\"returnType\":\"u32\",\"parameters\":[\"u32\",\"u32\",\"u32\",\"u32\",\"u32\",\"u32\",\"u32\",\"u32\"]},\"glTFAddNode\":{\"returnType\":\"void\",\"parameters\":[\"~lib/string/String\",\"u32\"]},\"glTFAddSampler\":{\"returnType\":\"void\",\"parameters\":[]},\"glTFAddScene\":{\"returnType\":\"void\",\"parameters\":[\"~lib/string/String\",\"~lib/array/Array<u32>\"]},\"glTFAddTexture\":{\"returnType\":\"void\",\"parameters\":[\"u32\",\"u32\"]},\"main\":{\"returnType\":\"void\",\"parameters\":[]}}}"
 )

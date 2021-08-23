@@ -182,6 +182,8 @@
         return ret;
       }
 
+      let instance;
+
       // loader
       AsBind.instantiate(
         fetch('./build/gltf-renderer.wasm').then(i => i.arrayBuffer()),
@@ -189,7 +191,7 @@
           env: { memory },
           'gltf-renderer': {
             'console.log'(str) {
-              console.log(str);
+              console.log(instance.__getString(str));
             },
             ...FN_LIST.reduce((acc, fnName) => {
               const glFnName = 'gl.' + fnName;
@@ -208,10 +210,7 @@
         },
       ).then(({ exports }) => {
         console.log(exports);
-        const t0 = performance.now();
-        exports.main();
-        const t2 = performance.now();
-        console.log('t2 - t0', t2 - t0);
+        instance = exports;
         // 加上细分性能打点会非常耗时，取消性能打点之后耗时大幅下降, 是值得留意一个现象
         // 只保留 最开始结尾 和 wasm内，耗时只有4.5 最低
         // 只保留 最开始结尾，耗时只有3.5 最低
@@ -254,6 +253,76 @@
         // 是有依赖的比如createProgram和useProgram，需要等program link完成之后在use？
 
         // 准备开始实现gltf-renderer，需要实现gltf的解析
+        fetch('./models/glTF/Cube.gltf')
+          .then(i => i.json())
+          .then(gltf => {
+            console.log(gltf);
+            exports.glTFSetAsset(gltf.asset.version, gltf.asset.generator);
+
+            gltf.accessors.forEach(accessor => {
+              exports.glTFAddAccessor(
+                accessor.bufferView,
+                accessor.byteOffset,
+                accessor.componentType,
+                accessor.count,
+                accessor.type,
+                accessor.max,
+                accessor.min,
+              );
+            });
+            gltf.bufferViews.forEach(bufferView => {
+              exports.glTFAddBufferView(
+                bufferView.buffer,
+                bufferView.byteLength,
+                bufferView.byteOffset,
+                bufferView.target,
+              );
+            });
+            gltf.buffers.forEach(buffer => {
+              exports.glTFAddBuffer(buffer.byteLength);
+            });
+            gltf.images.forEach(image => {
+              exports.glTFAddImage();
+            });
+            gltf.materials.forEach(material => {
+              exports.glTFAddMaterial(
+                material.name,
+                material.pbrMetallicRoughness.baseColorTexture.index,
+                material.pbrMetallicRoughness.metallicRoughnessTexture.index,
+              );
+            });
+            gltf.meshes.forEach(mesh => {
+              const index = exports.glTFAddMesh(mesh.name) - 1;
+              mesh.primitives.forEach(primitive => {
+                exports.glTFAddMeshPrimitive(
+                  index,
+                  primitive.attributes.NORMAL,
+                  primitive.attributes.POSITION,
+                  primitive.attributes.TANGENT,
+                  primitive.attributes.TEXCOORD_0,
+                  primitive.indices,
+                  primitive.material,
+                  primitive.mode,
+                );
+              });
+            });
+            gltf.nodes.forEach(node => {
+              exports.glTFAddNode(node.name, node.mesh);
+            });
+            gltf.samplers.forEach(sampler => {
+              exports.glTFAddSampler();
+            });
+            gltf.scenes.forEach(scene => {
+              exports.glTFAddScene(scene.name, scene.nodes);
+            });
+            gltf.textures.forEach(texture => {
+              exports.glTFAddTexture(texture.sampler, texture.source);
+            });
+            // TODO： 加载图片等依赖的buffer才行，这里上传gltf之前就已经是均加载完毕了，这里就是需要实现一个并发秦秋控制函数的了
+            // 然后gltf结构传入，复杂数据结构的传递可能需要自定生成这样的胶水代码实现
+            // 然后需要实现一个gltf的渲染，直接使用gltf的结构作为runtime的结构是否合适呢？一种表的结构
+            exports.main();
+          });
       });
     </script>
   </body>
