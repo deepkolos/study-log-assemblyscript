@@ -183,6 +183,24 @@
       }
 
       let instance;
+      const gltfPromise = fetch('./models/glTF/Cube.gltf')
+        .then(i => i.json())
+        .then(gltf => {
+          // 加载依赖资源
+          const imgs = gltf.images.map(img =>
+            loadImg(img.uri).then($img => (img.el = $img)),
+          );
+          const buffers = gltf.buffers.map(buffer =>
+            fetch(buffer.uri)
+              .then(i => i.arrayBuffer())
+              .then(arrayBuffer => {
+                if (buffer.byteLength !== arrayBuffer.byteLength)
+                  throw new Error('byteLength unmatch');
+                buffer.data = arrayBuffer;
+              }),
+          );
+          return Promise.all([...imgs, ...buffers]).then(() => gltf);
+        });
 
       // loader
       AsBind.instantiate(
@@ -253,77 +271,123 @@
         // 是有依赖的比如createProgram和useProgram，需要等program link完成之后在use？
 
         // 准备开始实现gltf-renderer，需要实现gltf的解析
-        fetch('./models/glTF/Cube.gltf')
-          .then(i => i.json())
-          .then(gltf => {
-            console.log(gltf);
-            exports.glTFSetAsset(gltf.asset.version, gltf.asset.generator);
 
-            gltf.accessors.forEach(accessor => {
-              exports.glTFAddAccessor(
-                accessor.bufferView,
-                accessor.byteOffset,
-                accessor.componentType,
-                accessor.count,
-                accessor.type,
-                accessor.max,
-                accessor.min,
-              );
-            });
-            gltf.bufferViews.forEach(bufferView => {
-              exports.glTFAddBufferView(
-                bufferView.buffer,
-                bufferView.byteLength,
-                bufferView.byteOffset,
-                bufferView.target,
-              );
-            });
-            gltf.buffers.forEach(buffer => {
-              exports.glTFAddBuffer(buffer.byteLength);
-            });
-            gltf.images.forEach(image => {
-              exports.glTFAddImage();
-            });
-            gltf.materials.forEach(material => {
-              exports.glTFAddMaterial(
-                material.name,
-                material.pbrMetallicRoughness.baseColorTexture.index,
-                material.pbrMetallicRoughness.metallicRoughnessTexture.index,
-              );
-            });
-            gltf.meshes.forEach(mesh => {
-              const index = exports.glTFAddMesh(mesh.name) - 1;
-              mesh.primitives.forEach(primitive => {
-                exports.glTFAddMeshPrimitive(
-                  index,
-                  primitive.attributes.NORMAL,
-                  primitive.attributes.POSITION,
-                  primitive.attributes.TANGENT,
-                  primitive.attributes.TEXCOORD_0,
-                  primitive.indices,
-                  primitive.material,
-                  primitive.mode,
-                );
-              });
-            });
-            gltf.nodes.forEach(node => {
-              exports.glTFAddNode(node.name, node.mesh);
-            });
-            gltf.samplers.forEach(sampler => {
-              exports.glTFAddSampler();
-            });
-            gltf.scenes.forEach(scene => {
-              exports.glTFAddScene(scene.name, scene.nodes);
-            });
-            gltf.textures.forEach(texture => {
-              exports.glTFAddTexture(texture.sampler, texture.source);
-            });
-            // TODO： 加载图片等依赖的buffer才行，这里上传gltf之前就已经是均加载完毕了，这里就是需要实现一个并发秦秋控制函数的了
-            // 然后gltf结构传入，复杂数据结构的传递可能需要自定生成这样的胶水代码实现
-            // 然后需要实现一个gltf的渲染，直接使用gltf的结构作为runtime的结构是否合适呢？一种表的结构
-            exports.main();
+        gltfPromise.then(gltf => {
+          console.log(gltf);
+          exports.glTFSetAsset(gltf.asset.version, gltf.asset.generator);
+
+          gltf.accessors.forEach(accessor => {
+            exports.glTFAddAccessor(
+              accessor.bufferView,
+              accessor.byteOffset,
+              accessor.componentType,
+              accessor.count,
+              accessor.type,
+              accessor.max,
+              accessor.min,
+            );
           });
+          gltf.bufferViews.forEach(bufferView => {
+            exports.glTFAddBufferView(
+              bufferView.buffer,
+              bufferView.byteLength,
+              bufferView.byteOffset,
+              bufferView.target,
+            );
+          });
+          gltf.buffers.forEach(buffer => {
+            exports.glTFAddBuffer(buffer.byteLength);
+          });
+          gltf.images.forEach(image => {
+            exports.glTFAddImage();
+          });
+          gltf.materials.forEach(material => {
+            exports.glTFAddMaterial(
+              material.name,
+              material.pbrMetallicRoughness.baseColorTexture.index,
+              material.pbrMetallicRoughness.metallicRoughnessTexture.index,
+            );
+          });
+          gltf.meshes.forEach(mesh => {
+            const index = exports.glTFAddMesh(mesh.name) - 1;
+            mesh.primitives.forEach(primitive => {
+              exports.glTFAddMeshPrimitive(
+                index,
+                primitive.attributes.NORMAL,
+                primitive.attributes.POSITION,
+                primitive.attributes.TANGENT,
+                primitive.attributes.TEXCOORD_0,
+                primitive.indices,
+                primitive.material,
+                primitive.mode,
+              );
+            });
+          });
+          gltf.nodes.forEach(node => {
+            exports.glTFAddNode(node.name, node.mesh);
+          });
+          gltf.samplers.forEach(sampler => {
+            exports.glTFAddSampler();
+          });
+          gltf.scenes.forEach(scene => {
+            exports.glTFAddScene(scene.name, scene.nodes);
+          });
+          gltf.textures.forEach(texture => {
+            exports.glTFAddTexture(texture.sampler, texture.source);
+          });
+          // TODO： 加载图片等依赖的buffer才行，这里上传gltf之前就已经是均加载完毕了，这里就是需要实现一个并发秦秋控制函数的了
+          // 然后gltf结构传入，复杂数据结构的传递可能需要自定生成这样的胶水代码实现
+          // 然后需要实现一个gltf的渲染，直接使用gltf的结构作为runtime的结构是否合适呢？一种表的结构
+          // 先实现js端的渲染gltf的，然后迁移到wasm里
+          exports.main();
+        });
       });
+
+      gltfPromise.then(gltf => {
+        // 模型无关的就是相机和光照了
+        // webgl资源管理
+        // 拆分阶段：
+        // 解析gltf的顶点，uv，法线，上传顶点
+        // 按照对应阶段，可配置情况进行相应的抽象
+        // 资源更新状态three是由一个needsUpdate，version来手动触发
+        // 渲染顺序就是按照模型的顺序实现，半透明是否需要处理呢
+        // webgl是以program为基础单位
+        // 貌似能直接使用gltf的抽象，直接使用那么应该是怎么去
+
+        function renderScene(sceneIndex) {
+          const scene = gltf.scenes[gltf.scene];
+          scene.nodes.forEach(nodeIndex => {
+            const node = gltf.nodes[nodeIndex];
+            const meshIndex = node.mesh;
+            if (meshIndex !== undefined) {
+              const mesh = gltf.meshes[meshIndex];
+              const normal = readBufferView(mesh.primitives.NORMAL);
+              const position = readBufferView(mesh.primitives.POSITION);
+              const tangent = readBufferView(mesh.primitives.TANGENT);
+              const texcoord_0 = readBufferView(mesh.primitives.TEXCOORD_0);
+              // 创建webgl对象，上传数据
+            }
+          });
+        }
+
+        function readBufferView(bufferViewIndex) {
+          const bufferView = gltf.bufferViews[bufferViewIndex];
+          const buffer = gltf.buffers[bufferView];
+          
+          // bufferView.target
+          // * `34962` ARRAY_BUFFER
+          // * `34963` ELEMENT_ARRAY_BUFFER
+        }
+      });
+
+      function loadImg(uri) {
+        return new Promise((resolve, reject) => {
+          const $img = document.createElement('img');
+          $img.onload = () => resolve($img);
+          $img.onerror = e => reject(e);
+          $img.src = uri;
+        });
+      }
     </script>
   </body>
 </html>

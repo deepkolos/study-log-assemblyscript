@@ -1,10 +1,10 @@
 (module
  (type $i32_i32_=>_none (func (param i32 i32)))
- (type $none_=>_none (func))
- (type $i32_=>_none (func (param i32)))
  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
- (type $i32_=>_i32 (func (param i32) (result i32)))
+ (type $none_=>_none (func))
  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+ (type $i32_=>_none (func (param i32)))
+ (type $i32_=>_i32 (func (param i32) (result i32)))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
  (type $i32_i32_i32_i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32 i32 i32 i32)))
@@ -2807,6 +2807,38 @@
   local.get $1
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
  )
+ (func $~lib/array/Array<assembly/gltf-renderer/GLTFMesh>#__get (param $0 i32) (param $1 i32) (result i32)
+  local.get $1
+  local.get $0
+  i32.load offset=12
+  i32.ge_u
+  if
+   i32.const 1824
+   i32.const 1744
+   i32.const 106
+   i32.const 42
+   call $~lib/builtins/abort
+   unreachable
+  end
+  local.get $0
+  i32.load offset=4
+  local.get $1
+  i32.const 2
+  i32.shl
+  i32.add
+  i32.load
+  local.tee $0
+  i32.eqz
+  if
+   i32.const 1888
+   i32.const 1744
+   i32.const 110
+   i32.const 40
+   call $~lib/builtins/abort
+   unreachable
+  end
+  local.get $0
+ )
  (func $assembly/gltf-renderer/glTFAddMeshPrimitive (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32) (param $7 i32) (result i32)
   (local $8 i32)
   (local $9 i32)
@@ -2866,38 +2898,10 @@
   local.get $8
   local.get $7
   i32.store offset=12
-  local.get $0
   global.get $assembly/gltf-renderer/gltf
   i32.load offset=24
-  local.tee $1
-  i32.load offset=12
-  i32.ge_u
-  if
-   i32.const 1824
-   i32.const 1744
-   i32.const 106
-   i32.const 42
-   call $~lib/builtins/abort
-   unreachable
-  end
-  local.get $1
-  i32.load offset=4
   local.get $0
-  i32.const 2
-  i32.shl
-  i32.add
-  i32.load
-  local.tee $0
-  i32.eqz
-  if
-   i32.const 1888
-   i32.const 1744
-   i32.const 110
-   i32.const 40
-   call $~lib/builtins/abort
-   unreachable
-  end
-  local.get $0
+  call $~lib/array/Array<assembly/gltf-renderer/GLTFMesh>#__get
   i32.load offset=4
   local.get $8
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
@@ -2985,82 +2989,8 @@
   call $~lib/array/Array<assembly/gltf-renderer/GLTFAccessor>#push
   drop
  )
- (func $~lib/util/number/itoa32 (param $0 i32) (result i32)
-  (local $1 i32)
-  (local $2 i32)
+ (func $~lib/util/number/utoa32_dec_lut (param $0 i32) (param $1 i32) (param $2 i32)
   (local $3 i32)
-  (local $4 i32)
-  (local $5 i32)
-  local.get $0
-  i32.eqz
-  if
-   i32.const 2288
-   return
-  end
-  i32.const 0
-  local.get $0
-  i32.sub
-  local.get $0
-  local.get $0
-  i32.const 31
-  i32.shr_u
-  local.tee $3
-  select
-  local.tee $1
-  i32.const 100000
-  i32.lt_u
-  if (result i32)
-   local.get $1
-   i32.const 100
-   i32.lt_u
-   if (result i32)
-    local.get $1
-    i32.const 10
-    i32.ge_u
-    i32.const 1
-    i32.add
-   else
-    local.get $1
-    i32.const 10000
-    i32.ge_u
-    i32.const 3
-    i32.add
-    local.get $1
-    i32.const 1000
-    i32.ge_u
-    i32.add
-   end
-  else
-   local.get $1
-   i32.const 10000000
-   i32.lt_u
-   if (result i32)
-    local.get $1
-    i32.const 1000000
-    i32.ge_u
-    i32.const 6
-    i32.add
-   else
-    local.get $1
-    i32.const 1000000000
-    i32.ge_u
-    i32.const 8
-    i32.add
-    local.get $1
-    i32.const 100000000
-    i32.ge_u
-    i32.add
-   end
-  end
-  local.get $3
-  i32.add
-  local.tee $0
-  i32.const 1
-  i32.shl
-  i32.const 1
-  call $~lib/rt/tcms/__new
-  local.tee $4
-  local.set $2
   loop $while-continue|0
    local.get $1
    i32.const 10000
@@ -3069,20 +2999,20 @@
     local.get $1
     i32.const 10000
     i32.rem_u
-    local.set $5
+    local.set $3
     local.get $1
     i32.const 10000
     i32.div_u
     local.set $1
-    local.get $2
     local.get $0
+    local.get $2
     i32.const 4
     i32.sub
-    local.tee $0
+    local.tee $2
     i32.const 1
     i32.shl
     i32.add
-    local.get $5
+    local.get $3
     i32.const 100
     i32.div_u
     i32.const 2
@@ -3090,7 +3020,7 @@
     i32.const 2300
     i32.add
     i64.load32_u
-    local.get $5
+    local.get $3
     i32.const 100
     i32.rem_u
     i32.const 2
@@ -3109,11 +3039,11 @@
   i32.const 100
   i32.ge_u
   if
-   local.get $2
    local.get $0
+   local.get $2
    i32.const 2
    i32.sub
-   local.tee $0
+   local.tee $2
    i32.const 1
    i32.shl
    i32.add
@@ -3135,8 +3065,8 @@
   i32.const 10
   i32.ge_u
   if
-   local.get $2
    local.get $0
+   local.get $2
    i32.const 2
    i32.sub
    i32.const 1
@@ -3150,8 +3080,8 @@
    i32.load
    i32.store
   else
-   local.get $2
    local.get $0
+   local.get $2
    i32.const 1
    i32.sub
    i32.const 1
@@ -3162,13 +3092,91 @@
    i32.add
    i32.store16
   end
-  local.get $3
+ )
+ (func $~lib/util/number/itoa32 (param $0 i32) (result i32)
+  (local $1 i32)
+  (local $2 i32)
+  (local $3 i32)
+  local.get $0
+  i32.eqz
   if
-   local.get $4
+   i32.const 2288
+   return
+  end
+  i32.const 0
+  local.get $0
+  i32.sub
+  local.get $0
+  local.get $0
+  i32.const 31
+  i32.shr_u
+  local.tee $1
+  select
+  local.tee $2
+  local.tee $0
+  i32.const 100000
+  i32.lt_u
+  if (result i32)
+   local.get $0
+   i32.const 100
+   i32.lt_u
+   if (result i32)
+    local.get $0
+    i32.const 10
+    i32.ge_u
+    i32.const 1
+    i32.add
+   else
+    local.get $0
+    i32.const 10000
+    i32.ge_u
+    i32.const 3
+    i32.add
+    local.get $0
+    i32.const 1000
+    i32.ge_u
+    i32.add
+   end
+  else
+   local.get $0
+   i32.const 10000000
+   i32.lt_u
+   if (result i32)
+    local.get $0
+    i32.const 1000000
+    i32.ge_u
+    i32.const 6
+    i32.add
+   else
+    local.get $0
+    i32.const 1000000000
+    i32.ge_u
+    i32.const 8
+    i32.add
+    local.get $0
+    i32.const 100000000
+    i32.ge_u
+    i32.add
+   end
+  end
+  local.get $1
+  i32.add
+  local.tee $3
+  i32.const 1
+  i32.shl
+  i32.const 1
+  call $~lib/rt/tcms/__new
+  local.tee $0
+  local.get $2
+  local.get $3
+  call $~lib/util/number/utoa32_dec_lut
+  local.get $1
+  if
+   local.get $0
    i32.const 45
    i32.store16
   end
-  local.get $4
+  local.get $0
  )
  (func $assembly/gltf-renderer/main
   (local $0 i32)
@@ -3179,7 +3187,7 @@
   i32.const 2048
   call $assembly/gltf-renderer/console.log
   global.get $assembly/gltf-renderer/gltf
-  local.tee $0
+  local.tee $1
   i32.load offset=4
   i32.load offset=4
   local.tee $2
@@ -3190,8 +3198,8 @@
   i32.shr_u
   i32.const 1
   i32.shl
-  local.tee $1
-  local.get $0
+  local.tee $0
+  local.get $1
   i32.load offset=4
   i32.load
   local.tee $3
@@ -3204,14 +3212,14 @@
   i32.shl
   local.tee $4
   i32.add
-  local.tee $0
-  if (result i32)
-   local.get $0
+  local.tee $1
+  if
+   local.get $1
    i32.const 1
    call $~lib/rt/tcms/__new
-   local.tee $0
+   local.tee $1
    local.get $2
-   local.get $1
+   local.get $0
    call $~lib/memory/memory.copy
    local.get $0
    local.get $1
@@ -3219,10 +3227,11 @@
    local.get $3
    local.get $4
    call $~lib/memory/memory.copy
-   local.get $0
   else
    i32.const 1312
+   local.set $1
   end
+  local.get $1
   call $assembly/gltf-renderer/console.log
   global.get $assembly/gltf-renderer/gltf
   i32.load
@@ -3238,6 +3247,73 @@
   i32.load offset=12
   i32.load offset=12
   call $~lib/util/number/itoa32
+  call $assembly/gltf-renderer/console.log
+  i32.const 2288
+  local.set $2
+  global.get $assembly/gltf-renderer/gltf
+  i32.load
+  i32.const 0
+  call $~lib/array/Array<assembly/gltf-renderer/GLTFMesh>#__get
+  i32.load
+  local.tee $0
+  if
+   local.get $0
+   i32.const 100000
+   i32.lt_u
+   if (result i32)
+    local.get $0
+    i32.const 100
+    i32.lt_u
+    if (result i32)
+     local.get $0
+     i32.const 10
+     i32.ge_u
+     i32.const 1
+     i32.add
+    else
+     local.get $0
+     i32.const 10000
+     i32.ge_u
+     i32.const 3
+     i32.add
+     local.get $0
+     i32.const 1000
+     i32.ge_u
+     i32.add
+    end
+   else
+    local.get $0
+    i32.const 10000000
+    i32.lt_u
+    if (result i32)
+     local.get $0
+     i32.const 1000000
+     i32.ge_u
+     i32.const 6
+     i32.add
+    else
+     local.get $0
+     i32.const 1000000000
+     i32.ge_u
+     i32.const 8
+     i32.add
+     local.get $0
+     i32.const 100000000
+     i32.ge_u
+     i32.add
+    end
+   end
+   local.tee $1
+   i32.const 1
+   i32.shl
+   i32.const 1
+   call $~lib/rt/tcms/__new
+   local.tee $2
+   local.get $0
+   local.get $1
+   call $~lib/util/number/utoa32_dec_lut
+  end
+  local.get $2
   call $assembly/gltf-renderer/console.log
  )
  (func $~lib/rt/tcms/Object#unlink (param $0 i32)

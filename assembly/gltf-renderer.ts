@@ -1,3 +1,4 @@
+//#region WebGL
 export type GLenum = u32;
 export type GLint = i32;
 export type GLuint = u32;
@@ -50,11 +51,13 @@ namespace gl {
   export declare function vertexAttribPointer(indx: GLint, size: GLint, typ: GLenum,
     normalized: /*GLboolean*/GLint, stride: GLsizei, offset: GLintptr): void;
 }
+//#endregion
 
 namespace console {
   export declare function log(str: string): void;
 }
 
+//#region GLTF
 class GLTFAccessor {
   bufferView: u32;
   byteOffset: u32;
@@ -268,14 +271,17 @@ export function glTFAddTexture(sampler: u32, source: u32): void {
   texture.source = source;
   gltf.textures.push(texture);
 }
+// #endregion
 
 export function main(): void {
   // 只适合局部资源的解析逻辑在wasm里做，结构复杂的都比较繁琐，js处理方便
   // wasm没有基础设施，引入这些基础设置就会导致非常巨大的体积，全wasm显然是不理想的
-  // wasm 和 js之间的复杂数据结构通信必须是序列化的形式，这也太难了，要么就是有东西能够自定创建这些复杂数据传递的胶水代码，不然太不方便了
+  // wasm 和 js之间的复杂数据结构通信必须是序列化的形式，这也太难了，要么就是有东西能够自动创建这些复杂数据传递的胶水代码，不然太不方便了
+  // rust是通过serde来做序列化和反序列化，来实现复杂数据的传递
   console.log('gltf info:');
   console.log(gltf.asset.generator + gltf.asset.version);
   console.log(gltf.accessors.length.toString());
   console.log(gltf.bufferViews.length.toString());
   console.log(gltf.buffers.length.toString());
+  console.log(gltf.accessors[0].bufferView.toString());
 }

@@ -321,3 +321,7 @@ require('assemblyscript/std/portable');
 ## 2021-8-23
 
 0. 初步实现基础GLTF结构写入到as
+
+## 2021-8-24
+
+0. 编写js版的gltf-renderer 10%
