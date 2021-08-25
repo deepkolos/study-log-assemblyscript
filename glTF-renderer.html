@@ -354,6 +354,25 @@
         // webgl是以program为基础单位
         // 貌似能直接使用gltf的抽象，直接使用那么应该是怎么去
 
+        const WEBGL_COMPONENT_TYPES = {
+          5120: Int8Array,
+          5121: Uint8Array,
+          5122: Int16Array,
+          5123: Uint16Array,
+          5125: Uint32Array,
+          5126: Float32Array,
+        };
+
+        const WEBGL_TYPE_SIZES = {
+          SCALAR: 1,
+          VEC2: 2,
+          VEC3: 3,
+          VEC4: 4,
+          MAT2: 4,
+          MAT3: 9,
+          MAT4: 16,
+        };
+
         function renderScene(sceneIndex) {
           const scene = gltf.scenes[gltf.scene];
           scene.nodes.forEach(nodeIndex => {
@@ -361,22 +380,54 @@
             const meshIndex = node.mesh;
             if (meshIndex !== undefined) {
               const mesh = gltf.meshes[meshIndex];
-              const normal = readBufferView(mesh.primitives.NORMAL);
-              const position = readBufferView(mesh.primitives.POSITION);
-              const tangent = readBufferView(mesh.primitives.TANGENT);
-              const texcoord_0 = readBufferView(mesh.primitives.TEXCOORD_0);
-              // 创建webgl对象，上传数据
+              mesh.primitives.forEach(primitive => {
+                const normal = uploadAttribute(primitive.attributes.NORMAL);
+                const position = uploadAttribute(primitive.attributes.POSITION);
+                const tangent = uploadAttribute(primitive.attributes.TANGENT);
+                const texcoord_0 = uploadAttribute(
+                  primitive.attributes.TEXCOORD_0,
+                );
+              });
             }
           });
         }
 
-        function readBufferView(bufferViewIndex) {
-          const bufferView = gltf.bufferViews[bufferViewIndex];
-          const buffer = gltf.buffers[bufferView];
-          
-          // bufferView.target
-          // * `34962` ARRAY_BUFFER
-          // * `34963` ELEMENT_ARRAY_BUFFER
+        function uploadAttribute(accessorIndex) {
+          const accessor = gltf.accessors[accessorIndex];
+          const itemSize = WEBGL_TYPE_SIZES[accessor.type];
+          const TypedArray = WEBGL_COMPONENT_TYPES[accessor.componentType];
+
+          const bufferView = gltf.bufferViews[accessor.bufferView];
+          const buffer = gltf.buffers[bufferView.buffer];
+
+          const arrayBuffer = buffer.data.slice(
+            bufferView.byteOffset,
+            bufferView.byteOffset + bufferView.byteLength,
+          );
+
+          const elementBytes = TypedArray.BYTES_PER_ELEMENT;
+          const itemBytes = elementBytes * itemSize;
+          const byteOffset = accessor.byteOffset | 0;
+          const byteStride =
+            accessor.bufferView !== undefined
+              ? gltf.bufferViews[accessor.bufferView].byteStride
+              : undefined;
+          const normalized = accessor.normalized === true;
+          const typedArray = new TypedArray(
+            arrayBuffer,
+            byteOffset,
+            accessor.count * itemSize,
+          );
+          // 每次渲染不一定都需要创建新的glBuffer，所以three的额外一层的作用就是这个
+          // 先理清楚gl的资源管理，还是得有一层中间层抽象
+          // 渲染一个三角形容易，一个gltf模型就复杂多了
+          // gl也分两个阶段，一个数据初始化阶段，一个是渲染阶段
+          // 初始化阶段，就是把渲染需要的数据准备好，比如，（资源类，主要是纹理和attribute依赖的buffer）
+          //    attribute依赖的顶点，uv，法线buffer
+          //    材质对应的shader
+          // 渲染阶段则是
+          //    设置attribute，纹理单元，uniform，framebuffer，gl全局状态
+          //    
         }
       });
 
