@@ -70,10 +70,10 @@
           new Float32Array([0, 0.5, -0.5, 0, 0.5, 0]),
           gl.STATIC_DRAW,
         );
-        gl.useProgram(program);
+
         gl.enableVertexAttribArray(positionLocation);
         gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
+        gl.useProgram(program);
         const t1 = performance.now();
         for (let i = 0; i < 1_000_000; i++) {
           gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -373,6 +373,20 @@
           MAT4: 16,
         };
 
+        const glCache = {
+          buffer: new Map(), // gltf accessor: gl buffer
+          texture: new Map(), // gltf textures: gl texture
+        };
+        const programCache = {
+          get basic() {
+            if (!programCache._basic)
+              programCache._basic = createGLProgram(vsSource, fsSource);
+            return programCache._basic;
+          },
+        };
+        const basicVertexShader = ``;
+        const basicFragmentShader = ``;
+
         function renderScene(sceneIndex) {
           const scene = gltf.scenes[gltf.scene];
           scene.nodes.forEach(nodeIndex => {
@@ -380,6 +394,23 @@
             const meshIndex = node.mesh;
             if (meshIndex !== undefined) {
               const mesh = gltf.meshes[meshIndex];
+              // 根据material创建shader，目前仅仅支持pbr，先只实现baseColor的渲染, 看了一下threejs的physical的shader，好多内容还是先实现basic的吧。。。
+              const material = gltf.materials[mesh.material];
+
+              // 创建shader,program（应该是和mesh的material类型相关，一类只需要一个program, 不过这样Uniform每次都得上传了
+              // 但是隐隐约约webgl program是需要一个层封装的，属于定制的封装
+              const program = programCache.basic;
+
+              // 上传纹理
+              const baseColorTexture = uploadTexture(
+                material.pbrMetallicRoughness.baseColorTexture.index,
+              );
+
+              // 绑定纹理到纹理单元
+
+              // 设置uniform
+
+              // 上传顶点数据
               mesh.primitives.forEach(primitive => {
                 const normal = uploadAttribute(primitive.attributes.NORMAL);
                 const position = uploadAttribute(primitive.attributes.POSITION);
@@ -392,18 +423,31 @@
           });
         }
 
+        function uploadTexture(textureIndex) {
+          const texture = gltf.textures[textureIndex];
+          const image = gltf.images[texture.source];
+          const sampler = gltf.samplers[texture.sampler];
+
+          if (glCache.texture[textureIndex])
+            return glCache.texture[textureIndex];
+
+          const colorFormat = image.uri.match(/\.jpg$/i) ? gl.RGB : gl.RGBA;
+
+          const texture = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, texture);
+          // prettier-ignore
+          gl.texImage2D(gl.TEXTURE_2D, 0, colorFormat, colorFormat, gl.UNSIGNED_BYTE, image.el);
+          // 这些参数应该哪里获取呢，测试的sampler为空，纹理的格式，颜色格式，数据类型等
+          // 简单通过图片后缀来区别，这里各种格式都得支持的话，就比较复杂了一些不过分层分得好的话也是没问题的
+          // 这里还得处理各种类型的纹理格式，常见的就是ImageElement，还有TypedArray，还有GPU压缩纹理
+
+          return texture;
+        }
+
         function uploadAttribute(accessorIndex) {
           const accessor = gltf.accessors[accessorIndex];
           const itemSize = WEBGL_TYPE_SIZES[accessor.type];
           const TypedArray = WEBGL_COMPONENT_TYPES[accessor.componentType];
-
-          const bufferView = gltf.bufferViews[accessor.bufferView];
-          const buffer = gltf.buffers[bufferView.buffer];
-
-          const arrayBuffer = buffer.data.slice(
-            bufferView.byteOffset,
-            bufferView.byteOffset + bufferView.byteLength,
-          );
 
           const elementBytes = TypedArray.BYTES_PER_ELEMENT;
           const itemBytes = elementBytes * itemSize;
@@ -413,22 +457,95 @@
               ? gltf.bufferViews[accessor.bufferView].byteStride
               : undefined;
           const normalized = accessor.normalized === true;
-          const typedArray = new TypedArray(
-            arrayBuffer,
-            byteOffset,
-            accessor.count * itemSize,
-          );
-          // 每次渲染不一定都需要创建新的glBuffer，所以three的额外一层的作用就是这个
-          // 先理清楚gl的资源管理，还是得有一层中间层抽象
-          // 渲染一个三角形容易，一个gltf模型就复杂多了
-          // gl也分两个阶段，一个数据初始化阶段，一个是渲染阶段
-          // 初始化阶段，就是把渲染需要的数据准备好，比如，（资源类，主要是纹理和attribute依赖的buffer）
-          //    attribute依赖的顶点，uv，法线buffer
-          //    材质对应的shader
-          // 渲染阶段则是
-          //    设置attribute，纹理单元，uniform，framebuffer，gl全局状态
-          //    
+
+          const uploadedToGL = glCache.buffer.has(accessorIndex);
+
+          if (!uploadedToGL) {
+            const bufferView = gltf.bufferViews[accessor.bufferView];
+            const buffer = gltf.buffers[bufferView.buffer];
+
+            const arrayBuffer = buffer.data.slice(
+              bufferView.byteOffset,
+              bufferView.byteOffset + bufferView.byteLength,
+            );
+
+            const typedArray = new TypedArray(
+              arrayBuffer,
+              byteOffset,
+              accessor.count * itemSize,
+            );
+
+            // upload attribute to gl
+            const glBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, glBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, typedArray, gl.STATIC_DRAW);
+            glCache.buffer.set(accessorIndex, glBuffer);
+          }
+
+          // set attribute，但是还需要那一个shader
+          gl.enableVertexAttribArray(positionLocation);
+          gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
         }
+
+        function createGLShader(shaderType, shaderSource) {
+          const shader = gl.createShader(shaderType);
+          gl.shaderSource(shader, shaderSource);
+          gl.compileShader(shader);
+          success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+          if (!success)
+            console.error('compile fs shader fail', gl.getShaderInfoLog(fs));
+          return shader;
+        }
+
+        function createGLProgram(vsSource, fsSource) {
+          const vs = createGLShader(gl.VERTEX_SHADER, vsSource);
+          const fs = createGLShader(gl.FRAGMENT_SHADER, fsSource);
+          const program = gl.createProgram();
+          gl.attachShader(program, vs);
+          gl.attachShader(program, fs);
+          gl.linkProgram(program);
+          success = gl.getProgramParameter(program, gl.LINK_STATUS);
+          if (!success)
+            console.error('link program fail', gl.getProgramInfoLog(program));
+          return program;
+        }
+        // 每次渲染不一定都需要创建新的glBuffer，所以three的额外一层的作用就是这个
+        // 先理清楚gl的资源管理，还是得有一层中间层抽象
+        // 渲染一个三角形容易，一个gltf模型就复杂多了
+        // gl也分两个阶段，一个数据初始化阶段，一个是渲染阶段
+        // 初始化阶段，就是把渲染需要的数据准备好，比如，（资源类，主要是纹理和attribute依赖的buffer）
+        //    attribute依赖的顶点，uv，法线buffer
+        //    材质对应的shader
+        // 渲染阶段则是
+        //    设置attribute，纹理单元，uniform，framebuffer，gl全局状态
+        //
+        // js 资源 webgl 资源管理
+        // three是通过needsUpdate来手动控制纹理上传，创建
+        // js需要上传资源到webgl，所以资源有两个存储位置，js,webgl，需要一个工具去维护这个映射关系
+        // 需要给资源一个id，可以是md5，md5的话就是全局的一个资源复用逻辑了，如果想要实现一个全局通用的资源逻辑
+        // three都是实现的是局部复用，uuid应该是对应生成是的认为是唯一的，生成一次
+        // arraybuffer倒是好计算md5，就是图片不太好计算，一个是绘制到canvas然后读取像素点然后再计算md5，但是又涉及一层dom的操作wasm里又需要调用胶水代码了
+
+        // attribute每次渲染都需要设置，但是buffer是只需要绑定buffer即可，所以attribute的逻辑是渲染的逻辑，buffer的逻辑是数据顺便阶段的逻辑
+        // texture和uniform则不需要每次设置，但是纹理单元还是需要每次都分配？可能是的
+        // three的正常逻辑就是资源上传+各种设置
+        // material是对shader的抽象封装
+        // geometry是对Attribute normal uv的抽象封装
+        // mesh是geometry和material的组合
+        // 所以gltf已经包含了这些的拆分，除了geometry
+
+        // webgl最小单位数据类型: buffer texture(不包含texture的设置) 貌似也没有多少
+        // js 到 webgl的数据存储需要用一个map来记录
+        // 这里实现就先使用下标来实现了,同样是资源上传和设置一并执行，资源上传会有一层缓存层
+        // attribute -> buffer 存储应该怎么存储呢
+        // accessor -> bufferview -> buffer 意味着js层的是accessor对应gl的buffer, 其中间粒度更加细分，但是上传状态是根据gl的buffer来记录
+
+        // useProgram和设置attribute是否有顺序依赖？没有，先设置attribute后useProgram也可以
+        // material是和shader强相关的，所以是先处理material，然后再处理geometry，也可以在mesh里做处理，geometry提供顶点数据，material提供shader设置
+        // 先看看three是如何处理的, 和想象的并不一样，three的shader是集中在WebGLProgram里做映射，material和geometry都是存储数据，不过也对,如果每个实例都有一份，就冗余了
+        // 这里估计也需要一小部分的抽象，所以geometry和material是shader设置的两类划分
+
+        // 发现render 需要传递一个场景树和相机
       });
 
       function loadImg(uri) {

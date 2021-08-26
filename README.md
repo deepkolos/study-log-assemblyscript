@@ -329,3 +329,7 @@ require('assemblyscript/std/portable');
 ## 2021-8-25
 
 0. 编写js版的gltf-renderer 15%（新手机终于到了，用了3天的红米3s, 骑共享单车都得一两分钟解锁，健康码5分钟起，但是QQ极速版出奇的快
+
+## 2021-8-26
+
+1. 编写js版的gltf-renderer 20%
