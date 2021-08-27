@@ -380,14 +380,30 @@
         const programCache = {
           get basic() {
             if (!programCache._basic)
-              programCache._basic = createGLProgram(vsSource, fsSource);
+              programCache._basic = createGLProgram(basicVertexShader, basicFragmentShader);
             return programCache._basic;
           },
         };
-        const basicVertexShader = ``;
+        const basicVertexShader = `
+          # geometry
+          attribute vec3 a_position;
+          attribute vec2 a_texcoord;
+          attribute vec4 a_normal;
+
+          # camera
+          uniform mat4 u_projection;
+
+          # matrial
+          uniform sampler2D u_base_color_texture;
+          uniform vec3 u_base_color;
+
+          void main() {
+
+          }
+        `;
         const basicFragmentShader = ``;
 
-        function renderScene(sceneIndex) {
+        function renderScene(sceneIndex, camera) {
           const scene = gltf.scenes[gltf.scene];
           scene.nodes.forEach(nodeIndex => {
             const node = gltf.nodes[nodeIndex];
@@ -409,6 +425,8 @@
               // 绑定纹理到纹理单元
 
               // 设置uniform
+
+              // 设置WebGL全局状态
 
               // 上传顶点数据
               mesh.primitives.forEach(primitive => {
