@@ -380,7 +380,10 @@
         const programCache = {
           get basic() {
             if (!programCache._basic)
-              programCache._basic = createGLProgram(basicVertexShader, basicFragmentShader);
+              programCache._basic = createGLProgram(
+                basicVertexShader,
+                basicFragmentShader,
+              );
             return programCache._basic;
           },
         };
@@ -392,16 +395,60 @@
 
           # camera
           uniform mat4 u_projection;
+          uniform mat4 u_camera_pose;
+          uniform mat4 u_model_pose;
 
+          # fragment shader
+          varying vec2 v_texcoord;
+          varying vec4 v_normal;
+
+          void main() {
+            // 模型到世界坐标系, 转到相机坐标系，只记得是一个逆矩阵，但是为什么是逆矩阵有点忘记了
+            // 公式里的mt = wt * M; 的M是世界坐标系转到模型坐标系的变换，这里的model_pose是一样的，世界坐标到模型坐标
+            // 之前学的东西都白学了一样。。。要是面试webgl估计上来就做一些矩阵运算题了
+            // 世界坐标系乘上u_model_pose变化到模型坐标系，比如模型坐标系一开始在原点，然后沿x轴正方向位移一个单位，一个点位于模型坐标系的原点
+            // 那么模型坐标系的原点在世界坐标系的坐标是(1,0,0)
+            // 那么就是相乘起来就行，但是理解起来有点绕
+            // 我怎么记得有两种说法，还是得按照公式的写法去理解
+            // p点 = M^t模型坐标系 * p向量
+            // M^t模型坐标系 = W^t世界坐标系 * M变换矩阵
+            // p点 = W^t世界坐标系 * M变换矩阵 * p向量
+            // 所以P点在世界坐标系是 M * P
+            // C^t = W^t * C
+            // M^t = W^t * M
+            // C^t * C^-1 = W^t * C * C^-1 = W^t * I单位矩阵
+            // W^t = C^t * C^-1
+            // p点 = C^t * C^-1 * M * p向量
+            // 所以在相机坐标系是 C的逆 * M * p
+
+            vec4 p_camera_frame = invert(u_camera_pose) * u_model_pose * a_position;
+
+            // 投影矩阵，相机是朝向负z轴看的，这个是在哪里体现呢？
+            // 考察投影矩阵理解程度可以问题：如何把相机修改为朝向z轴的正方向看呢？
+            // 还得重新理解投影矩阵
+
+            vec4 p_near_plane = u_projection * p_camera_frame;
+
+            // 法线插值记得还有区别。。。记得不能直接用重心插值
+            v_normal = a_normal;
+
+            v_texcoord = a_texcoord;
+          }
+        `;
+        const basicFragmentShader = `
           # matrial
           uniform sampler2D u_base_color_texture;
           uniform vec3 u_base_color;
 
-          void main() {
+          # varying
+          varying vec2 v_texcoord;
+          varying vec4 v_normal;
 
+          void main() {
+            // 法线是用来光照使用的
+            gl_FragColor = vec4(1, 0, 0, 1);
           }
         `;
-        const basicFragmentShader = ``;
 
         function renderScene(sceneIndex, camera) {
           const scene = gltf.scenes[gltf.scene];
@@ -437,6 +484,8 @@
                   primitive.attributes.TEXCOORD_0,
                 );
               });
+
+              // 绘制
             }
           });
         }
