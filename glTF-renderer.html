@@ -38,10 +38,7 @@
         gl.compileShader(vs);
         success = gl.getShaderParameter(vs, gl.COMPILE_STATUS);
         if (!success)
-          return console.log(
-            'compile   vs shader fail',
-            gl.getShaderInfoLog(vs),
-          );
+          return console.log('compile vs shader fail', gl.getShaderInfoLog(vs));
 
         const fs = gl.createShader(gl.FRAGMENT_SHADER);
         gl.shaderSource(fs, FS_SHADER);
@@ -391,7 +388,7 @@
           # geometry
           attribute vec3 a_position;
           attribute vec2 a_texcoord;
-          attribute vec4 a_normal;
+          attribute vec3 a_normal;
 
           # camera
           uniform mat4 u_projection;
@@ -430,12 +427,25 @@
             vec4 p_near_plane = u_projection * p_camera_frame;
 
             // 法线插值记得还有区别。。。记得不能直接用重心插值
+
             v_normal = a_normal;
 
             v_texcoord = a_texcoord;
+
+            gl_Position = p_near_plane;
+
+            // 工程相关的话，就是glsl的代码混淆和压缩，编辑器提示，测试等等流程，
+            // 都会涉及glsl的ast解析，就是做类似babel tenser的逻辑，可能还会加上模块系统，如果加上模块系统就需要加上vscode的插件支持
           }
         `;
         const basicFragmentShader = `
+          # light
+          uniform vec4 u_ambient_light;
+          uniform vec4 u_directional_light;
+          uniform vec4 u_point_light;
+          uniform vec4 u_point_light_position; // 点光源用位置即可
+          uniform mat4 u_directional_light_pose;
+          
           # matrial
           uniform sampler2D u_base_color_texture;
           uniform vec3 u_base_color;
@@ -445,8 +455,18 @@
           varying vec4 v_normal;
 
           void main() {
-            // 法线是用来光照使用的
-            gl_FragColor = vec4(1, 0, 0, 1);
+            // 法线是用来光照计算用的
+            // 点光源，平行光，环境光
+
+            gl_FragColor = vec4(1, 0, 0, 1); // 先最简单的
+
+            // vec4 color_from_tex = sample2D(u_base_color_texture, v_texcoord);
+            // gl_FragColor = mix(color_from_tex, u_base_color, 0.5); // 与设置的颜色混合
+            // 但是存在贴图不存在的情况，shader里不好使用if判断
+            // 这种数据有无是如何做兼容呢？多个shader么，一个是有纹理贴图的，一个是没纹理贴图的
+
+            // 简单归类了一下，所以那些material，geometry，light，camera是对shader的attribute和uniform的抽象
+            // 感觉做完简单版本gltf-renderer就重新回到Foundations of 3D Computer Graphics的学习了，进一步完成渲染引擎的工程抽象还有实现
           }
         `;
 
@@ -463,6 +483,7 @@
               // 创建shader,program（应该是和mesh的material类型相关，一类只需要一个program, 不过这样Uniform每次都得上传了
               // 但是隐隐约约webgl program是需要一个层封装的，属于定制的封装
               const program = programCache.basic;
+              gl.useProgram(program);
 
               // 上传纹理
               const baseColorTexture = uploadTexture(
@@ -470,19 +491,46 @@
               );
 
               // 绑定纹理到纹理单元
+              // gl.bindTexture(gl.TEXTURE0, baseColorTexture);
+              // 然后再把纹理单元写入uniform
 
               // 设置uniform
+              const aPosition = gl.getAttribLocation(program, 'a_position');
+              const aTexcoord = gl.getAttribLocation(program, 'a_texcoord');
+              const aNormal = gl.getAttribLocation(program, 'a_normal');
 
               // 设置WebGL全局状态
 
-              // 上传顶点数据
+              // 上传顶点数据, 为什么primitives是多个呢，是指多个primitives, 多组geometry公用一个材质？？
               mesh.primitives.forEach(primitive => {
-                const normal = uploadAttribute(primitive.attributes.NORMAL);
-                const position = uploadAttribute(primitive.attributes.POSITION);
-                const tangent = uploadAttribute(primitive.attributes.TANGENT);
-                const texcoord_0 = uploadAttribute(
+                const normalBuffer = uploadAttribute(
+                  primitive.attributes.NORMAL,
+                );
+                const positionBuffer = uploadAttribute(
+                  primitive.attributes.POSITION,
+                );
+                const tangentBuffer = uploadAttribute(
+                  primitive.attributes.TANGENT,
+                ); // 还不知道TANGENT的作用
+                const texcoord_0Buffer = uploadAttribute(
                   primitive.attributes.TEXCOORD_0,
                 );
+
+                // set attribute，但是还需要那一个shader
+                gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                gl.enableVertexAttribArray(aPosition);
+                gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 0, 0); // 还有各种细分类型需要确定，目前先固定一种
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+                gl.enableVertexAttribArray(aNormal);
+                gl.vertexAttribPointer(aNormal, 3, gl.FLOAT, false, 0, 0);
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, texcoord_0Buffer);
+                gl.enableVertexAttribArray(aTexcoord);
+                gl.vertexAttribPointer(aTexcoord, 2, gl.FLOAT, false, 0, 0);
+
+                // TODO: 三角形的数量需要统计
+                gl.drawArrays(gl.TRIANGLES, 0, 6);
               });
 
               // 绘制
@@ -549,9 +597,7 @@
             glCache.buffer.set(accessorIndex, glBuffer);
           }
 
-          // set attribute，但是还需要那一个shader
-          gl.enableVertexAttribArray(positionLocation);
-          gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+          return glBuffer;
         }
 
         function createGLShader(shaderType, shaderSource) {

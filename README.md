@@ -341,3 +341,7 @@ require('assemblyscript/std/portable');
 ## 2021-8-31
 
 1. 编写js版的gltf-renderer 25%
+
+## 2021-9-1
+
+1. 编写js版的gltf-renderer 26%
