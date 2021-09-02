@@ -33,6 +33,7 @@
     "as-string-sink": "^0.4.2"
   },
   "devDependencies": {
-    "assemblyscript": "^0.19.11"
+    "assemblyscript": "^0.19.11",
+    "vite": "^2.5.3"
   }
 }

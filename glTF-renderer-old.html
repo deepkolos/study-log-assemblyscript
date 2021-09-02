@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>glTF-Renderer</title>
-    <script src="https://cdn.jsdelivr.net/npm/@assemblyscript/loader/umd/index.js"></script>
+    <script src="./loader.js"></script>
   </head>
   <body>
     <script type="module">
@@ -178,17 +178,18 @@
 
         return ret;
       }
+      const GLTF_DIR_URL = './models/glTF/';
 
       let instance;
-      const gltfPromise = fetch('./models/glTF/Cube.gltf')
+      const gltfPromise = fetch(GLTF_DIR_URL + 'Cube.gltf')
         .then(i => i.json())
         .then(gltf => {
           // 加载依赖资源
           const imgs = gltf.images.map(img =>
-            loadImg(img.uri).then($img => (img.el = $img)),
+            loadImg(GLTF_DIR_URL + img.uri).then($img => (img.el = $img)),
           );
           const buffers = gltf.buffers.map(buffer =>
-            fetch(buffer.uri)
+            fetch(GLTF_DIR_URL + buffer.uri)
               .then(i => i.arrayBuffer())
               .then(arrayBuffer => {
                 if (buffer.byteLength !== arrayBuffer.byteLength)
@@ -224,6 +225,7 @@
           },
         },
       ).then(({ exports }) => {
+        return;
         console.log(exports);
         instance = exports;
         // 加上细分性能打点会非常耗时，取消性能打点之后耗时大幅下降, 是值得留意一个现象
@@ -385,19 +387,20 @@
           },
         };
         const basicVertexShader = `
-          # geometry
+          // geometry
           attribute vec3 a_position;
           attribute vec2 a_texcoord;
-          attribute vec3 a_normal;
+          // attribute vec3 a_normal;
 
-          # camera
+          // camera
           uniform mat4 u_projection;
-          uniform mat4 u_camera_pose;
+          // uniform mat4 u_camera_pose;
+          uniform mat4 u_camera_pose_invert;
           uniform mat4 u_model_pose;
 
-          # fragment shader
+          // fragment shader
           varying vec2 v_texcoord;
-          varying vec4 v_normal;
+          varying vec3 v_normal;
 
           void main() {
             // 模型到世界坐标系, 转到相机坐标系，只记得是一个逆矩阵，但是为什么是逆矩阵有点忘记了
@@ -417,40 +420,47 @@
             // W^t = C^t * C^-1
             // p点 = C^t * C^-1 * M * p向量
             // 所以在相机坐标系是 C的逆 * M * p
+            // glsl 没有inverse mat4的内置函数，还是在CPU算吧
+            // mat4 i_camera_pose = inverse(u_camera_pose);
 
-            vec4 p_camera_frame = invert(u_camera_pose) * u_model_pose * a_position;
+            vec4 p_camera_frame = u_camera_pose_invert * u_model_pose * vec4(a_position, 1);
+            // vec4 p_camera_frame = u_model_pose * vec4(a_position, 1);
 
             // 投影矩阵，相机是朝向负z轴看的，这个是在哪里体现呢？
             // 考察投影矩阵理解程度可以问题：如何把相机修改为朝向z轴的正方向看呢？
             // 还得重新理解投影矩阵
 
             vec4 p_near_plane = u_projection * p_camera_frame;
+            // vec4 p_near_plane = u_projection * vec4(a_position, 1);
 
             // 法线插值记得还有区别。。。记得不能直接用重心插值
 
-            v_normal = a_normal;
+            // v_normal = a_normal;
 
             v_texcoord = a_texcoord;
 
             gl_Position = p_near_plane;
+            // gl_Position = vec4(a_position / 3.0, 1);
 
             // 工程相关的话，就是glsl的代码混淆和压缩，编辑器提示，测试等等流程，
             // 都会涉及glsl的ast解析，就是做类似babel tenser的逻辑，可能还会加上模块系统，如果加上模块系统就需要加上vscode的插件支持
           }
         `;
         const basicFragmentShader = `
-          # light
+          precision mediump float;
+          
+          // light
           uniform vec4 u_ambient_light;
           uniform vec4 u_directional_light;
           uniform vec4 u_point_light;
           uniform vec4 u_point_light_position; // 点光源用位置即可
           uniform mat4 u_directional_light_pose;
           
-          # matrial
+          // matrial
           uniform sampler2D u_base_color_texture;
           uniform vec3 u_base_color;
 
-          # varying
+          // varying
           varying vec2 v_texcoord;
           varying vec4 v_normal;
 
@@ -458,9 +468,11 @@
             // 法线是用来光照计算用的
             // 点光源，平行光，环境光
 
-            gl_FragColor = vec4(1, 0, 0, 1); // 先最简单的
+            // gl_FragColor = vec4(0, 1, 0, 1); // 先最简单的
 
-            // vec4 color_from_tex = sample2D(u_base_color_texture, v_texcoord);
+            gl_FragColor = texture2D(u_base_color_texture, v_texcoord); // 贴上去的图片效果不对，应该是min max没格式化
+
+            // vec4 color_from_tex = texture2D(u_base_color_texture, v_texcoord);
             // gl_FragColor = mix(color_from_tex, u_base_color, 0.5); // 与设置的颜色混合
             // 但是存在贴图不存在的情况，shader里不好使用if判断
             // 这种数据有无是如何做兼容呢？多个shader么，一个是有纹理贴图的，一个是没纹理贴图的
@@ -470,70 +482,142 @@
           }
         `;
 
-        function renderScene(sceneIndex, camera) {
+        const CAMERA_PROJECTION_MATRIX = perspective(
+          Math.PI / 3,
+          canvas.width / canvas.height,
+          1,
+          100,
+        ); // 60°
+        // prettier-ignore
+        const CAMERA_POSE_MATRIX = new Float32Array([
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1,
+        ]);
+        const CAMERA_POSE_INVERT_MATRIX = inverse(CAMERA_POSE_MATRIX);
+
+        const { cos, sin ,PI} = Math;
+        const rad = 30 / 180 * PI
+        // prettier-ignore
+        const MODEL_POSE_MATRIX = new Float32Array([
+          1, 0, 0, 0,
+          0, cos(rad), sin(rad), 0,
+          0, -sin(rad), cos(rad), 0,
+          0, 0, -3, 1,
+        ]);
+        // !!列主序!!需要清晰知道存储是矩阵格式，和使用的矩阵读取方式
+        // 旋转则是对matrix的抽象，由四元素或欧拉角来确定姿态，缩放，位置
+        // 加旋转
+
+
+        renderScene(gltf.scene);
+
+        function renderScene(sceneIndex) {
+          // gl.clearColor(1, 0, 0, 1);
+          // gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
           const scene = gltf.scenes[gltf.scene];
           scene.nodes.forEach(nodeIndex => {
             const node = gltf.nodes[nodeIndex];
             const meshIndex = node.mesh;
             if (meshIndex !== undefined) {
               const mesh = gltf.meshes[meshIndex];
-              // 根据material创建shader，目前仅仅支持pbr，先只实现baseColor的渲染, 看了一下threejs的physical的shader，好多内容还是先实现basic的吧。。。
-              const material = gltf.materials[mesh.material];
 
               // 创建shader,program（应该是和mesh的material类型相关，一类只需要一个program, 不过这样Uniform每次都得上传了
               // 但是隐隐约约webgl program是需要一个层封装的，属于定制的封装
               const program = programCache.basic;
               gl.useProgram(program);
 
-              // 上传纹理
-              const baseColorTexture = uploadTexture(
-                material.pbrMetallicRoughness.baseColorTexture.index,
-              );
-
-              // 绑定纹理到纹理单元
-              // gl.bindTexture(gl.TEXTURE0, baseColorTexture);
-              // 然后再把纹理单元写入uniform
-
-              // 设置uniform
+              // 获取location
               const aPosition = gl.getAttribLocation(program, 'a_position');
               const aTexcoord = gl.getAttribLocation(program, 'a_texcoord');
               const aNormal = gl.getAttribLocation(program, 'a_normal');
+              const uProjection = gl.getUniformLocation(
+                program,
+                'u_projection',
+              );
+              // const uCameraPose = gl.getUniformLocation(
+              //   program,
+              //   'u_camera_pose',
+              // );
+              const uCameraPoseInvert = gl.getUniformLocation(
+                program,
+                'u_camera_pose_invert',
+              );
+              const uModelPose = gl.getUniformLocation(program, 'u_model_pose');
+              const uBaseColorTexture = gl.getUniformLocation(
+                program,
+                'u_base_color_texture',
+              );
+
+              // 设置uniform
+              gl.uniformMatrix4fv(uProjection, false, CAMERA_PROJECTION_MATRIX);
+              gl.uniformMatrix4fv(
+                uCameraPoseInvert,
+                false,
+                CAMERA_POSE_INVERT_MATRIX,
+              );
+              gl.uniformMatrix4fv(uModelPose, false, MODEL_POSE_MATRIX);
 
               // 设置WebGL全局状态
 
               // 上传顶点数据, 为什么primitives是多个呢，是指多个primitives, 多组geometry公用一个材质？？
               mesh.primitives.forEach(primitive => {
-                const normalBuffer = uploadAttribute(
-                  primitive.attributes.NORMAL,
-                );
+                // const normalBuffer = uploadAttribute(
+                //   primitive.attributes.NORMAL,
+                // );
                 const positionBuffer = uploadAttribute(
                   primitive.attributes.POSITION,
                 );
-                const tangentBuffer = uploadAttribute(
-                  primitive.attributes.TANGENT,
-                ); // 还不知道TANGENT的作用
+                // const tangentBuffer = uploadAttribute(
+                //   primitive.attributes.TANGENT,
+                // ); // 还不知道TANGENT的作用
                 const texcoord_0Buffer = uploadAttribute(
                   primitive.attributes.TEXCOORD_0,
                 );
+
+                // const positionBuffer = gl.createBuffer();
+                // gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                // gl.bufferData(
+                //   gl.ARRAY_BUFFER,
+                //   new Float32Array([0, 0.5, 0, -0.5, 0,0, 0.5, 0,0]),
+                //   gl.STATIC_DRAW,
+                // );
 
                 // set attribute，但是还需要那一个shader
                 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
                 gl.enableVertexAttribArray(aPosition);
                 gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 0, 0); // 还有各种细分类型需要确定，目前先固定一种
 
-                gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-                gl.enableVertexAttribArray(aNormal);
-                gl.vertexAttribPointer(aNormal, 3, gl.FLOAT, false, 0, 0);
+                // gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+                // gl.enableVertexAttribArray(aNormal);
+                // gl.vertexAttribPointer(aNormal, 3, gl.FLOAT, false, 0, 0);
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, texcoord_0Buffer);
                 gl.enableVertexAttribArray(aTexcoord);
                 gl.vertexAttribPointer(aTexcoord, 2, gl.FLOAT, false, 0, 0);
 
-                // TODO: 三角形的数量需要统计
-                gl.drawArrays(gl.TRIANGLES, 0, 6);
-              });
+                // 根据material创建shader，目前仅仅支持pbr，先只实现baseColor的渲染, 看了一下threejs的physical的shader，好多内容还是先实现basic的吧。。。
+                const material = gltf.materials[primitive.material];
 
-              // 绘制
+                // 上传纹理
+                const baseColorTexture = uploadTexture(
+                  material.pbrMetallicRoughness.baseColorTexture.index,
+                );
+
+                // 绑定纹理到纹理单元, 然后再把纹理单元写入uniform
+                const texUnit = 1;
+                gl.activeTexture(gl.TEXTURE0 + texUnit);
+                gl.bindTexture(gl.TEXTURE_2D, baseColorTexture);
+                gl.uniform1i(uBaseColorTexture, texUnit);
+
+                const accessor = gltf.accessors[primitive.attributes.POSITION];
+                const itemSize = WEBGL_TYPE_SIZES[accessor.type];
+
+                // 绘制
+                gl.drawArrays(gl.TRIANGLES, 0, accessor.count * itemSize);
+                // gl.drawArrays(gl.TRIANGLES, 0, 3);
+              });
             }
           });
         }
@@ -548,15 +632,26 @@
 
           const colorFormat = image.uri.match(/\.jpg$/i) ? gl.RGB : gl.RGBA;
 
-          const texture = gl.createTexture();
-          gl.bindTexture(gl.TEXTURE_2D, texture);
-          // prettier-ignore
-          gl.texImage2D(gl.TEXTURE_2D, 0, colorFormat, colorFormat, gl.UNSIGNED_BYTE, image.el);
+          const textureGL = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, textureGL);
+          // 需要根据什么设置？纹理是否是2的幂次方？
+          // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+          gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            colorFormat,
+            colorFormat,
+            gl.UNSIGNED_BYTE,
+            image.el,
+          );
           // 这些参数应该哪里获取呢，测试的sampler为空，纹理的格式，颜色格式，数据类型等
           // 简单通过图片后缀来区别，这里各种格式都得支持的话，就比较复杂了一些不过分层分得好的话也是没问题的
           // 这里还得处理各种类型的纹理格式，常见的就是ImageElement，还有TypedArray，还有GPU压缩纹理
 
-          return texture;
+          return textureGL;
         }
 
         function uploadAttribute(accessorIndex) {
@@ -595,18 +690,22 @@
             gl.bindBuffer(gl.ARRAY_BUFFER, glBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, typedArray, gl.STATIC_DRAW);
             glCache.buffer.set(accessorIndex, glBuffer);
+            console.log('uploadAttribute', typedArray);
           }
 
-          return glBuffer;
+          return glCache.buffer.get(accessorIndex);
         }
 
         function createGLShader(shaderType, shaderSource) {
           const shader = gl.createShader(shaderType);
           gl.shaderSource(shader, shaderSource);
           gl.compileShader(shader);
-          success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+          const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
           if (!success)
-            console.error('compile fs shader fail', gl.getShaderInfoLog(fs));
+            console.error(
+              'compile fs shader fail',
+              gl.getShaderInfoLog(shader),
+            );
           return shader;
         }
 
@@ -617,7 +716,7 @@
           gl.attachShader(program, vs);
           gl.attachShader(program, fs);
           gl.linkProgram(program);
-          success = gl.getProgramParameter(program, gl.LINK_STATUS);
+          const success = gl.getProgramParameter(program, gl.LINK_STATUS);
           if (!success)
             console.error('link program fail', gl.getProgramInfoLog(program));
           return program;
@@ -659,6 +758,109 @@
         // 这里估计也需要一小部分的抽象，所以geometry和material是shader设置的两类划分
 
         // 发现render 需要传递一个场景树和相机
+
+        // 记得three也有layer的概念，感觉和chrome的是类似的
+
+        // 从webgl-fundamatals直接拿一个
+        function perspective(fieldOfViewInRadians, aspect, near, far) {
+          var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
+          var rangeInv = 1.0 / (near - far);
+
+          // prettier-ignore
+          return new Float32Array([
+            f / aspect, 0, 0, 0,
+            0, f, 0, 0,
+            0, 0, (near + far) * rangeInv, -1,
+            0, 0, near * far * rangeInv * 2, 0
+          ]);
+        }
+
+        // prettier-ignore
+        function inverse(m, dst) {
+          dst = dst || new Float32Array(16);
+          var m00 = m[0 * 4 + 0];
+          var m01 = m[0 * 4 + 1];
+          var m02 = m[0 * 4 + 2];
+          var m03 = m[0 * 4 + 3];
+          var m10 = m[1 * 4 + 0];
+          var m11 = m[1 * 4 + 1];
+          var m12 = m[1 * 4 + 2];
+          var m13 = m[1 * 4 + 3];
+          var m20 = m[2 * 4 + 0];
+          var m21 = m[2 * 4 + 1];
+          var m22 = m[2 * 4 + 2];
+          var m23 = m[2 * 4 + 3];
+          var m30 = m[3 * 4 + 0];
+          var m31 = m[3 * 4 + 1];
+          var m32 = m[3 * 4 + 2];
+          var m33 = m[3 * 4 + 3];
+          var tmp_0  = m22 * m33;
+          var tmp_1  = m32 * m23;
+          var tmp_2  = m12 * m33;
+          var tmp_3  = m32 * m13;
+          var tmp_4  = m12 * m23;
+          var tmp_5  = m22 * m13;
+          var tmp_6  = m02 * m33;
+          var tmp_7  = m32 * m03;
+          var tmp_8  = m02 * m23;
+          var tmp_9  = m22 * m03;
+          var tmp_10 = m02 * m13;
+          var tmp_11 = m12 * m03;
+          var tmp_12 = m20 * m31;
+          var tmp_13 = m30 * m21;
+          var tmp_14 = m10 * m31;
+          var tmp_15 = m30 * m11;
+          var tmp_16 = m10 * m21;
+          var tmp_17 = m20 * m11;
+          var tmp_18 = m00 * m31;
+          var tmp_19 = m30 * m01;
+          var tmp_20 = m00 * m21;
+          var tmp_21 = m20 * m01;
+          var tmp_22 = m00 * m11;
+          var tmp_23 = m10 * m01;
+
+          var t0 = (tmp_0 * m11 + tmp_3 * m21 + tmp_4 * m31) -
+              (tmp_1 * m11 + tmp_2 * m21 + tmp_5 * m31);
+          var t1 = (tmp_1 * m01 + tmp_6 * m21 + tmp_9 * m31) -
+              (tmp_0 * m01 + tmp_7 * m21 + tmp_8 * m31);
+          var t2 = (tmp_2 * m01 + tmp_7 * m11 + tmp_10 * m31) -
+              (tmp_3 * m01 + tmp_6 * m11 + tmp_11 * m31);
+          var t3 = (tmp_5 * m01 + tmp_8 * m11 + tmp_11 * m21) -
+              (tmp_4 * m01 + tmp_9 * m11 + tmp_10 * m21);
+
+          var d = 1.0 / (m00 * t0 + m10 * t1 + m20 * t2 + m30 * t3);
+
+          dst[0] = d * t0;
+          dst[1] = d * t1;
+          dst[2] = d * t2;
+          dst[3] = d * t3;
+          dst[4] = d * ((tmp_1 * m10 + tmp_2 * m20 + tmp_5 * m30) -
+                (tmp_0 * m10 + tmp_3 * m20 + tmp_4 * m30));
+          dst[5] = d * ((tmp_0 * m00 + tmp_7 * m20 + tmp_8 * m30) -
+                (tmp_1 * m00 + tmp_6 * m20 + tmp_9 * m30));
+          dst[6] = d * ((tmp_3 * m00 + tmp_6 * m10 + tmp_11 * m30) -
+                (tmp_2 * m00 + tmp_7 * m10 + tmp_10 * m30));
+          dst[7] = d * ((tmp_4 * m00 + tmp_9 * m10 + tmp_10 * m20) -
+                (tmp_5 * m00 + tmp_8 * m10 + tmp_11 * m20));
+          dst[8] = d * ((tmp_12 * m13 + tmp_15 * m23 + tmp_16 * m33) -
+                (tmp_13 * m13 + tmp_14 * m23 + tmp_17 * m33));
+          dst[9] = d * ((tmp_13 * m03 + tmp_18 * m23 + tmp_21 * m33) -
+                (tmp_12 * m03 + tmp_19 * m23 + tmp_20 * m33));
+          dst[10] = d * ((tmp_14 * m03 + tmp_19 * m13 + tmp_22 * m33) -
+                (tmp_15 * m03 + tmp_18 * m13 + tmp_23 * m33));
+          dst[11] = d * ((tmp_17 * m03 + tmp_20 * m13 + tmp_23 * m23) -
+                (tmp_16 * m03 + tmp_21 * m13 + tmp_22 * m23));
+          dst[12] = d * ((tmp_14 * m22 + tmp_17 * m32 + tmp_13 * m12) -
+                (tmp_16 * m32 + tmp_12 * m12 + tmp_15 * m22));
+          dst[13] = d * ((tmp_20 * m32 + tmp_12 * m02 + tmp_19 * m22) -
+                (tmp_18 * m22 + tmp_21 * m32 + tmp_13 * m02));
+          dst[14] = d * ((tmp_18 * m12 + tmp_23 * m32 + tmp_15 * m02) -
+                (tmp_22 * m32 + tmp_14 * m02 + tmp_19 * m12));
+          dst[15] = d * ((tmp_22 * m22 + tmp_16 * m02 + tmp_21 * m12) -
+                (tmp_20 * m12 + tmp_23 * m22 + tmp_17 * m02));
+
+          return dst;
+        }
       });
 
       function loadImg(uri) {

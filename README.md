@@ -345,3 +345,7 @@ require('assemblyscript/std/portable');
 ## 2021-9-1
 
 1. 编写js版的gltf-renderer 26% (感觉进度太慢了，还是得有所侧重去实现才行
+
+## 2021-9-2
+
+1. 编写js版的gltf-renderer 30% 初步实现gltf展示，准备提炼笔记，进行抽象设计
