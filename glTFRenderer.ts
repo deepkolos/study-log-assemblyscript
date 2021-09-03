@@ -52,10 +52,42 @@ class GLTFWebGLRenderer {
 // GLTF/FBX/GBJ -> THREE Scene Graph -> Edit Scene Graph -> render SceneGraph
 // FBX/OBJ -> GLTF -> render GLTF 只是相对比较难编辑这个GLTF内的东西，不过可以外挂
 // 只是相当于解析GLTF的逻辑和渲染并在一起了，GLTF目前索引表的数据格式好处应该是方便资源复用？
+// 如果是这样需要抽象的也只有webgl program需要方便设置了
 
 /**
  * geometry -> vec3 attribute
  * material -> texture uniform
  * light -> vec4 mat4 uniform
- * camare -> mat4 uniform
+ * camera -> mat4 uniform
  */
+
+// attribute是可以跨program的，所以attribute上传和使用逻辑
+
+// 通过这两个实现方便的设置
+// getActiveAttrib
+// getActiveUniform
+
+class Program<T> {
+  gl: WebGLRenderingContext;
+  glProgram: WebGLProgram;
+
+  constructor(
+    gl: WebGLRenderingContext,
+    vertexShaderSource: string,
+    FramgmentShaderSource: string,
+  ) {
+    this.gl = gl;
+    this.glProgram = gl.createProgram();
+    this.glVertexShader = gl.createShader(gl.VERTEX_SHADER);
+    this.glFragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+  }
+
+  // 如何外部生成这些setAttribute的方法细分类型呢，得看看dom里面是如何实现的
+  setAttribute(name: string, data: Float32Array | Uint8Array) {}
+
+  setUnifrom(name: string, ...data) {}
+
+  run() {}
+
+  dispose() {}
+}
