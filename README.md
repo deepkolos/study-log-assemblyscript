@@ -353,3 +353,7 @@ require('assemblyscript/std/portable');
 ## 2021-9-3
 
 3. 编写js版的gltf-renderer 35% 简单进行抽象设计，将会是GLTF直接和webgl api对接，会对webgl做一层简单的抽象，资源情况将会外挂存储
+
+## 2021-9-5
+
+1. 编写js版的gltf-renderer 40% 初步设计了 GLProgram，但buffer和texture由外部维护，仅仅更新attribute和uniform，TS友好，设置的参数均可配置，有提示
