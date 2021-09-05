@@ -115,12 +115,12 @@ namespace gl {
   export type sampler2D = number;
 }
 
-interface ProgramTypeMap {
-  Attributes: {};
-  Uniforms: {};
+interface ProgramTypeMap<T, K> {
+  Attributes: T;
+  Uniforms: K;
 }
 
-interface Attribute<T> {
+interface AttributeSetting {
   size: GLint;
   type: GLenum;
   normalized: GLboolean;
@@ -138,13 +138,13 @@ interface Attribute<T> {
 // type ParametersFrom1<T extends (...args: any) => any> = T extends (any: any, ...args: infer P) => any ? P : never;
 // type A = ParametersFrom1<WebGLRenderingContext['vertexAttribPointer']>;
 
-interface CommonProgramTypeMap extends ProgramTypeMap {
-  Attributes: {
+type CommonProgramTypeMap = ProgramTypeMap<
+  {
     // geometry
-    aPosition: Attribute<Float32Array>;
-    aTexcoord: Attribute<Float32Array>;
-  };
-  Uniforms: {
+    aPosition: AttributeSetting;
+    aTexcoord: AttributeSetting;
+  },
+  {
     // camera
     uProjection: gl.mat4;
     uCameraPoseInvert: gl.mat4;
@@ -155,24 +155,30 @@ interface CommonProgramTypeMap extends ProgramTypeMap {
     uPointLight: gl.vec4;
     uPointLightPosition: gl.vec4;
     uDirectionalLightPose: gl.mat4;
-  };
-}
+  }
+>;
 
 interface UnlitMatrialTypeMap extends CommonProgramTypeMap {
   Uniforms: {
-    uBaseColorTexture: gl.sampler2D;
+    uBaseColorTexture: gl.sampler2D; // texture unit
     uBaseColor: gl.vec3;
   } & CommonProgramTypeMap['Uniforms'];
 }
-// 要么后面再拆分吧，类型貌似有点多
+// 要么后面再拆分吧，类型貌似有点多，额这类型提示不生效。。。有点尴尬
 
-class GLProgram<T extends ProgramTypeMap> {
+type ElementOf<T> = T extends Array<infer E> ? E : never;
+type A<T> = T extends ProgramTypeMap<infer K, infer U> ? [K, U] : unknown;
+
+class GLProgram<T extends ProgramTypeMap<unknown, unknown>> {
   gl: WebGLRenderingContext;
   glProgram: WebGLProgram;
   vertexShaderSource: string;
   framgmentShaderSource: string;
   attributeInfo: AttributeInfo<T['Attributes']>;
   uniformInfo: UnifromInfo<T['Uniforms']>;
+  attributeSetting: {
+    [k in keyof T['Attributes']]: AttributeSetting;
+  };
 
   constructor(
     gl: WebGLRenderingContext,
@@ -203,9 +209,9 @@ class GLProgram<T extends ProgramTypeMap> {
 
   // 如何外部生成这些setAttribute的方法细分类型呢，得看看dom里面是如何实现的
   // 记得是用map来实现
-  setAttribute<K extends keyof ProgramTypeMap['Attributes']>(
+  setAttribute<K extends keyof T['Attributes']>(
     name: K,
-    data: ProgramTypeMap['Attributes'][K],
+    data: T['Attributes'][K],
   ) {
     const { gl } = this;
     // this.attributeInfo[name].location
@@ -225,10 +231,7 @@ class GLProgram<T extends ProgramTypeMap> {
     return this;
   }
 
-  setUnifrom<K extends keyof ProgramTypeMap['Uniforms']>(
-    name: K,
-    data: ProgramTypeMap['Uniforms'][K],
-  ) {
+  setUnifrom<K extends keyof T['Uniforms']>(name: K, data: T['Uniforms'][K]) {
     // 有gl派生资源的应该如何管理？主要是texture和buffer这两种资源，buffer这里包创建了，目前attribute和buffer是多对多的关系，但是texture和纹理并不是
     return this;
   }
@@ -236,14 +239,17 @@ class GLProgram<T extends ProgramTypeMap> {
   run() {
     // 状态重置可以外部控制，这个program仅仅处理shader相关的
     // 初始化Attribute
-
     // uniform 则是按需更新，不是每次都得全量更新
-
     // draw call
   }
 
   dispose() {}
 }
+
+const gl = null as WebGLRenderingContext;
+const a: GLProgram<UnlitMatrialTypeMap> = new GLProgram(gl, '', '');
+
+a.setUnifrom('uAmbientLight', [1, 1, 1, 1]);
 
 // oasis里用了引用计数，three则使用weakMap，进一步简化资源的维护，这里就先沿用GLTF内资源复用，要不后面再考虑，需要遍历资源情况，不过也只有GLTF内是显式标记了复用情况
 // 如果是这样的话，纹理也在program里集成创建了
@@ -254,9 +260,12 @@ class GLTFGLCache {
 }
 
 function getUniformInfo<T>(gl: WebGLRenderingContext, program: WebGLProgram) {
-  const numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+  const uniformLen = gl.getProgramParameter(
+    program,
+    gl.ACTIVE_UNIFORMS,
+  ) as number;
   const uniformInfo = {} as UnifromInfo<T>;
-  for (let i = 0; i < numUniforms; ++i) {
+  for (let i = 0; i < uniformLen; ++i) {
     const info = gl.getActiveUniform(program, i);
     uniformInfo[info.name] = {
       ...info,
