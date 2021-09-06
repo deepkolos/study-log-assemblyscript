@@ -357,3 +357,7 @@ require('assemblyscript/std/portable');
 ## 2021-9-5
 
 1. 编写js版的gltf-renderer 40% 初步设计了 GLProgram，但buffer和texture由外部维护，仅仅更新attribute和uniform，TS友好，设置的参数均可配置，有提示
+
+## 2021-9-6
+
+1. 编写js版的gltf-renderer 45% TS的类型真有趣，居然实现了`class A implements [number, number, number]`, 群里的大佬确实强, 学到了，又是奇怪的抽象实验

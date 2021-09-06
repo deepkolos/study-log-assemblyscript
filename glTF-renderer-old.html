@@ -497,8 +497,8 @@
         ]);
         const CAMERA_POSE_INVERT_MATRIX = inverse(CAMERA_POSE_MATRIX);
 
-        const { cos, sin ,PI} = Math;
-        const rad = 30 / 180 * PI
+        const { cos, sin, PI } = Math;
+        const rad = (30 / 180) * PI;
         // prettier-ignore
         const MODEL_POSE_MATRIX = new Float32Array([
           1, 0, 0, 0,
@@ -509,7 +509,6 @@
         // !!列主序!!需要清晰知道存储是矩阵格式，和使用的矩阵读取方式
         // 旋转则是对matrix的抽象，由四元素或欧拉角来确定姿态，缩放，位置
         // 加旋转
-
 
         renderScene(gltf.scene);
 
@@ -757,7 +756,7 @@
         // 先看看three是如何处理的, 和想象的并不一样，three的shader是集中在WebGLProgram里做映射，material和geometry都是存储数据，不过也对,如果每个实例都有一份，就冗余了
         // 这里估计也需要一小部分的抽象，所以geometry和material是shader设置的两类划分
 
-        // 发现render 需要传递一个场景树和相机
+        // 发现render 需要传递一个场景树和相机,估计是和这个有关
 
         // 记得three也有layer的概念，感觉和chrome的是类似的
 
