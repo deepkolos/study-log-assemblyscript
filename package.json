@@ -4,6 +4,7 @@
   "description": "study log of assemblyscript",
   "main": "index.js",
   "scripts": {
+    "dev": "vite",
     "test": "node tests",
     "test:base64": "npm run base64:wasm && node tests/base64",
     "pretest": "npm run asbuild:untouched",
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "assemblyscript": "^0.19.11",
+    "typescript": "^4.4.2",
     "vite": "^2.5.3"
   }
 }

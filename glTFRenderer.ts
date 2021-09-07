@@ -1,27 +1,6 @@
+import { GLTFWebGLRenderer } from './libs/glTFRenderer';
+import { loadGLTF } from './libs/Loader';
 import { Matrix4 } from './libs/Math';
-import { unlitMaterialProgram } from './libs/UnlitMaterial';
-import GLTFFile from './models/glTF/Cube.json';
-
-type GLTF = typeof GLTFFile;
-
-const WEBGL_COMPONENT_TYPES = {
-  5120: Int8Array,
-  5121: Uint8Array,
-  5122: Int16Array,
-  5123: Uint16Array,
-  5125: Uint32Array,
-  5126: Float32Array,
-};
-
-const WEBGL_TYPE_SIZES = {
-  SCALAR: 1,
-  VEC2: 2,
-  VEC3: 3,
-  VEC4: 4,
-  MAT2: 4,
-  MAT3: 9,
-  MAT4: 16,
-};
 
 function perspective(
   fieldOfViewInRadians: number,
@@ -33,44 +12,47 @@ function perspective(
   var rangeInv = 1.0 / (near - far);
 
   // prettier-ignore
-  return Matrix4.from([
+  return new Matrix4().set( 
     f / aspect, 0, 0, 0,
     0, f, 0, 0,
-    0, 0, (near + far) * rangeInv, -1,
-    0, 0, near * far * rangeInv * 2, 0
-  ])
+    0, 0, (near + far) * rangeInv, near * far * rangeInv * 2,
+    0, 0, -1, 0)
 }
 
-class GLTFWebGLRenderer {
-  constructor(gl: WebGLRenderingContext) {
-    unlitMaterialProgram.compile(gl);
-  }
+const canvas = document.createElement('canvas');
+const gl = canvas.getContext('webgl') as WebGLRenderingContext;
+const projection = perspective(
+  Math.PI / 3,
+  // canvas.width / canvas.height,
+  1,
+  1,
+  100,
+);
+const cameraPoseInvert = new Matrix4().identity().invert();
+const modelPose = new Matrix4()
+  .identity()
+  .translate(0, 0, -5)
+  .rotate(Math.PI / 3, 0, 0);
 
-  render(
-    gltf: GLTF,
-    projection: Matrix4,
-    cameraPoseInvert: Matrix4,
-    modelPose: Matrix4,
-  ) {
-    const sceneDef = gltf.scenes[gltf.scene];
+canvas.width = 400 * devicePixelRatio;
+canvas.height = 400 * devicePixelRatio;
+canvas.style.width = '400px';
+canvas.style.height = '400px';
+gl.viewport(0, 0, canvas.width, canvas.height);
 
-    // 相比与之前漏了模型内的坐标系的变换，而方便实现应该使用深度遍历
-    for (let i = 0, il = sceneDef.nodes.length; i < il; i++) {
-      const nodeIndex = sceneDef.nodes[i];
-      const nodeDef = gltf.nodes[nodeIndex];
-      const meshIndex = nodeDef.mesh;
+document.body.append(canvas);
 
-      if (meshIndex === undefined) continue;
+loadGLTF('./models/glTF/Cube.gltf').then(gltf => {
+  const glTFRenderer = new GLTFWebGLRenderer(gl, gltf);
 
-      const meshDef = gltf.meshes[meshIndex];
-      unlitMaterialProgram.setUnifrom('uCameraPoseInvert', cameraPoseInvert);
-      unlitMaterialProgram.setUnifrom('uProjection', projection);
-      unlitMaterialProgram.setUnifrom('uModelPose', modelPose);
+  // 动起来之后就发现问题了，有一部分像是镂空了一样，还是得使用棋盘纹理看的清楚
 
-      for (let j = 0, jl = meshDef.primitives.length; j < jl; j++) {
-        const primitiveDef = meshDef.primitives[j];
-        // 生成attribute
-      }
-    }
-  }
-}
+  let x = 0;
+  const render = () => {
+    x += 0.02;
+    modelPose.rotate(x, x, x);
+    glTFRenderer.render(projection, cameraPoseInvert, modelPose);
+    requestAnimationFrame(render);
+  };
+  render();
+});

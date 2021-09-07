@@ -6,8 +6,8 @@ module.exports = defineConfig({
   build: {
     rollupOptions: {
       input: {
-        index: resolve(__dirname, 'index.html'),
-        gltfRenderer: resolve(__dirname, 'glTFRenderer.html'),
+        // index: resolve(__dirname, 'index.html'),
+        glTFRenderer: resolve(__dirname, 'glTFRenderer.html'),
       },
     },
   },

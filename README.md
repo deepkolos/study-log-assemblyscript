@@ -352,7 +352,7 @@ require('assemblyscript/std/portable');
 
 ## 2021-9-3
 
-3. 编写js版的gltf-renderer 35% 简单进行抽象设计，将会是GLTF直接和webgl api对接，会对webgl做一层简单的抽象，资源情况将会外挂存储
+1. 编写js版的gltf-renderer 35% 简单进行抽象设计，将会是GLTF直接和webgl api对接，会对webgl做一层简单的抽象，资源情况将会外挂存储
 
 ## 2021-9-5
 
@@ -361,3 +361,7 @@ require('assemblyscript/std/portable');
 ## 2021-9-6
 
 1. 编写js版的gltf-renderer 45% TS的类型真有趣，居然实现了`class A implements [number, number, number]`, 群里的大佬确实强, 学到了，又是奇怪的抽象实验
+
+## 2021-9-7 
+
+1. 编写js版的gltf-renderer 50% 跑起来了，不过纹理有问题，看来画个立方体就不简单

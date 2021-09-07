@@ -14,49 +14,48 @@ export const unlitMaterialProgram: GLProgram<UnlitMatrialTypeMap> =
   new GLProgram(
     glsl`
   // geometry
-  attribute vec3 a_position;
-  attribute vec2 a_texcoord;
-  // attribute vec3 a_normal;
+  attribute vec3 aPosition;
+  attribute vec2 aTexcoord;
+  // attribute vec3 aNormal;
 
   // camera
-  uniform mat4 u_projection;
-  // uniform mat4 u_camera_pose;
-  uniform mat4 u_camera_pose_invert;
-  uniform mat4 u_model_pose;
+  uniform mat4 uProjection;
+  uniform mat4 uCameraPoseInvert;
+  uniform mat4 uModelPose;
 
   // fragment shader
-  varying vec2 v_texcoord;
-  varying vec3 v_normal;
+  varying vec2 vTexcoord;
+  varying vec3 vNormal;
 
   void main() {
-    vec4 p_camera_frame = u_camera_pose_invert * u_model_pose * vec4(a_position, 1);
-    vec4 p_near_plane = u_projection * p_camera_frame;
+    vec4 pCameraFrame = uCameraPoseInvert * uModelPose * vec4(aPosition, 1);
+    vec4 pNearPlane = uProjection * pCameraFrame;
 
-    // v_normal = a_normal;
-    v_texcoord = a_texcoord;
+    // vNormal = aNormal;
+    vTexcoord = aTexcoord;
 
-    gl_Position = p_near_plane;
+    gl_Position = pNearPlane;
   }
   `,
     glsl`
   precision mediump float;
   // light
-  uniform vec4 u_ambient_light;
-  uniform vec4 u_directional_light;
-  uniform vec4 u_point_light;
-  uniform vec4 u_point_light_position; // 点光源用位置即可
-  uniform mat4 u_directional_light_pose;
+  uniform vec4 uAmbientLight;
+  uniform vec4 uDirectionalLight;
+  uniform vec4 uPointLight;
+  uniform vec4 uPointLightPosition;
+  uniform mat4 uDirectionalLightPose;
   
   // matrial
-  uniform sampler2D u_base_color_texture;
-  uniform vec3 u_base_color;
+  uniform sampler2D uBaseColorTexture;
+  uniform vec3 uBaseColor;
 
   // varying
-  varying vec2 v_texcoord;
-  varying vec4 v_normal;
+  varying vec2 vTexcoord;
+  varying vec4 vNormal;
 
   void main() {
-    gl_FragColor = texture2D(u_base_color_texture, v_texcoord);
+    gl_FragColor = texture2D(uBaseColorTexture, vTexcoord);
   }
   `,
   );

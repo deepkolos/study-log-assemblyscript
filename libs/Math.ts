@@ -25,10 +25,38 @@ export class Matrix4 extends Array<number> implements gl.mat4 {
     this.fill(0);
   }
 
+  // prettier-ignore
+  set(
+    n11: number, n12: number, n13: number, n14: number, 
+    n21: number, n22: number, n23: number, n24: number,
+    n31: number, n32: number, n33: number, n34: number,
+    n41: number, n42: number, n43: number, n44: number,
+  ) {
+    const t = this;
+
+    t[0] = n11; t[4] = n12; t[8] = n13; t[12] = n14;
+    t[1] = n21; t[5] = n22; t[9] = n23; t[13] = n24;
+    t[2] = n31; t[6] = n32; t[10] = n33; t[14] = n34;
+    t[3] = n41; t[7] = n42; t[11] = n43; t[15] = n44;
+
+    return this;
+  }
+
+  // prettier-ignore
+  identity() {
+		return this.set(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1
+		);
+	}
+
   translate(x: number, y: number, z: number) {
     this[3] = x;
     this[7] = y;
-    this[13] = z;
+    this[14] = z;
+    return this;
   }
 
   // prettier-ignore
