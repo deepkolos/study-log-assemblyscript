@@ -183,3 +183,7 @@ export class Vector3 extends Array<number> implements gl.vec3 {
     super(3);
   }
 }
+
+export function isPowerOfTwo(n: number) {
+  return (n & (n - 1)) === 0 && n !== 0;
+}

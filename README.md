@@ -365,3 +365,7 @@ require('assemblyscript/std/portable');
 ## 2021-9-7 
 
 1. 编写js版的gltf-renderer 50% 跑起来了，不过纹理有问题，看来画个立方体就不简单
+
+## 2021-9-8
+
+1. 编写js版的gltf-renderer 55% 修复了纹理的问题，需要上传纹理再生成mipmap，后面先看看three的抽象吧，感觉最近都在瞎抽象

@@ -91,6 +91,7 @@ export class GLProgram<
   }
 
   use() {
+    // 这个可能自动化么
     this.gl.useProgram(this.glProgram);
     return this;
   }
@@ -129,7 +130,6 @@ export class GLProgram<
         gl.uniformMatrix3fv(location, false, data as unknown as gl.mat3);
         break;
       case 0x8b5c: // _MAT4
-        console.log('uniformMatrix4fv');
         gl.uniformMatrix4fv(location, false, data as unknown as gl.mat4);
         break;
 
@@ -170,7 +170,6 @@ export class GLProgram<
       case 0x8dca: // INT_SAMPLER_2D
       case 0x8dd2: // UNSIGNED_INT_SAMPLER_2D
       case 0x8b62: // SAMPLER_2D_SHADOW
-        console.log('uniform1i');
         gl.uniform1i(location, data as unknown as gl.sampler2D);
         break;
 

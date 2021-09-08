@@ -19,6 +19,7 @@ function perspective(
     0, 0, -1, 0)
 }
 
+const fps = document.createElement('div');
 const canvas = document.createElement('canvas');
 const gl = canvas.getContext('webgl') as WebGLRenderingContext;
 const projection = perspective(
@@ -40,18 +41,23 @@ canvas.style.width = '400px';
 canvas.style.height = '400px';
 gl.viewport(0, 0, canvas.width, canvas.height);
 
-document.body.append(canvas);
+document.body.append(canvas, fps);
 
 loadGLTF('./models/glTF/Cube.gltf').then(gltf => {
   const glTFRenderer = new GLTFWebGLRenderer(gl, gltf);
-
+  gl.enable(gl.DEPTH_TEST); // 开启深度测试后方块就正常了，但是还有纹理采样问题
   // 动起来之后就发现问题了，有一部分像是镂空了一样，还是得使用棋盘纹理看的清楚
+  // 这里的renderer并没有集成gl全局状态设置，需要继续把流程理解清楚些
 
   let x = 0;
+  let t = 0;
   const render = () => {
-    x += 0.02;
+    x += 0.01;
     modelPose.rotate(x, x, x);
+    t = performance.now();
     glTFRenderer.render(projection, cameraPoseInvert, modelPose);
+    t = performance.now() - t;
+    fps.innerText = t.toFixed(2); // 每次都触发了纹理的上传了, 没命中缓存
     requestAnimationFrame(render);
   };
   render();
