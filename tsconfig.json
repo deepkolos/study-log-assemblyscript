@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "lib": ["ESNEXT", "DOM"]
+  },
   "typeAcquisition": {
     "include": ["./libs/"]
   }
