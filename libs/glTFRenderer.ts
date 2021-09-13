@@ -2,6 +2,7 @@ import { AttributeSetting } from './GLProgram';
 import { GLTFGLCache } from './GLTFGLCache';
 import { isPowerOfTwo, Matrix4 } from './Math';
 import { unlitMaterialProgram } from './UnlitMaterial';
+import { GlTf } from './GLTF.d';
 
 const WEBGL_COMPONENT_TYPES = {
   5120: Int8Array,
@@ -25,66 +26,103 @@ const WEBGL_TYPE_SIZES = {
 export class GLTFWebGLRenderer {
   private cache: GLTFGLCache;
   private gl: WebGLRenderingContext;
-  private gltf: GLTF;
+  private gltf: GlTf;
+  projection: Matrix4;
+  cameraPoseInvert: Matrix4;
+  modelPose: Matrix4;
 
-  constructor(gl: WebGLRenderingContext, gltf: GLTF) {
+  constructor(gl: WebGLRenderingContext, gltf: GlTf) {
     this.gl = gl;
     this.gltf = gltf;
     this.cache = new GLTFGLCache();
     unlitMaterialProgram.compile(gl);
   }
 
-  // TODO: 拆分阶段
   render(projection: Matrix4, cameraPoseInvert: Matrix4, modelPose: Matrix4) {
-    const { gltf, gl } = this;
-    const sceneDef = gltf.scenes[gltf.scene];
+    this.projection = projection;
+    this.cameraPoseInvert = cameraPoseInvert;
+    this.modelPose = modelPose;
+
+    this.renderScene(this.gltf.scene);
+  }
+
+  renderScene(sceneIndex: number) {
+    const sceneDef = this.gltf.scenes[sceneIndex];
 
     for (let i = 0, il = sceneDef.nodes.length; i < il; i++) {
-      const nodeIndex = sceneDef.nodes[i];
-      const nodeDef = gltf.nodes[nodeIndex];
-      const meshIndex = nodeDef.mesh;
+      this.renderNode(sceneDef.nodes[i], this.modelPose);
+    }
+  }
 
-      if (meshIndex === undefined) continue;
+  renderNode(nodeIndex: number, parentWorldMatrix: Matrix4) {
+    const nodeDef = this.gltf.nodes[nodeIndex];
+    const meshIndex = nodeDef.mesh;
+    const worldMatrix = new Matrix4();
+    const localMatrix = new Matrix4().identity();
 
-      const meshDef = gltf.meshes[meshIndex];
-      // 这里可能使用不同的program, 不同的材质
-      unlitMaterialProgram.use();
-      unlitMaterialProgram.setUnifrom('uCameraPoseInvert', cameraPoseInvert);
-      unlitMaterialProgram.setUnifrom('uProjection', projection);
-      unlitMaterialProgram.setUnifrom('uModelPose', modelPose);
+    // 生成local matrix, 优先使用TRS
+    // 矩阵计算是每次渲染都得重新运算么？
+    if (nodeDef.matrix) localMatrix.copyFrom(nodeDef.matrix);
+    if (nodeDef.rotation && nodeDef.scale && nodeDef.translation)
+      localMatrix.compose(
+        nodeDef.translation as unknown as gl.vec3,
+        nodeDef.rotation as unknown as gl.vec4,
+        nodeDef.scale as unknown as gl.vec3,
+      );
 
-      for (let j = 0, jl = meshDef.primitives.length; j < jl; j++) {
-        // attribute
-        const primitiveDef = meshDef.primitives[j];
-        // 生成attribute
-        const positionSetting = this.uploadAttribute(
-          primitiveDef.attributes.POSITION,
-        );
-        const texcoordSetting = this.uploadAttribute(
-          primitiveDef.attributes.TEXCOORD_0,
-        );
+    // 什么是左乘，什么是右乘？
+    worldMatrix.copyFrom(localMatrix);
+    worldMatrix.multiply(parentWorldMatrix);
 
-        unlitMaterialProgram.setAttribute('aPosition', positionSetting);
-        unlitMaterialProgram.setAttribute('aTexcoord', texcoordSetting);
+    if (meshIndex !== undefined) this.renderMesh(meshIndex, worldMatrix);
 
-        // 纹理
-        const material = gltf.materials[primitiveDef.material];
-        const baseColorTexture = this.uploadTexture(
-          material.pbrMetallicRoughness.baseColorTexture.index,
-        );
+    if (nodeDef.children)
+      for (let i = 0, il = nodeDef.children.length; i < il; i++)
+        this.renderNode(nodeDef.children[i], worldMatrix);
+  }
 
-        // 纹理单元分配逻辑
-        const texUnit = 1;
-        gl.activeTexture(gl.TEXTURE0 + texUnit);
-        gl.bindTexture(gl.TEXTURE_2D, baseColorTexture);
-        unlitMaterialProgram.setUnifrom('uBaseColorTexture', texUnit);
+  renderMesh(meshIndex: number, modelWorldMatrix: Matrix4) {
+    const { gltf, gl } = this;
+    const meshDef = gltf.meshes[meshIndex];
 
-        // 绘制
-        const accessor = gltf.accessors[primitiveDef.attributes.POSITION];
-        const itemSize = WEBGL_TYPE_SIZES[accessor.type];
+    // 这里可能使用不同的program, 不同的材质
+    // GLTF可能内部指定了相机, three的mesh是不支持自定义相机的
+    unlitMaterialProgram.use();
+    unlitMaterialProgram.setUnifrom('uCameraPoseInvert', this.cameraPoseInvert);
+    unlitMaterialProgram.setUnifrom('uProjection', this.projection);
+    unlitMaterialProgram.setUnifrom('uModelPose', modelWorldMatrix);
 
-        unlitMaterialProgram.run(accessor.count * itemSize);
-      }
+    for (let j = 0, jl = meshDef.primitives.length; j < jl; j++) {
+      // attribute
+      const primitiveDef = meshDef.primitives[j];
+      // 生成attribute
+      const positionSetting = this.uploadAttribute(
+        primitiveDef.attributes.POSITION,
+      );
+      const texcoordSetting = this.uploadAttribute(
+        primitiveDef.attributes.TEXCOORD_0,
+      );
+
+      unlitMaterialProgram.setAttribute('aPosition', positionSetting);
+      unlitMaterialProgram.setAttribute('aTexcoord', texcoordSetting);
+
+      // 纹理 也可以提前所有纹理，可以提前批量上传 变成gl的资源，不过可能一些是没使用的
+      const material = gltf.materials[primitiveDef.material];
+      const baseColorTexture = this.uploadTexture(
+        material.pbrMetallicRoughness.baseColorTexture.index,
+      );
+
+      // 纹理单元分配逻辑
+      const texUnit = 0;
+      gl.activeTexture(gl.TEXTURE0 + texUnit);
+      gl.bindTexture(gl.TEXTURE_2D, baseColorTexture);
+      unlitMaterialProgram.setUnifrom('uBaseColorTexture', texUnit);
+
+      // 绘制
+      const accessor = gltf.accessors[primitiveDef.attributes.POSITION];
+      const itemSize = WEBGL_TYPE_SIZES[accessor.type];
+      console.log(accessor.count * itemSize);
+      unlitMaterialProgram.run(accessor.count * itemSize);
     }
   }
 

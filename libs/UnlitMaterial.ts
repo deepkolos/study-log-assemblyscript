@@ -10,6 +10,8 @@ type UnlitMatrialTypeMap<U = {}, A = {}> = CommonProgramTypeMap<
 >;
 
 // webgl program应该是单例的? 负责一类配置的渲染，还是一个mesh对应一个program？这里显示单例，如果是单例就意味着attribute和uniform每次都得重新设置了
+// three的program是按照功能特性组装起来的，是按照特性作为单例，而不仅仅是matrial, 比如阴影+PBR和纯粹PBR是一个，阴影也包含硬阴影软阴影
+// three shader之前也做了复用，我这里就为了练习，这一层就不复用了，主要想要复用希望是vscode也支持的包括提示寻址等等
 export const unlitMaterialProgram: GLProgram<UnlitMatrialTypeMap> =
   new GLProgram(
     glsl`
