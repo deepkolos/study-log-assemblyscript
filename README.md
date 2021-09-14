@@ -308,86 +308,105 @@ require('assemblyscript/std/portable');
 
 ## 2021-8-16
 
-0. 增加 performance 测试字符串和 Uint8Array 测试用例，发现格式转换十分耗时（感觉wasm并不适合高频数据交换的场景
+0. 增加 performance 测试字符串和 Uint8Array 测试用例，发现格式转换十分耗时（感觉 wasm 并不适合高频数据交换的场景
 
 ## 2021-8-18
 
-0. 想一下command buffer的实现，发现只有无返回值的api支持合并，但是api之间的执行顺序就会打乱也会出错
+0. 想一下 command buffer 的实现，发现只有无返回值的 api 支持合并，但是 api 之间的执行顺序就会打乱也会出错
 
 ## 2021-8-19
 
-0. 发现非常难从js传递复杂数据到wasm，gltf不太希望像three-d那样完全wasm内解析包括json的decode，先打算使用js调用wasm api来组装gltf
+0. 发现非常难从 js 传递复杂数据到 wasm，gltf 不太希望像 three-d 那样完全 wasm 内解析包括 json 的 decode，先打算使用 js 调用 wasm api 来组装 gltf
 
 ## 2021-8-23
 
-0. 初步实现基础GLTF结构写入到as
+0. 初步实现基础 GLTF 结构写入到 as
 
 ## 2021-8-24
 
-0. 编写js版的gltf-renderer 10%
+0. 编写 js 版的 gltf-renderer 10%
 
 ## 2021-8-25
 
-0. 编写js版的gltf-renderer 15%（新手机终于到了，用了3天的红米3s, 骑共享单车都得一两分钟解锁，健康码5分钟起，但是QQ极速版出奇的快
+0. 编写 js 版的 gltf-renderer 15%（新手机终于到了，用了 3 天的红米 3s, 骑共享单车都得一两分钟解锁，健康码 5 分钟起，但是 QQ 极速版出奇的快
 
 ## 2021-8-26
 
-1. 编写js版的gltf-renderer 20%
+1. 编写 js 版的 gltf-renderer 20%
 
 ## 2021-8-27
 
-1. 编写js版的gltf-renderer 21%
+1. 编写 js 版的 gltf-renderer 21%
 
 ## 2021-8-31
 
-1. 编写js版的gltf-renderer 25%
+1. 编写 js 版的 gltf-renderer 25%
 
 ## 2021-9-1
 
-1. 编写js版的gltf-renderer 26% (感觉进度太慢了，还是得有所侧重去实现才行
+1. 编写 js 版的 gltf-renderer 26% (感觉进度太慢了，还是得有所侧重去实现才行
 
 ## 2021-9-2
 
-1. 编写js版的gltf-renderer 30% 初步实现gltf展示，准备提炼笔记，进行抽象设计
+1. 编写 js 版的 gltf-renderer 30% 初步实现 gltf 展示，准备提炼笔记，进行抽象设计
 
 ## 2021-9-3
 
-1. 编写js版的gltf-renderer 35% 简单进行抽象设计，将会是GLTF直接和webgl api对接，会对webgl做一层简单的抽象，资源情况将会外挂存储
+1. 编写 js 版的 gltf-renderer 35% 简单进行抽象设计，将会是 GLTF 直接和 webgl api 对接，会对 webgl 做一层简单的抽象，资源情况将会外挂存储
 
 ## 2021-9-5
 
-1. 编写js版的gltf-renderer 40% 初步设计了 GLProgram，但buffer和texture由外部维护，仅仅更新attribute和uniform，TS友好，设置的参数均可配置，有提示
+1. 编写 js 版的 gltf-renderer 40% 初步设计了 GLProgram，但 buffer 和 texture 由外部维护，仅仅更新 attribute 和 uniform，TS 友好，设置的参数均可配置，有提示
 
 ## 2021-9-6
 
-1. 编写js版的gltf-renderer 45% TS的类型真有趣，居然实现了`class A implements [number, number, number]`, 群里的大佬确实强, 学到了，又是奇怪的抽象实验
+1. 编写 js 版的 gltf-renderer 45% TS 的类型真有趣，居然实现了`class A implements [number, number, number]`, 群里的大佬确实强, 学到了，又是奇怪的抽象实验
 
-## 2021-9-7 
+## 2021-9-7
 
-1. 编写js版的gltf-renderer 50% 跑起来了，不过纹理有问题，看来画个立方体就不简单
+1. 编写 js 版的 gltf-renderer 50% 跑起来了，不过纹理有问题，看来画个立方体就不简单
 
 ## 2021-9-8
 
-1. 编写js版的gltf-renderer 55% 修复了纹理的问题，需要上传纹理再生成mipmap，后面先看看three的抽象吧，感觉最近都在瞎抽象
+1. 编写 js 版的 gltf-renderer 55% 修复了纹理的问题，需要上传纹理再生成 mipmap，后面先看看 three 的抽象吧，感觉最近都在瞎抽象
 
 ## 2021-9-9
 
-0. 发现glTF的节点是带有cameraID，就是说渲染某个节点可以使用特定相机，GLTF一般不带相机
-1. glTF下标关联不适合节点增删，不过作为模型存储则方便复用，js 运行时有引用，但是字符串没有
-2. node还有matrix/TRS, 有动画的话，只出现TRS
-3. three的WebGLProgram是自己实现了一个glsl的模块复用能力, Programs则实现了一层复用，看来是动态生成很多个program, 然后把能复用给复用起来，program是按照启用的特性来动态生成。
+0. 发现 glTF 的节点是带有 cameraID，就是说渲染某个节点可以使用特定相机，GLTF 一般不带相机
+1. glTF 下标关联不适合节点增删，不过作为模型存储则方便复用，js 运行时有引用，但是字符串没有
+2. node 还有 matrix/TRS, 有动画的话，只出现 TRS
+3. three 的 WebGLProgram 是自己实现了一个 glsl 的模块复用能力, Programs 则实现了一层复用，看来是动态生成很多个 program, 然后把能复用给复用起来，program 是按照启用的特性来动态生成。
 4. 先整理各个部件大概可锻炼的能力，然后针对性去边看，边实现。美好的探索型练习题。
 
 TODO:
 
 0. 相机控制（炼数学计算，封装
 1. 场景树（炼数学计算
-2. 材质（练shader
-3. GLTF规范（学概念，适合探索
+2. 材质（练 shader
+3. GLTF 规范（学概念，适合探索
 4. 动画（练状态管理？
 
 ## 2021-9-13
 
-0. T * R * S，听到建模同学提到可以设置模型旋转中心，会是怎么实现呢？先R后T才能实现吧，和左乘右乘相关？
-1. 拆分了一下render函数，增加坐标和子节点的渲染
-2. 喵了几眼PBR，貌似内容比较多，BRDF也得回忆
+0. T _ R _ S，听到建模同学提到可以设置模型旋转中心，会是怎么实现呢？先 R 后 T 才能实现吧，和左乘右乘相关？
+1. 拆分了一下 render 函数，增加坐标和子节点的渲染
+2. 喵了几眼 PBR，貌似内容比较多，BRDF 也得回忆
+
+## 2021-9-14
+
+```
+每个片元的光照反射和光源的光强的关系公式表示：
+  “某点反射的颜色 = 牛逼的函数（光照颜色、法线方向、光照方向、固有色巴拉巴拉等等参数）”
+也就是BRDF，英文名是 Bidirectional Reflectance Distribution Function，即双向反射分布函数。
+
+BRDF 一般满足两个特性，交换律和能量守恒。
+  交换律是说当摄像机位置和光源位置调换位置，这个函数计算的最终结果是相同的。
+  能量守恒就是这个函数的计算结果不能超过光强。
+  
+关于光照计算是有很多种流派的，如果某光照计算违反了两者或其中之一，那么它们就不是 BRDF，就不是 PBR 材质。
+PBR 这个词语语境一般就直接代表硬表面材质了，而不是基于物理这个概念，例如 3S 材质也是基于物理测量的，但是不叫 PBR 材质。
+
+https://zhuanlan.zhihu.com/p/137013668
+```
+
+TODO: 直接看PBR还是太难了，还是先把Phong BlingPhong 理解并实现吧
