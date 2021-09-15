@@ -41,12 +41,6 @@ export type CommonProgramTypeMap<U = {}, A = {}> = ProgramTypeMap<
     uProjection: gl.mat4;
     uCameraPoseInvert: gl.mat4;
     uModelPose: gl.mat4;
-    // light
-    uAmbientLight: gl.vec4;
-    uDirectionalLight: gl.vec4;
-    uPointLight: gl.vec4;
-    uPointLightPosition: gl.vec4;
-    uDirectionalLightPose: gl.mat4;
   },
   A & {
     // geometry

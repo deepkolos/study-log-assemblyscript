@@ -18,7 +18,7 @@ export const unlitMaterialProgram: GLProgram<UnlitMatrialTypeMap> =
   // geometry
   attribute vec3 aPosition;
   attribute vec2 aTexcoord;
-  // attribute vec3 aNormal;
+  attribute vec3 aNormal;
 
   // camera
   uniform mat4 uProjection;
@@ -27,13 +27,11 @@ export const unlitMaterialProgram: GLProgram<UnlitMatrialTypeMap> =
 
   // fragment shader
   varying vec2 vTexcoord;
-  varying vec3 vNormal;
 
   void main() {
     vec4 pCameraFrame = uCameraPoseInvert * uModelPose * vec4(aPosition, 1);
     vec4 pNearPlane = uProjection * pCameraFrame;
 
-    // vNormal = aNormal;
     vTexcoord = aTexcoord;
 
     gl_Position = pNearPlane;
@@ -41,20 +39,13 @@ export const unlitMaterialProgram: GLProgram<UnlitMatrialTypeMap> =
   `,
     glsl`
   precision mediump float;
-  // light
-  uniform vec4 uAmbientLight;
-  uniform vec4 uDirectionalLight;
-  uniform vec4 uPointLight;
-  uniform vec4 uPointLightPosition;
-  uniform mat4 uDirectionalLightPose;
-  
+
   // matrial
   uniform sampler2D uBaseColorTexture;
   uniform vec3 uBaseColor;
 
   // varying
   varying vec2 vTexcoord;
-  varying vec4 vNormal;
 
   void main() {
     gl_FragColor = texture2D(uBaseColorTexture, vTexcoord);
