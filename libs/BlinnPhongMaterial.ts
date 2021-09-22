@@ -17,6 +17,9 @@ type BlinnPhongMatrialTypeMap<U = {}, A = {}> = CommonProgramTypeMap<
     uDirectionalLight: gl.vec4;
     uDirectionalLightPose: gl.mat4;
     uDirectionalLightIntensity: gl.float;
+
+    // camera
+    uCameraPosition: gl.vec3;
   },
   A & {
     aNormal: AttributeSetting;
@@ -55,6 +58,9 @@ export const blinnPhongMaterialProgram: GLProgram<BlinnPhongMatrialTypeMap> =
   `,
     glsl`
   precision mediump float;
+  // camera
+  uniform vec3 uCameraPosition;
+
   // light
   uniform vec4 uAmbientLight;
   uniform float uAmbientLightIntensity;
@@ -78,8 +84,14 @@ export const blinnPhongMaterialProgram: GLProgram<BlinnPhongMatrialTypeMap> =
 
   void main() {
     vec4 textureColor = texture2D(uBaseColorTexture, vTexcoord);
-    vec4 diffuselyReflectedLight = uPointLight * uPointLightIntensity / pow(length(uPointLightPosition, vPointWorld), 2) * max(0.0, vNormal * vPointWorld);
-    vec4 specularReflectedLight = 
+
+    vec3 viewDirection = uCameraPosition - vPointWorld;
+    vec3 pointLightDirection = uPointLightPosition - vPointWorld;
+    vec3 bisector = normalize(viewDirection + pointLightDirection);
+    vec4 pointLightOnSurface = uPointLight * uPointLightIntensity / pow(length(uPointLightPosition, vPointWorld), 2);
+    
+    vec4 diffuselyReflectedLight = pointLightOnSurface * max(0.0, vNormal * pointLightDirection);
+    vec4 specularReflectedLight = pointLightOnSurface * pow(max(0.0, vNormal * bisector), u);
 
     gl_FragColor = textureColor * (uAmbientLight + diffuselyReflectedLight);
   }

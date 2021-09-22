@@ -108,7 +108,7 @@ export class GLTFWebGLRenderer {
 
       unlitMaterialProgram.setAttribute('aPosition', positionSetting);
       unlitMaterialProgram.setAttribute('aTexcoord', texcoordSetting);
-      unlitMaterialProgram.setAttribute('aNormal', normalSetting);
+      // unlitMaterialProgram.setAttribute('aNormal', normalSetting);
 
       // 纹理 也可以提前所有纹理，可以提前批量上传 变成gl的资源，不过可能一些是没使用的
       const material = gltf.materials[primitiveDef.material];
