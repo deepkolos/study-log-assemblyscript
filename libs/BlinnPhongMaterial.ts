@@ -18,6 +18,8 @@ type BlinnPhongMatrialTypeMap<U = {}, A = {}> = CommonProgramTypeMap<
     uDirectionalLightPose: gl.mat4;
     uDirectionalLightIntensity: gl.float;
 
+    uSpecularShiness: gl.float;
+
     // camera
     uCameraPosition: gl.vec3;
   },
@@ -41,15 +43,17 @@ export const blinnPhongMaterialProgram: GLProgram<BlinnPhongMatrialTypeMap> =
 
   // fragment shader
   varying vec2 vTexcoord;
-  varying vec3 vNormal;
-  varying vec3 vPointWorld;
+  varying vec4 vNormal;
+  varying vec4 vPointWorld;
 
   void main() {
     vec4 pWorldFrame = uModelPose * vec4(aPosition, 1);
     vec4 pCameraFrame = uCameraPoseInvert * pWorldFrame;
     vec4 pNearPlane = uProjection * pCameraFrame;
+    vec4 normal = uModelPose * vec4(aNormal, 1);
 
-    vNormal = aNormal;
+    // 记得法线的变换不太一样?
+    vNormal = normal;
     vTexcoord = aTexcoord;
     vPointWorld = pWorldFrame;
 
@@ -61,7 +65,7 @@ export const blinnPhongMaterialProgram: GLProgram<BlinnPhongMatrialTypeMap> =
   // camera
   uniform vec3 uCameraPosition;
 
-  // light
+  // light (多光源的话如何实现呢？
   uniform vec4 uAmbientLight;
   uniform float uAmbientLightIntensity;
 
@@ -72,6 +76,8 @@ export const blinnPhongMaterialProgram: GLProgram<BlinnPhongMatrialTypeMap> =
   uniform vec4 uDirectionalLight;
   uniform mat4 uDirectionalLightPose;
   uniform float uDirectionalLightIntensity;
+
+  uniform float uSpecularShiness;
   
   // matrial
   uniform sampler2D uBaseColorTexture;
@@ -79,21 +85,42 @@ export const blinnPhongMaterialProgram: GLProgram<BlinnPhongMatrialTypeMap> =
 
   // varying
   varying vec2 vTexcoord;
-  varying vec3 vNormal;
-  varying vec3 vPointWorld;
+  varying vec4 vNormal;
+  varying vec4 vPointWorld;
 
   void main() {
     vec4 textureColor = texture2D(uBaseColorTexture, vTexcoord);
 
-    vec3 viewDirection = uCameraPosition - vPointWorld;
-    vec3 pointLightDirection = uPointLightPosition - vPointWorld;
+    vec3 normal = normalize(vNormal.xyz);
+    vec3 viewDirection = normalize(uCameraPosition - vPointWorld.xyz);
+    vec3 pointLightDirection = normalize(uPointLightPosition - vPointWorld.xyz); // 方向反了?
+    // vec3 pointLightDirection = -normalize(vec3(0,0,0) - vPointWorld.xyz); // 方向反了?
     vec3 bisector = normalize(viewDirection + pointLightDirection);
-    vec4 pointLightOnSurface = uPointLight * uPointLightIntensity / pow(length(uPointLightPosition, vPointWorld), 2);
-    
-    vec4 diffuselyReflectedLight = pointLightOnSurface * max(0.0, vNormal * pointLightDirection);
-    vec4 specularReflectedLight = pointLightOnSurface * pow(max(0.0, vNormal * bisector), u);
+    vec4 pointLightOnSurface = uPointLight * uPointLightIntensity / pow(length(uPointLightPosition - vPointWorld.xyz), 2.0);
 
-    gl_FragColor = textureColor * (uAmbientLight + diffuselyReflectedLight);
+    vec4 diffuselyReflectedLight = pointLightOnSurface * max(0.0, dot(normal, pointLightDirection));
+    vec4 specularReflectedLight = pointLightOnSurface * pow(max(0.0, dot(normal, bisector)), uSpecularShiness);
+    vec4 ambientLight = uAmbientLight * uAmbientLightIntensity;
+
+    gl_FragColor = textureColor * (ambientLight + diffuselyReflectedLight + specularReflectedLight);
+
+    gl_FragColor = textureColor * (ambientLight + diffuselyReflectedLight);
+    // gl_FragColor = vec4(pointLightOnSurface.xyz, 1);
+    // gl_FragColor = textureColor * uPointLight * uPointLightIntensity * max(0.0, -dot(normal, pointLightDirection));
+    // gl_FragColor = vec4(vNormal.x, vNormal.y, vNormal.z, 1);
+    // gl_FragColor = vec4(pointLightDirection.x, pointLightDirection.y, pointLightDirection.z, 1);
+    // gl_FragColor = vec4(pointLightDirection.x, pointLightDirection.x, pointLightDirection.x, 1);
+    // gl_FragColor = vec4(pointLightDirection.y, pointLightDirection.y, pointLightDirection.y, 1);
+    // gl_FragColor = vec4(-pointLightDirection.z, -pointLightDirection.z, -pointLightDirection.z, 1);
+    // gl_FragColor = vec4(vPointWorld.x, vPointWorld.y, vPointWorld.z, 1);
+    // gl_FragColor = vec4(abs(vPointWorld.x), abs(vPointWorld.y), abs(vPointWorld.z), 1);
+    float dotND = dot(normal, pointLightDirection);
+    // float dotND = abs(dot(normalize(vec4(0,0,1,1)), normalize(vec4(0,1,0,1)))); // 非0
+    // float dotND = dot(normalize(vec3(0,0,1)), normalize(vec3(0,1,0))); // 0
+    // gl_FragColor = vec4(abs(vNormal.x), abs(vNormal.y), abs(vNormal.z), 1);
+    gl_FragColor = vec4(dotND, dotND, dotND, 1);
+    // gl_FragColor = vec4(0, 0, 0, 1);
+
   }
   `,
   );

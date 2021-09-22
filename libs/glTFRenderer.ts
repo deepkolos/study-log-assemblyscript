@@ -3,6 +3,7 @@ import { GLTFGLCache } from './GLTFGLCache';
 import { isPowerOfTwo, Matrix4 } from './Math';
 import { unlitMaterialProgram } from './UnlitMaterial';
 import { GlTf } from './GLTF.d';
+import { blinnPhongMaterialProgram } from './BlinnPhongMaterial';
 
 const WEBGL_COMPONENT_TYPES = {
   5120: Int8Array,
@@ -23,6 +24,18 @@ const WEBGL_TYPE_SIZES = {
   MAT4: 16,
 };
 
+interface LightCfg {
+  uAmbientLight: gl.vec4;
+  uAmbientLightIntensity: gl.float;
+  uPointLight: gl.vec4;
+  uPointLightPosition: gl.vec3;
+  uPointLightIntensity: gl.float;
+  uDirectionalLight: gl.vec4;
+  uDirectionalLightPose: gl.mat4;
+  uDirectionalLightIntensity: gl.float;
+  uSpecularShiness: gl.float;
+}
+
 export class GLTFWebGLRenderer {
   private cache: GLTFGLCache;
   private gl: WebGLRenderingContext;
@@ -30,18 +43,29 @@ export class GLTFWebGLRenderer {
   projection: Matrix4;
   cameraPoseInvert: Matrix4;
   modelPose: Matrix4;
+  light: LightCfg;
 
   constructor(gl: WebGLRenderingContext, gltf: GlTf) {
     this.gl = gl;
     this.gltf = gltf;
     this.cache = new GLTFGLCache();
-    unlitMaterialProgram.compile(gl);
+    // unlitMaterialProgram.compile(gl);
+    blinnPhongMaterialProgram.compile(gl);
+    // TODO: program不hardcode
+    // FIXME: 通过映射就类型就丢了
   }
 
-  render(projection: Matrix4, cameraPoseInvert: Matrix4, modelPose: Matrix4) {
+  render(
+    projection: Matrix4,
+    cameraPoseInvert: Matrix4,
+    modelPose: Matrix4,
+    light: LightCfg,
+  ) {
     this.projection = projection;
     this.cameraPoseInvert = cameraPoseInvert;
     this.modelPose = modelPose;
+    this.light = light;
+    // 光照信息，threejs是挂在场景图里，GLTF也能看到光照的定义,这里就先直接传递了
 
     this.renderScene(this.gltf.scene);
   }
@@ -82,15 +106,44 @@ export class GLTFWebGLRenderer {
   }
 
   renderMesh(meshIndex: number, modelWorldMatrix: Matrix4) {
-    const { gltf, gl } = this;
+    const { gltf, gl, light } = this;
     const meshDef = gltf.meshes[meshIndex];
 
     // 这里可能使用不同的program, 不同的材质
     // GLTF可能内部指定了相机, three的mesh是不支持自定义相机的
-    unlitMaterialProgram.use();
-    unlitMaterialProgram.setUnifrom('uCameraPoseInvert', this.cameraPoseInvert);
-    unlitMaterialProgram.setUnifrom('uProjection', this.projection);
-    unlitMaterialProgram.setUnifrom('uModelPose', modelWorldMatrix);
+    blinnPhongMaterialProgram.use();
+    blinnPhongMaterialProgram.setUnifrom(
+      'uCameraPoseInvert',
+      this.cameraPoseInvert,
+    );
+    blinnPhongMaterialProgram.setUnifrom('uProjection', this.projection);
+    blinnPhongMaterialProgram.setUnifrom('uModelPose', modelWorldMatrix);
+    blinnPhongMaterialProgram.setUnifrom('uAmbientLight', light.uAmbientLight);
+    blinnPhongMaterialProgram.setUnifrom(
+      'uAmbientLightIntensity',
+      light.uAmbientLightIntensity,
+    );
+    // blinnPhongMaterialProgram.setUnifrom(
+    //   'uDirectionalLight',
+    //   light.uDirectionalLight,
+    // );
+    // blinnPhongMaterialProgram.setUnifrom(
+    //   'uDirectionalLightIntensity',
+    //   light.uDirectionalLightIntensity,
+    // );
+    // blinnPhongMaterialProgram.setUnifrom(
+    //   'uDirectionalLightPose',
+    //   light.uDirectionalLightPose,
+    // );
+    blinnPhongMaterialProgram.setUnifrom('uPointLight', light.uPointLight);
+    blinnPhongMaterialProgram.setUnifrom(
+      'uPointLightIntensity',
+      light.uPointLightIntensity,
+    );
+    blinnPhongMaterialProgram.setUnifrom(
+      'uPointLightPosition',
+      light.uPointLightPosition,
+    );
 
     for (let j = 0, jl = meshDef.primitives.length; j < jl; j++) {
       // attribute
@@ -106,9 +159,9 @@ export class GLTFWebGLRenderer {
         primitiveDef.attributes.NORMAL,
       );
 
-      unlitMaterialProgram.setAttribute('aPosition', positionSetting);
-      unlitMaterialProgram.setAttribute('aTexcoord', texcoordSetting);
-      // unlitMaterialProgram.setAttribute('aNormal', normalSetting);
+      blinnPhongMaterialProgram.setAttribute('aPosition', positionSetting);
+      blinnPhongMaterialProgram.setAttribute('aTexcoord', texcoordSetting);
+      blinnPhongMaterialProgram.setAttribute('aNormal', normalSetting);
 
       // 纹理 也可以提前所有纹理，可以提前批量上传 变成gl的资源，不过可能一些是没使用的
       const material = gltf.materials[primitiveDef.material];
@@ -120,13 +173,13 @@ export class GLTFWebGLRenderer {
       const texUnit = 0;
       gl.activeTexture(gl.TEXTURE0 + texUnit);
       gl.bindTexture(gl.TEXTURE_2D, baseColorTexture);
-      unlitMaterialProgram.setUnifrom('uBaseColorTexture', texUnit);
+      blinnPhongMaterialProgram.setUnifrom('uBaseColorTexture', texUnit);
 
       // 绘制
       const accessor = gltf.accessors[primitiveDef.attributes.POSITION];
       const itemSize = WEBGL_TYPE_SIZES[accessor.type];
-      console.log(accessor.count * itemSize);
-      unlitMaterialProgram.run(accessor.count * itemSize);
+      // console.log(accessor.count * itemSize);
+      blinnPhongMaterialProgram.run(accessor.count * itemSize);
     }
   }
 

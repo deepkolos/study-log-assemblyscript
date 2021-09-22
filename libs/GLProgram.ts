@@ -1,3 +1,5 @@
+import { addLineNumber } from './utils';
+
 type AttributeInfo<T> = {
   [k in keyof T]: {
     name: string;
@@ -100,6 +102,7 @@ export class GLProgram<
 
   setUnifrom<K extends keyof T['Uniforms']>(name: K, data: T['Uniforms'][K]) {
     const { gl, uniformInfo } = this;
+    if (!uniformInfo[name]) throw new Error(`set ${name} fail`);
     const { type, location } = uniformInfo[name];
 
     // TODO: add cache 只有变化了才有gl call
@@ -285,7 +288,11 @@ function createGLShader(
   gl.compileShader(shader);
   const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
   if (!success)
-    console.error('compile shader fail', gl.getShaderInfoLog(shader));
+    console.error(
+      'compile shader fail',
+      gl.getShaderInfoLog(shader),
+      addLineNumber(shaderSource),
+    );
   return shader;
 }
 
