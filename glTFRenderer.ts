@@ -53,21 +53,21 @@ loadGLTF('./models/glTF/Cube.gltf').then(gltf => {
 
   const uPointLight: gl.vec4 = [1, 1, 1, 1];
   const uPointLightPosition: gl.vec3 = [0, 0, 0];
-  const uPointLightIntensity = 10;
+  const uPointLightIntensity = 12;
 
   const uDirectionalLight: gl.vec4 = [1, 1, 1, 1];
   const uDirectionalLightPose: gl.mat4 = new Matrix4();
   const uDirectionalLightIntensity = 0;
 
-  const uSpecularShiness = 1;
+  const uSpecularShiness = 30;
 
   let x = 0;
   let t = 0;
   const render = () => {
     x += 0.01;
-    modelPose.rotate(x, x, x);
+    // modelPose.rotate(x, x, x);
     // modelPose.rotate(x, 0, 0);
-    // modelPose.rotate(0, x, 0);
+    modelPose.rotate(0, x, 0);
     // modelPose.rotate(0, 0, x);
     t = performance.now();
     glTFRenderer.render(projection, cameraPoseInvert, modelPose, {

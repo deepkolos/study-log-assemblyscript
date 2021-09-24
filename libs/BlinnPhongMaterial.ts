@@ -104,7 +104,9 @@ export const blinnPhongMaterialProgram: GLProgram<BlinnPhongMatrialTypeMap> =
 
     gl_FragColor = textureColor * vec4(ambientLight.xyz + diffuselyReflectedLight.xyz + specularReflectedLight.xyz, 1);
 
-    gl_FragColor = textureColor * vec4(ambientLight.xyz + diffuselyReflectedLight.xyz, 1);
+    // gl_FragColor = textureColor * vec4(ambientLight.xyz + diffuselyReflectedLight.xyz, 1);
+    // gl_FragColor = textureColor * vec4(specularReflectedLight.xyz, 1);
+
     // gl_FragColor = textureColor * (vec4(0,0,0,1));
     // gl_FragColor = textureColor * (pointLightOnSurface);
     // gl_FragColor = vec4(pointLightOnSurface.xyz, 1);
@@ -139,6 +141,14 @@ export const blinnPhongMaterialProgram: GLProgram<BlinnPhongMatrialTypeMap> =
     // float pointLightIntensity = pow(length(uPointLightPosition - vPointWorld.xyz), 2.0) / 100.0;
     // gl_FragColor = vec4(pointLightIntensity, pointLightIntensity, pointLightIntensity, 1);
 
+    // 检查 specularReflectedLight
+    // gl_FragColor = vec4(bisector, 1); // 都是蓝色
+    // gl_FragColor = vec4(normal, 1); // 正面时候是蓝色, 侧面红色
+    // float dotNB = max(0.0, dot(normal, bisector));
+    // gl_FragColor = vec4(dotNB, dotNB, dotNB, 1);
+    // float intensity = pow(max(0.0, dot(normal, bisector)), 30.0);
+    // float intensity = pow(1.2, 10.0);
+    // gl_FragColor = vec4(intensity, intensity, intensity, 1);
 
   }
   `,

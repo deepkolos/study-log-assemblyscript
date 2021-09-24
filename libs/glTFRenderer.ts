@@ -123,6 +123,10 @@ export class GLTFWebGLRenderer {
       'uAmbientLightIntensity',
       light.uAmbientLightIntensity,
     );
+    blinnPhongMaterialProgram.setUnifrom(
+      'uSpecularShiness',
+      light.uSpecularShiness,
+    );
     // blinnPhongMaterialProgram.setUnifrom(
     //   'uDirectionalLight',
     //   light.uDirectionalLight,

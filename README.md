@@ -434,3 +434,7 @@ https://zhuanlan.zhihu.com/p/144331612
 
 0. 为什么active uniform数量返回的比定义的少? https://www.khronos.org/opengl/wiki/Uniform_(GLSL) 代码里没有使用导致
 1. 如何可视化法线?
+
+## 2021-9-23
+
+0. 完成specularReflectedLight的调试
