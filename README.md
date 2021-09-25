@@ -438,3 +438,7 @@ https://zhuanlan.zhihu.com/p/144331612
 ## 2021-9-23
 
 0. 完成specularReflectedLight的调试
+
+## 2021-9-24
+
+0. 法线的变换理解了, 但是实现效果不对, 奇怪了

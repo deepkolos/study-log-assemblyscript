@@ -43,6 +43,7 @@ export type CommonProgramTypeMap<U = {}, A = {}> = ProgramTypeMap<
     uProjection: gl.mat4;
     uCameraPoseInvert: gl.mat4;
     uModelPose: gl.mat4;
+    uModelPoseInvert: gl.mat4;
   },
   A & {
     // geometry
@@ -102,7 +103,10 @@ export class GLProgram<
 
   setUnifrom<K extends keyof T['Uniforms']>(name: K, data: T['Uniforms'][K]) {
     const { gl, uniformInfo } = this;
-    if (!uniformInfo[name]) throw new Error(`set ${name} fail`);
+    if (!uniformInfo[name]) {
+      console.error(`set ${name} fail`);
+      return this;
+    }
     const { type, location } = uniformInfo[name];
 
     // TODO: add cache 只有变化了才有gl call

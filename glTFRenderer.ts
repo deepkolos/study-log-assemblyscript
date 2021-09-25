@@ -66,8 +66,8 @@ loadGLTF('./models/glTF/Cube.gltf').then(gltf => {
   const render = () => {
     x += 0.01;
     // modelPose.rotate(x, x, x);
-    // modelPose.rotate(x, 0, 0);
-    modelPose.rotate(0, x, 0);
+    modelPose.rotate(x, 0, 0);
+    // modelPose.rotate(0, x, 0);
     // modelPose.rotate(0, 0, x);
     t = performance.now();
     glTFRenderer.render(projection, cameraPoseInvert, modelPose, {

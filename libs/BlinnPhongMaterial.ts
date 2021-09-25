@@ -40,6 +40,7 @@ export const blinnPhongMaterialProgram: GLProgram<BlinnPhongMatrialTypeMap> =
   uniform mat4 uProjection;
   uniform mat4 uCameraPoseInvert;
   uniform mat4 uModelPose;
+  uniform mat4 uModelPoseInvert;
 
   // fragment shader
   varying vec2 vTexcoord;
@@ -51,8 +52,11 @@ export const blinnPhongMaterialProgram: GLProgram<BlinnPhongMatrialTypeMap> =
     vec4 pCameraFrame = uCameraPoseInvert * pWorldFrame;
     vec4 pNearPlane = uProjection * pCameraFrame;
     vec3 normal = mat3(uModelPose) * aNormal;
+    // vec3 normal = (uModelPoseInvert * vec4(aNormal, 1)).xyz; // 为什么效果不对呢奇怪了,感觉方向还是不动
+    // vec3 normal = mat3(uModelPoseInvert) * aNormal;
 
     // 记得法线的变换不太一样? 法线不需要位移,只需要应用旋转
+    // https://zhuanlan.zhihu.com/p/144331612 M^-1^T : M的逆的转置
     vNormal = normal;
     vTexcoord = aTexcoord;
     vPointWorld = pWorldFrame;

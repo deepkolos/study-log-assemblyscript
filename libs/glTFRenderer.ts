@@ -44,6 +44,7 @@ export class GLTFWebGLRenderer {
   cameraPoseInvert: Matrix4;
   modelPose: Matrix4;
   light: LightCfg;
+  modelPoseInvert: Matrix4;
 
   constructor(gl: WebGLRenderingContext, gltf: GlTf) {
     this.gl = gl;
@@ -65,6 +66,10 @@ export class GLTFWebGLRenderer {
     this.cameraPoseInvert = cameraPoseInvert;
     this.modelPose = modelPose;
     this.light = light;
+    this.modelPoseInvert = new Matrix4()
+      .copyFrom(modelPose)
+      .invert()
+      .transpose();
     // 光照信息，threejs是挂在场景图里，GLTF也能看到光照的定义,这里就先直接传递了
 
     this.renderScene(this.gltf.scene);
@@ -119,6 +124,11 @@ export class GLTFWebGLRenderer {
     blinnPhongMaterialProgram.setUnifrom('uProjection', this.projection);
     blinnPhongMaterialProgram.setUnifrom('uModelPose', modelWorldMatrix);
     blinnPhongMaterialProgram.setUnifrom('uAmbientLight', light.uAmbientLight);
+    blinnPhongMaterialProgram.setUnifrom(
+      'uModelPoseInvert',
+      this.modelPoseInvert,
+    );
+
     blinnPhongMaterialProgram.setUnifrom(
       'uAmbientLightIntensity',
       light.uAmbientLightIntensity,

@@ -73,6 +73,22 @@ export class Matrix4 extends Array<number> implements gl.mat4 {
   }
 
   // prettier-ignore
+  transpose () {
+		var te = this;
+		var tmp;
+
+		tmp = te[ 1 ]; te[ 1 ] = te[ 4 ]; te[ 4 ] = tmp;
+		tmp = te[ 2 ]; te[ 2 ] = te[ 8 ]; te[ 8 ] = tmp;
+		tmp = te[ 6 ]; te[ 6 ] = te[ 9 ]; te[ 9 ] = tmp;
+
+		tmp = te[ 3 ]; te[ 3 ] = te[ 12 ]; te[ 12 ] = tmp;
+		tmp = te[ 7 ]; te[ 7 ] = te[ 13 ]; te[ 13 ] = tmp;
+		tmp = te[ 11 ]; te[ 11 ] = te[ 14 ]; te[ 14 ] = tmp;
+
+		return this;
+	}
+
+  // prettier-ignore
   compose(position: gl.vec3, quaternion: gl.vec4, scale: gl.vec3) {
 		const te = this;
 
