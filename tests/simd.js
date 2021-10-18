@@ -53,3 +53,20 @@ let wasmCost, jsCost;
 
 console.log(`wasmCost: ${wasmCost}`);
 console.log(`jsCost: ${jsCost}`);
+
+const mat4_0 = new wasmExport.Mat4();
+const mat4_1 = new wasmExport.Mat4();
+mat4_0.set(
+  1, 0, 0, 0,
+  0, 1, 0, 0,
+  0, 0, 1, 0,
+  0, 0, 0, 1,
+);
+mat4_1.set(
+  2, 1, 0, 0,
+  0, 2, 0, 0,
+  0, 0, 1, 0,
+  0, 0, 0, 1,
+);
+const mat4_2 = mat4_0.multiply(mat4_1);
+console.log(wasmExport.__getFloat32ArrayView(mat4_0.elements));
