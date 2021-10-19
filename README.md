@@ -474,3 +474,11 @@ https://zhuanlan.zhihu.com/p/144331612
 
 又又发现个手写 wat 的库, 正是我打算实现的 simd 矩阵库 [ftb-matrix](https://github.com/marcchambon/ftb-matrix)
 f32x4需要convert_i32x4_s, 有点懵了, 感觉不好用, ftb-matrix思路不错,wasm就是对memory做计算,也没有类的概念,js负责设置memory,调用方法,js的类实例映射到一块memory
+
+## 2021-10-19
+
+这给向量设置数据也太难了, 只能replace_lane么, 这样太难受了, 可能是找到正确的方法, 感觉比一般代码都多, 代码量上面.
+感觉应该是从指针里读取,而不是创建一个,然后通过replace_lane赋值
+ftb-matrix通过export出去的memory, js读取数据就是从Float32Array的view去读取memory,计算时候就传递向量的指针过去,v128.load从指针load数据
+
+v128是一个存数据向量,里面可以存任意数据(或者说不关心存的是i8还是f32, 都是运算符决定的), 比如f32x4.add(v128, v128), 就是把参数的两个向量, 按照f32x4的加法运算
