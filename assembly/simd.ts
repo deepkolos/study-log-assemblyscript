@@ -63,7 +63,6 @@ export function SIMD_CALC(
   r3: i32,
   r4: i32,
 ): i32[] {
-  return []
   let vLeft = i32x4.splat(0);
   let vRight = i32x4.splat(0);
   vLeft = i32x4.replace_lane(vLeft, 0, l1);
@@ -211,9 +210,6 @@ export class Mat4 {
     const be = b.elements;
     const te = this.elements;
 
-    let vLeft = f32x4.splat(0);
-    let vRight = f32x4.splat(0);
-
     const a11 = ae[0],
       a12 = ae[4],
       a13 = ae[8],
@@ -248,16 +244,71 @@ export class Mat4 {
       b43 = be[11],
       b44 = be[15];
 
-    // vLeft = f32x4.replace_lane(vLeft, 0, l1);
-    // vLeft = f32x4.replace_lane(vLeft, 1, l2);
-    // vLeft = f32x4.replace_lane(vLeft, 2, l3);
-    // vLeft = f32x4.replace_lane(vLeft, 3, l4);
+    // 一次可以运算4个f32 不想用replace_lane
+    //#region simd start 最初版
+    const tmpInput = new Float32Array(4);
 
-    // vRight = f32x4.replace_lane(vRight, 0, r1);
-    // vRight = f32x4.replace_lane(vRight, 1, r2);
-    // vRight = f32x4.replace_lane(vRight, 2, r3);
-    // vRight = f32x4.replace_lane(vRight, 3, r4);
+    // tmpInput[0] = ae[0];
+    // tmpInput[1] = ae[0];
+    // tmpInput[2] = ae[0];
+    // tmpInput[3] = ae[0];
+    // let l = v128.load(tmpInput.dataStart);
+    let l = f32x4.splat(ae[0]);
 
+    tmpInput[0] = be[0];
+    tmpInput[1] = be[4];
+    tmpInput[2] = be[8];
+    tmpInput[3] = be[12];
+    let r = v128.load(tmpInput.dataStart);
+
+    let o0 = f32x4.mul(l, r);
+    // v128.store(tmpOutput.dataStart, o);
+
+    l = f32x4.splat(ae[4]);
+
+    tmpInput[0] = be[1];
+    tmpInput[1] = be[5];
+    tmpInput[2] = be[9];
+    tmpInput[3] = be[13];
+    r = v128.load(tmpInput.dataStart);
+
+    let o1 = f32x4.mul(l, r);
+
+    l = f32x4.splat(ae[8]);
+
+    tmpInput[0] = be[2];
+    tmpInput[1] = be[6];
+    tmpInput[2] = be[10];
+    tmpInput[3] = be[14];
+    r = v128.load(tmpInput.dataStart);
+
+    let o2 = f32x4.mul(l, r);
+
+    l = f32x4.splat(ae[12]);
+
+    tmpInput[0] = be[3];
+    tmpInput[1] = be[7];
+    tmpInput[2] = be[11];
+    tmpInput[3] = be[15];
+    r = v128.load(tmpInput.dataStart);
+
+    let o3 = f32x4.mul(l, r);
+
+    let o4 = f32x4.add(o0, o1);
+    o4 = f32x4.add(o4, o2);
+    o4 = f32x4.add(o4, o3);
+
+    v128.store(tmpInput.dataStart, o4);
+
+    te[0] = tmpInput[0];
+    te[4] = tmpInput[1];
+    te[8] = tmpInput[2];
+    te[12] = tmpInput[3];
+    //#endregion
+
+    // 循环能减少代码量, 但是性能会下降, 但是代码行数确实有点多, 都试试吧, 实测下
+
+    // 这里下标间隔都是4, 能一次性存到这里面么
     te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
     te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
     te[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
@@ -280,4 +331,36 @@ export class Mat4 {
 
     return this;
   }
+}
+
+// 验证v128.load的参数
+export function test_v128_load(): Uint8Array {
+  const arr = new Uint8Array(32);
+
+  for (let i: u8 = 0; i < 32; i++) {
+    arr[i] = i;
+  }
+
+  let vec = v128.load(arr.dataStart, 16);
+  arr[16] = 33;
+  // 加载后不影响v128内的值
+  const out = new Uint8Array(16);
+  out[0] = i8x16.extract_lane_u(vec, 0);
+  out[1] = i8x16.extract_lane_u(vec, 1);
+  out[2] = i8x16.extract_lane_u(vec, 2);
+  out[3] = i8x16.extract_lane_u(vec, 3);
+  out[4] = i8x16.extract_lane_u(vec, 4);
+  out[5] = i8x16.extract_lane_u(vec, 5);
+  out[6] = i8x16.extract_lane_u(vec, 6);
+  out[7] = i8x16.extract_lane_u(vec, 7);
+  out[8] = i8x16.extract_lane_u(vec, 8);
+  out[9] = i8x16.extract_lane_u(vec, 9);
+  out[10] = i8x16.extract_lane_u(vec, 10);
+  out[11] = i8x16.extract_lane_u(vec, 11);
+  out[12] = i8x16.extract_lane_u(vec, 12);
+  out[13] = i8x16.extract_lane_u(vec, 13);
+  out[14] = i8x16.extract_lane_u(vec, 14);
+  out[15] = i8x16.extract_lane_u(vec, 15);
+
+  return out;
 }

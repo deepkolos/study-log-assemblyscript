@@ -70,3 +70,6 @@ mat4_1.set(
 );
 const mat4_2 = mat4_0.multiply(mat4_1);
 console.log(wasmExport.__getFloat32ArrayView(mat4_0.elements));
+
+const test_v128_loadOutput = wasmExport.test_v128_load()
+console.log(wasmExport.__getUint8ArrayView(test_v128_loadOutput))

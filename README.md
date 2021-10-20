@@ -473,12 +473,43 @@ https://zhuanlan.zhihu.com/p/144331612
 ## 2021-10-18
 
 又又发现个手写 wat 的库, 正是我打算实现的 simd 矩阵库 [ftb-matrix](https://github.com/marcchambon/ftb-matrix)
-f32x4需要convert_i32x4_s, 有点懵了, 感觉不好用, ftb-matrix思路不错,wasm就是对memory做计算,也没有类的概念,js负责设置memory,调用方法,js的类实例映射到一块memory
+f32x4 需要 convert_i32x4_s, 有点懵了, 感觉不好用, ftb-matrix 思路不错,wasm 就是对 memory 做计算,也没有类的概念,js 负责设置 memory,调用方法,js 的类实例映射到一块 memory
 
 ## 2021-10-19
 
-这给向量设置数据也太难了, 只能replace_lane么, 这样太难受了, 可能是找到正确的方法, 感觉比一般代码都多, 代码量上面.
-感觉应该是从指针里读取,而不是创建一个,然后通过replace_lane赋值
-ftb-matrix通过export出去的memory, js读取数据就是从Float32Array的view去读取memory,计算时候就传递向量的指针过去,v128.load从指针load数据
+这给向量设置数据也太难了, 只能 replace_lane 么, 这样太难受了, 可能是找到正确的方法, 感觉比一般代码都多, 代码量上面.
+感觉应该是从指针里读取,而不是创建一个,然后通过 replace_lane 赋值
+ftb-matrix 通过 export 出去的 memory, js 读取数据就是从 Float32Array 的 view 去读取 memory,计算时候就传递向量的指针过去,v128.load 从指针 load 数据
 
-v128是一个存数据向量,里面可以存任意数据(或者说不关心存的是i8还是f32, 都是运算符决定的), 比如f32x4.add(v128, v128), 就是把参数的两个向量, 按照f32x4的加法运算
+v128 是一个存数据向量,里面可以存任意数据(或者说不关心存的是 i8 还是 f32, 都是运算符决定的), 比如 f32x4.add(v128, v128), 就是把参数的两个向量, 按照 f32x4 的加法运算
+
+## 2021-10-20
+
+从[zeux大佬看v8源码总结出simd生成指令个数表格](https://github.com/zeux/wasm-simd/blob/master/Instructions.md)
+
+可以看出, v128.load只需一个指令, replace_lane也是一个, 但是需要调用多次, f32x4就需要4次, 初始化v128还是得用v128.load. 还是得老实看官方文档, assemblyscript的文档还是太稀缺了
+
+[https://github.com/WebAssembly/simd/blob/main/proposals/simd/SIMD.md](https://github.com/WebAssembly/simd/blob/main/proposals/simd/SIMD.md)
+
+Operations on the SIMD value type
+
+The single v128 SIMD type can be used to represent different types of packed data, e.g., it can represent four 32-bit floating point values, 8 16-bit signed or unsigned integer values, etc.
+
+The instructions introduced in this specification are named according to the following schema: {interpretation}.{operation}. Where the {interpretation} prefix denotes how the bytes of the v128 type are interpreted by the {operation}.
+比如f32x4.add, v128会解析为f32 4个lane, 加法
+
+For example, the instructions f32x4.extract_lane and i64x2.extract_lane perform the same semantic operation: extracting the scalar value of a vector lane. However, the f32x4.extract_lane instruction returns a 32-bit wide floating point value, while the i64x2.extract_lane instruction returns a 64-bit wide integer value.
+
+The floating-point operations in this specification aim to be compatible with WebAssembly's scalar floating-point operations. In particular, the rules about NaN propagation and default NaN values are the same, and all operations use the default roundTiesToEven rounding mode.
+本规范中的浮点操作旨在与WebAssembly的标量浮点操作兼容。特别是，关于NaN传播的规则和默认NaN值是相同的，所有操作都使用默认的roundTiesToEven舍入模式。
+
+as的v128.load的immOffset应该是simd的v128.load的memarg.offset再加个offset
+
+```python
+def S.load(m: memarg):
+    return S.from_bytes(memory[memarg.offset:memarg.offset + 16])
+
+## memarg.offset = ptr + immOffset, 验证可以从as的单元测试里找, 或者自己试一下 √ 是这个
+```
+
+load 完后memery的数据可替换么, 会影响load进v128的值么? 否, 不会影响
