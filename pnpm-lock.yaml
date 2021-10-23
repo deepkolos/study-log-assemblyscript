@@ -5,6 +5,7 @@ specifiers:
   as-bind: ^0.8.0
   as-string-sink: ^0.4.2
   assemblyscript: ^0.19.11
+  ftb-matrix: ^0.0.9
   typescript: ^4.4.2
   vite: ^2.5.3
 
@@ -12,6 +13,7 @@ dependencies:
   '@assemblyscript/loader': 0.19.11
   as-bind: 0.8.0_55a9af1b8ebfa5e3b7527e2ea13a6c42
   as-string-sink: 0.4.2
+  ftb-matrix: 0.0.9
 
 devDependencies:
   assemblyscript: 0.19.11
@@ -53,11 +55,16 @@ packages:
     dev: true
 
   /fsevents/2.3.2:
-    resolution: {integrity: sha1-ilJveLj99GI7cJ4Ll1xSwkwC/Ro=, tarball: fsevents/download/fsevents-2.3.2.tgz}
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
+
+  /ftb-matrix/0.0.9:
+    resolution: {integrity: sha512-9YRb48axNNKSGfOaY0xFaafx9gy5QHaQWI7IdrectlG/e40nfME6ArRf1aIJ4Y/fU2AcpuiyIE8ARQzCQCoTJA==}
+    dev: false
 
   /function-bind/1.1.1:
     resolution: {integrity: sha1-pWiZ0+o8m6uHS7l3O3xe3pL0iV0=, tarball: function-bind/download/function-bind-1.1.1.tgz}

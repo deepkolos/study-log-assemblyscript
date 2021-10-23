@@ -1,6 +1,10 @@
 // 使用方式还得看测试用例
 // https://github.com/AssemblyScript/assemblyscript/blob/main/tests/compiler/features/simd.ts
 
+// namespace console {
+//   export declare function log(t: i64): void;
+// }
+
 export function SIMD_ADD(
   l1: i32,
   l2: i32,
@@ -210,95 +214,41 @@ export class Mat4 {
     const be = b.elements;
     const te = this.elements;
 
-    const a11 = ae[0],
-      a12 = ae[4],
-      a13 = ae[8],
-      a14 = ae[12];
-    const a21 = ae[1],
-      a22 = ae[5],
-      a23 = ae[9],
-      a24 = ae[13];
-    const a31 = ae[2],
-      a32 = ae[6],
-      a33 = ae[10],
-      a34 = ae[14];
-    const a41 = ae[3],
-      a42 = ae[7],
-      a43 = ae[11],
-      a44 = ae[15];
-
-    const b11 = be[0],
-      b12 = be[4],
-      b13 = be[8],
-      b14 = be[12];
-    const b21 = be[1],
-      b22 = be[5],
-      b23 = be[9],
-      b24 = be[13];
-    const b31 = be[2],
-      b32 = be[6],
-      b33 = be[10],
-      b34 = be[14];
-    const b41 = be[3],
-      b42 = be[7],
-      b43 = be[11],
-      b44 = be[15];
-
     // 一次可以运算4个f32 不想用replace_lane
     //#region simd start 最初版
     const tmpInput = new Float32Array(4);
-
-    // tmpInput[0] = ae[0];
-    // tmpInput[1] = ae[0];
-    // tmpInput[2] = ae[0];
-    // tmpInput[3] = ae[0];
-    // let l = v128.load(tmpInput.dataStart);
-    let l = f32x4.splat(ae[0]);
 
     tmpInput[0] = be[0];
     tmpInput[1] = be[4];
     tmpInput[2] = be[8];
     tmpInput[3] = be[12];
-    let r = v128.load(tmpInput.dataStart);
-
-    let o0 = f32x4.mul(l, r);
-    // v128.store(tmpOutput.dataStart, o);
-
-    l = f32x4.splat(ae[4]);
-
+    const r0 = v128.load(tmpInput.dataStart);
     tmpInput[0] = be[1];
     tmpInput[1] = be[5];
     tmpInput[2] = be[9];
     tmpInput[3] = be[13];
-    r = v128.load(tmpInput.dataStart);
-
-    let o1 = f32x4.mul(l, r);
-
-    l = f32x4.splat(ae[8]);
-
+    const r1 = v128.load(tmpInput.dataStart);
     tmpInput[0] = be[2];
     tmpInput[1] = be[6];
     tmpInput[2] = be[10];
     tmpInput[3] = be[14];
-    r = v128.load(tmpInput.dataStart);
-
-    let o2 = f32x4.mul(l, r);
-
-    l = f32x4.splat(ae[12]);
-
+    const r2 = v128.load(tmpInput.dataStart);
     tmpInput[0] = be[3];
     tmpInput[1] = be[7];
     tmpInput[2] = be[11];
     tmpInput[3] = be[15];
-    r = v128.load(tmpInput.dataStart);
+    const r3 = v128.load(tmpInput.dataStart);
 
-    let o3 = f32x4.mul(l, r);
+    let l = f32x4.splat(ae[0]);
+    let o = f32x4.mul(l, r0);
+    l = f32x4.splat(ae[4]);
+    o = f32x4.add(o, f32x4.mul(l, r1));
+    l = f32x4.splat(ae[8]);
+    o = f32x4.add(o, f32x4.mul(l, r2));
+    l = f32x4.splat(ae[12]);
+    o = f32x4.add(o, f32x4.mul(l, r3));
 
-    let o4 = f32x4.add(o0, o1);
-    o4 = f32x4.add(o4, o2);
-    o4 = f32x4.add(o4, o3);
-
-    v128.store(tmpInput.dataStart, o4);
+    v128.store(tmpInput.dataStart, o);
 
     te[0] = tmpInput[0];
     te[4] = tmpInput[1];
@@ -306,28 +256,113 @@ export class Mat4 {
     te[12] = tmpInput[3];
     //#endregion
 
-    // 循环能减少代码量, 但是性能会下降, 但是代码行数确实有点多, 都试试吧, 实测下
+    // te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+    // te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+    // te[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+    // te[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
 
-    // 这里下标间隔都是4, 能一次性存到这里面么
-    te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
-    te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
-    te[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
-    te[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+    //#region
+    l = f32x4.splat(ae[1]);
+    o = f32x4.mul(l, r0);
+    l = f32x4.splat(ae[5]);
+    o = f32x4.add(o, f32x4.mul(l, r1));
+    l = f32x4.splat(ae[9]);
+    o = f32x4.add(o, f32x4.mul(l, r2));
+    l = f32x4.splat(ae[13]);
+    o = f32x4.add(o, f32x4.mul(l, r3));
 
-    te[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
-    te[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
-    te[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
-    te[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+    v128.store(tmpInput.dataStart, o);
 
-    te[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
-    te[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
-    te[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
-    te[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+    te[1] = tmpInput[0];
+    te[5] = tmpInput[1];
+    te[9] = tmpInput[2];
+    te[13] = tmpInput[3];
+    //#endregion
 
-    te[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
-    te[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
-    te[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
-    te[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+    // te[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+    // te[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+    // te[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+    // te[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+
+    //#region
+    l = f32x4.splat(ae[2]);
+    o = f32x4.mul(l, r0);
+    l = f32x4.splat(ae[6]);
+    o = f32x4.add(o, f32x4.mul(l, r1));
+    l = f32x4.splat(ae[10]);
+    o = f32x4.add(o, f32x4.mul(l, r2));
+    l = f32x4.splat(ae[14]);
+    o = f32x4.add(o, f32x4.mul(l, r3));
+
+    v128.store(tmpInput.dataStart, o);
+
+    te[2] = tmpInput[0];
+    te[6] = tmpInput[1];
+    te[10] = tmpInput[2];
+    te[14] = tmpInput[3];
+    //#endregion
+
+    // te[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+    // te[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+    // te[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+    // te[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+
+    //#region
+    l = f32x4.splat(ae[3]);
+    o = f32x4.mul(l, r0);
+    l = f32x4.splat(ae[7]);
+    o = f32x4.add(o, f32x4.mul(l, r1));
+    l = f32x4.splat(ae[11]);
+    o = f32x4.add(o, f32x4.mul(l, r2));
+    l = f32x4.splat(ae[15]);
+    o = f32x4.add(o, f32x4.mul(l, r3));
+
+    v128.store(tmpInput.dataStart, o);
+
+    te[3] = tmpInput[0];
+    te[7] = tmpInput[1];
+    te[11] = tmpInput[2];
+    te[15] = tmpInput[3];
+    //#endregion
+
+    // te[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+    // te[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+    // te[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+    // te[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+
+    return this;
+  }
+
+  multiplyMatricesSIMDWithLoop(a: Mat4, b: Mat4): Mat4 {
+    const ae = a.elements;
+    const be = b.elements;
+
+    const tmpInput = new Float32Array(4);
+
+    let l: v128;
+    let r: v128;
+    let o: v128;
+
+    // 多了不少加法指令, 比js还慢, 这就有点尴尬了hhh
+
+    for (let i: u8 = 0; i < 4; i++) {
+      o = f32x4.splat(0);
+      for (let j: u8 = 0; j < 4; j++) {
+        l = f32x4.splat(ae[i + (j << 2)]);
+        tmpInput[0] = be[0 + j];
+        tmpInput[1] = be[4 + j];
+        tmpInput[2] = be[8 + j];
+        tmpInput[3] = be[12 + j];
+        r = v128.load(tmpInput.dataStart);
+        o = f32x4.add(o, f32x4.mul(l, r));
+      }
+
+      v128.store(tmpInput.dataStart, o);
+      this.elements[0 + i] = tmpInput[0];
+      this.elements[4 + i] = tmpInput[1];
+      this.elements[8 + i] = tmpInput[2];
+      this.elements[12 + i] = tmpInput[3];
+    }
 
     return this;
   }

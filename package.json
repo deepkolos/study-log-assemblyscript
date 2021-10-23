@@ -7,7 +7,6 @@
     "dev": "vite",
     "test": "node tests",
     "test:base64": "npm run base64:wasm && node tests/base64",
-    "pretest": "npm run asbuild:untouched",
     "mandelbrot:wasm": "asc assembly/mandelbrot.ts --target release --runtime stub --use Math=JSMath --importMemory -b build/mandelbrot.wasm",
     "mandelbrot:asm": "asc assembly/mandelbrot.ts --target release --runtime stub --use Math=JSMath --importMemory -j build/mandelbrot.js",
     "game-of-life:wasm": "asc assembly/game-of-life.ts --target release --runtime stub --use Math=JSMath --importMemory -b build/game-of-life.wasm",
@@ -32,7 +31,8 @@
   "dependencies": {
     "@assemblyscript/loader": "^0.19.11",
     "as-bind": "^0.8.0",
-    "as-string-sink": "^0.4.2"
+    "as-string-sink": "^0.4.2",
+    "ftb-matrix": "^0.0.9"
   },
   "devDependencies": {
     "assemblyscript": "^0.19.11",
