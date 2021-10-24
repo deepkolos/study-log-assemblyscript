@@ -4,7 +4,11 @@ const { test, expect, benchmark } = require('./libs/test.js');
 const { Matrix4 } = require('./libs/Matrix4.js');
 const ftbMatrix = require('ftb-matrix/dist/ftb-matrix');
 
-const imports = {};
+const imports = {
+  env: {
+    memory: new WebAssembly.Memory({ initial: 1024 }),
+  },
+};
 const wasmModule = loader.instantiateSync(
   fs.readFileSync(__dirname + '/../build/simd.wasm'),
   imports,
@@ -105,8 +109,18 @@ test('matrix multiply', () => {
 });
 
 test('matrix multiply benchmark', async () => {
-  const intputLeft = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
-  const intputRight = [...intputLeft].reverse();
+  const intputLeft = new Float32Array([
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+  ]);
+  const intputRight = new Float32Array([...intputLeft].reverse());
+  const intputLeftPtr = wasmExport.__newArray(
+    wasmExport.Float32Array_ID.value,
+    intputLeft,
+  );
+  const intputRightPtr = wasmExport.__newArray(
+    wasmExport.Float32Array_ID.value,
+    intputRight,
+  );
 
   const { Mat } = await ftbMatrix({ simd: true });
   const m4LeftJs = new Matrix4();
@@ -120,60 +134,64 @@ test('matrix multiply benchmark', async () => {
     JS(i) {
       // m4LeftJs.set(...intputLeft);
       // m4RightJs.set(...intputRight);
-      // m4LeftJs.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // m4RightJs.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4LeftJs.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4RightJs.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4LeftJs.fromArray(intputLeft);
+      // m4RightJs.fromArray(intputLeft);
 
-      const a = i || (Math.random() * 10) | 0;
-      m4LeftJs.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      m4RightJs.set(1, 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // const a = i || (Math.random() * 10) | 0;
+      // m4LeftJs.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4RightJs.set(1, 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       m4LeftJs.multiplyMatrices(m4LeftJs, m4RightJs);
     },
     WASM(i) {
       // m4LeftWasm.set(...intputLeft);
       // m4RightWasm.set(...intputRight);
-      // m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4LeftWasm.fromArray(intputLeftPtr);
+      // m4RightWasm.fromArray(intputLeftPtr);
 
-      const a = i || (Math.random() * 10) | 0;
-      m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // prettier-ignore
-      m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // const a = i || (Math.random() * 10) | 0;
+      // m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // // prettier-ignore
+      // m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       m4LeftWasm.multiplyMatrices(m4LeftWasm, m4RightWasm);
     },
     WASM_SIMD(i) {
       // m4LeftWasm.set(...intputLeft);
       // m4RightWasm.set(...intputRight);
-      // m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      const a = i || (Math.random() * 10) | 0;
-      m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // prettier-ignore
-      m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // const a = i || (Math.random() * 10) | 0;
+      // m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // // prettier-ignore
+      // m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 
       m4LeftWasm.multiplyMatricesSIMD(m4LeftWasm, m4RightWasm);
     },
     WASM_SIMD_LOOP(i) {
       // m4LeftWasm.set(...intputLeft);
       // m4RightWasm.set(...intputRight);
-      // m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      const a = i || (Math.random() * 10) | 0;
-      m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // prettier-ignore
-      m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // const a = i || (Math.random() * 10) | 0;
+      // m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // // prettier-ignore
+      // m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 
       m4LeftWasm.multiplyMatricesSIMDWithLoop(m4LeftWasm, m4RightWasm);
     },
     FTB_WASM_SIMD(i) {
       // m4LeftFtbWasm.set(...intputLeft);
       // m4RightFtbWasm.set(...intputRight);
-      // m4LeftFtbWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // m4RightFtbWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      const a = i || (Math.random() * 10) | 0;
-      // prettier-ignore
-      m4LeftFtbWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // prettier-ignore
-      m4RightFtbWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4LeftFtbWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4RightFtbWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // const a = i || (Math.random() * 10) | 0;
+      // // prettier-ignore
+      // m4LeftFtbWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // // prettier-ignore
+      // m4RightFtbWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       m4LeftFtbWasm.multiplyMatrices(m4LeftFtbWasm, m4RightFtbWasm);
     },
   };
@@ -188,10 +206,21 @@ test('matrix multiply benchmark', async () => {
   benchCfg.FTB_WASM_SIMD(1);
   expect(f32Arr(m4LeftWasm.elements)).toBe(m4LeftJs.elements);
 
+  // benchmark(benchCfg, 1);
   // benchmark(benchCfg, 100);
   // benchmark(benchCfg, 1000);
   // benchmark(benchCfg, 5000);
-  // benchmark(benchCfg, 10000);
-  // benchmark(benchCfg, 10_000);
-  // benchmark(benchCfg, 100_000);
+  // benchmark(benchCfg, 27_000);
+  benchmark(benchCfg, 100_000);
+
+  benchmark(
+    {
+      LOOP_IN_WASM() {
+        // m4LeftWasm.test_loop_in_wasm(m4RightWasm, 1000);
+        // m4LeftWasm.test_loop_in_wasm(m4RightWasm, 27_000);
+        m4LeftWasm.test_loop_in_wasm(m4RightWasm, 100_000);
+      },
+    },
+    1,
+  );
 });

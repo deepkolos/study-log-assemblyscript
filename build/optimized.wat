@@ -1,37 +1,32 @@
 (module
- (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+ (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
  (type $i32_=>_i32 (func (param i32) (result i32)))
+ (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
  (type $none_=>_i32 (func (result i32)))
  (type $i32_i32_i32_i32_i32_i32_i32_i32_=>_i32 (func (param i32 i32 i32 i32 i32 i32 i32 i32) (result i32)))
  (type $none_=>_none (func))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
  (type $i32_i32_=>_none (func (param i32 i32)))
  (type $i32_i32_f32_=>_none (func (param i32 i32 f32)))
- (type $i32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_=>_i32 (func (param i32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32) (result i32)))
+ (type $i32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_f32_=>_none (func (param i32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32 f32)))
  (type $i32_i32_=>_f32 (func (param i32 i32) (result f32)))
- (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
  (type $i32_=>_none (func (param i32)))
+ (import "env" "memory" (memory $0 1))
+ (data (i32.const 1036) ",\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\1c\00\00\00I\00n\00v\00a\00l\00i\00d\00 \00l\00e\00n\00g\00t\00h\00")
+ (data (i32.const 1084) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00&\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00b\00u\00f\00f\00e\00r\00.\00t\00s\00\00\00\00\00\00\00")
+ (data (i32.const 1148) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00(\00\00\00A\00l\00l\00o\00c\00a\00t\00i\00o\00n\00 \00t\00o\00o\00 \00l\00a\00r\00g\00e\00\00\00\00\00")
+ (data (i32.const 1212) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\1e\00\00\00~\00l\00i\00b\00/\00r\00t\00/\00s\00t\00u\00b\00.\00t\00s\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
+ (data (i32.const 1276) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00$\00\00\00I\00n\00d\00e\00x\00 \00o\00u\00t\00 \00o\00f\00 \00r\00a\00n\00g\00e\00\00\00\00\00\00\00\00\00")
+ (data (i32.const 1340) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00$\00\00\00~\00l\00i\00b\00/\00t\00y\00p\00e\00d\00a\00r\00r\00a\00y\00.\00t\00s\00\00\00\00\00\00\00\00\00")
+ (data (i32.const 1408) "\07\00\00\00 \00\00\00\00\00\00\00 \00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\01\19\00\00\02\00\00\00\02\t\00\00\00\00\00\00\00\00\00\00\00\00\00\00A\00\00\00\02\00\00\00")
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
+ (global $assembly/simd/Float32Array_ID i32 (i32.const 3))
  (global $~lib/rt/stub/offset (mut i32) (i32.const 0))
- (global $assembly/simd/Mat4 i32 (i32.const 4))
+ (global $assembly/simd/tmpInput (mut i32) (i32.const 0))
+ (global $assembly/simd/Mat4 i32 (i32.const 5))
  (global $~lib/rt/__rtti_base i32 (i32.const 1408))
- (memory $0 1)
- (data (i32.const 1036) "<")
- (data (i32.const 1048) "\01\00\00\00(\00\00\00A\00l\00l\00o\00c\00a\00t\00i\00o\00n\00 \00t\00o\00o\00 \00l\00a\00r\00g\00e")
- (data (i32.const 1100) "<")
- (data (i32.const 1112) "\01\00\00\00\1e\00\00\00~\00l\00i\00b\00/\00r\00t\00/\00s\00t\00u\00b\00.\00t\00s")
- (data (i32.const 1164) ",")
- (data (i32.const 1176) "\01\00\00\00\1c\00\00\00I\00n\00v\00a\00l\00i\00d\00 \00l\00e\00n\00g\00t\00h")
- (data (i32.const 1212) "<")
- (data (i32.const 1224) "\01\00\00\00&\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00b\00u\00f\00f\00e\00r\00.\00t\00s")
- (data (i32.const 1276) "<")
- (data (i32.const 1288) "\01\00\00\00$\00\00\00I\00n\00d\00e\00x\00 \00o\00u\00t\00 \00o\00f\00 \00r\00a\00n\00g\00e")
- (data (i32.const 1340) "<")
- (data (i32.const 1352) "\01\00\00\00$\00\00\00~\00l\00i\00b\00/\00t\00y\00p\00e\00d\00a\00r\00r\00a\00y\00.\00t\00s")
- (data (i32.const 1408) "\07\00\00\00 \00\00\00\00\00\00\00 ")
- (data (i32.const 1436) "\02\t")
- (data (i32.const 1452) "\01\19\00\00\02\00\00\00A\00\00\00\02")
+ (export "Float32Array_ID" (global $assembly/simd/Float32Array_ID))
  (export "SIMD_ADD" (func $assembly/simd/SIMD_ADD))
  (export "SIMD_CALC" (func $assembly/simd/SIMD_CALC))
  (export "Mat4" (global $assembly/simd/Mat4))
@@ -39,15 +34,18 @@
  (export "Mat4#set:elements" (func $~lib/arraybuffer/ArrayBufferView#set:buffer))
  (export "Mat4#constructor" (func $assembly/simd/Mat4#constructor))
  (export "Mat4#set" (func $assembly/simd/Mat4#set))
+ (export "Mat4#fromArray" (func $assembly/simd/Mat4#fromArray))
  (export "Mat4#multiply" (func $assembly/simd/Mat4#multiply))
  (export "Mat4#premultiply" (func $assembly/simd/Mat4#premultiply))
  (export "Mat4#multiplyMatrices" (func $assembly/simd/Mat4#multiplyMatrices))
  (export "Mat4#multiplyMatricesSIMD" (func $assembly/simd/Mat4#multiplyMatricesSIMD))
  (export "Mat4#multiplyMatricesSIMDWithLoop" (func $assembly/simd/Mat4#multiplyMatricesSIMDWithLoop))
+ (export "Mat4#multiplyMatricesSIMD_VOID" (func $assembly/simd/Mat4#multiplyMatricesSIMD_VOID))
+ (export "Mat4#test_loop_in_wasm" (func $assembly/simd/Mat4#test_loop_in_wasm))
  (export "test_v128_load" (func $assembly/simd/test_v128_load))
  (export "__new" (func $~lib/rt/stub/__new))
  (export "__pin" (func $~lib/rt/stub/__pin))
- (export "__unpin" (func $~lib/rt/stub/__unpin))
+ (export "__unpin" (func $assembly/simd/Mat4#multiplyMatricesSIMD_VOID))
  (export "__collect" (func $~lib/rt/stub/__collect))
  (export "__rtti_base" (global $~lib/rt/__rtti_base))
  (export "memory" (memory $0))
@@ -63,8 +61,8 @@
   i32.const 1073741804
   i32.gt_u
   if
-   i32.const 1056
-   i32.const 1120
+   i32.const 1168
+   i32.const 1232
    i32.const 86
    i32.const 30
    call $~lib/builtins/abort
@@ -77,8 +75,8 @@
   i32.const 1073741820
   i32.gt_u
   if
-   i32.const 1056
-   i32.const 1120
+   i32.const 1168
+   i32.const 1232
    i32.const 33
    i32.const 29
    call $~lib/builtins/abort
@@ -162,137 +160,6 @@
   i32.const 16
   i32.add
  )
- (func $~lib/rt/__newArray (result i32)
-  (local $0 i32)
-  (local $1 i32)
-  i32.const 16
-  i32.const 0
-  call $~lib/rt/stub/__new
-  local.set $1
-  i32.const 16
-  i32.const 3
-  call $~lib/rt/stub/__new
-  local.tee $0
-  local.get $1
-  i32.store
-  local.get $0
-  local.get $1
-  i32.store offset=4
-  local.get $0
-  i32.const 16
-  i32.store offset=8
-  local.get $0
-  i32.const 4
-  i32.store offset=12
-  local.get $0
- )
- (func $assembly/simd/SIMD_ADD (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32) (param $7 i32) (result i32)
-  (local $8 i32)
-  (local $9 v128)
-  call $~lib/rt/__newArray
-  local.tee $8
-  i32.load offset=4
-  drop
-  local.get $8
-  i32.load offset=4
-  i32.const 0
-  i32x4.splat
-  local.tee $9
-  local.get $0
-  i32x4.replace_lane 0
-  local.get $1
-  i32x4.replace_lane 1
-  local.get $2
-  i32x4.replace_lane 2
-  local.get $3
-  i32x4.replace_lane 3
-  local.get $9
-  local.get $4
-  i32x4.replace_lane 0
-  local.get $5
-  i32x4.replace_lane 1
-  local.get $6
-  i32x4.replace_lane 2
-  local.get $7
-  i32x4.replace_lane 3
-  i32x4.add
-  local.tee $9
-  i32x4.extract_lane 0
-  i32.store
-  local.get $8
-  i32.load offset=4
-  local.get $9
-  i32x4.extract_lane 1
-  i32.store offset=4
-  local.get $8
-  i32.load offset=4
-  local.get $9
-  i32x4.extract_lane 2
-  i32.store offset=8
-  local.get $8
-  i32.load offset=4
-  local.get $9
-  i32x4.extract_lane 3
-  i32.store offset=12
-  local.get $8
- )
- (func $assembly/simd/SIMD_CALC (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32) (param $7 i32) (result i32)
-  (local $8 v128)
-  (local $9 i32)
-  (local $10 v128)
-  call $~lib/rt/__newArray
-  local.tee $9
-  i32.load offset=4
-  drop
-  local.get $9
-  i32.load offset=4
-  i32.const 0
-  i32x4.splat
-  local.tee $8
-  local.get $0
-  i32x4.replace_lane 0
-  local.get $1
-  i32x4.replace_lane 1
-  local.get $2
-  i32x4.replace_lane 2
-  local.get $3
-  i32x4.replace_lane 3
-  local.tee $10
-  local.get $10
-  local.get $8
-  local.get $4
-  i32x4.replace_lane 0
-  local.get $5
-  i32x4.replace_lane 1
-  local.get $6
-  i32x4.replace_lane 2
-  local.get $7
-  i32x4.replace_lane 3
-  local.tee $8
-  i32x4.add
-  local.get $8
-  i32x4.mul
-  i32x4.sub
-  local.tee $8
-  i32x4.extract_lane 0
-  i32.store
-  local.get $9
-  i32.load offset=4
-  local.get $8
-  i32x4.extract_lane 1
-  i32.store offset=4
-  local.get $9
-  i32.load offset=4
-  local.get $8
-  i32x4.extract_lane 2
-  i32.store offset=8
-  local.get $9
-  i32.load offset=4
-  local.get $8
-  i32x4.extract_lane 3
-  i32.store offset=12
-  local.get $9
- )
  (func $~lib/arraybuffer/ArrayBufferView#set:buffer (param $0 i32) (param $1 i32)
   local.get $0
   local.get $1
@@ -325,8 +192,8 @@
   i32.shr_u
   i32.gt_u
   if
-   i32.const 1184
-   i32.const 1232
+   i32.const 1056
+   i32.const 1104
    i32.const 18
    i32.const 57
    call $~lib/builtins/abort
@@ -524,6 +391,137 @@
   i32.store offset=8
   local.get $0
  )
+ (func $~lib/rt/__newArray (result i32)
+  (local $0 i32)
+  (local $1 i32)
+  i32.const 16
+  i32.const 0
+  call $~lib/rt/stub/__new
+  local.set $1
+  i32.const 16
+  i32.const 4
+  call $~lib/rt/stub/__new
+  local.tee $0
+  local.get $1
+  i32.store
+  local.get $0
+  local.get $1
+  i32.store offset=4
+  local.get $0
+  i32.const 16
+  i32.store offset=8
+  local.get $0
+  i32.const 4
+  i32.store offset=12
+  local.get $0
+ )
+ (func $assembly/simd/SIMD_ADD (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32) (param $7 i32) (result i32)
+  (local $8 i32)
+  (local $9 v128)
+  call $~lib/rt/__newArray
+  local.tee $8
+  i32.load offset=4
+  drop
+  local.get $8
+  i32.load offset=4
+  i32.const 0
+  i32x4.splat
+  local.tee $9
+  local.get $0
+  i32x4.replace_lane 0
+  local.get $1
+  i32x4.replace_lane 1
+  local.get $2
+  i32x4.replace_lane 2
+  local.get $3
+  i32x4.replace_lane 3
+  local.get $9
+  local.get $4
+  i32x4.replace_lane 0
+  local.get $5
+  i32x4.replace_lane 1
+  local.get $6
+  i32x4.replace_lane 2
+  local.get $7
+  i32x4.replace_lane 3
+  i32x4.add
+  local.tee $9
+  i32x4.extract_lane 0
+  i32.store
+  local.get $8
+  i32.load offset=4
+  local.get $9
+  i32x4.extract_lane 1
+  i32.store offset=4
+  local.get $8
+  i32.load offset=4
+  local.get $9
+  i32x4.extract_lane 2
+  i32.store offset=8
+  local.get $8
+  i32.load offset=4
+  local.get $9
+  i32x4.extract_lane 3
+  i32.store offset=12
+  local.get $8
+ )
+ (func $assembly/simd/SIMD_CALC (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32) (param $7 i32) (result i32)
+  (local $8 v128)
+  (local $9 i32)
+  (local $10 v128)
+  call $~lib/rt/__newArray
+  local.tee $9
+  i32.load offset=4
+  drop
+  local.get $9
+  i32.load offset=4
+  i32.const 0
+  i32x4.splat
+  local.tee $8
+  local.get $0
+  i32x4.replace_lane 0
+  local.get $1
+  i32x4.replace_lane 1
+  local.get $2
+  i32x4.replace_lane 2
+  local.get $3
+  i32x4.replace_lane 3
+  local.tee $10
+  local.get $10
+  local.get $8
+  local.get $4
+  i32x4.replace_lane 0
+  local.get $5
+  i32x4.replace_lane 1
+  local.get $6
+  i32x4.replace_lane 2
+  local.get $7
+  i32x4.replace_lane 3
+  local.tee $8
+  i32x4.add
+  local.get $8
+  i32x4.mul
+  i32x4.sub
+  local.tee $8
+  i32x4.extract_lane 0
+  i32.store
+  local.get $9
+  i32.load offset=4
+  local.get $8
+  i32x4.extract_lane 1
+  i32.store offset=4
+  local.get $9
+  i32.load offset=4
+  local.get $8
+  i32x4.extract_lane 2
+  i32.store offset=8
+  local.get $9
+  i32.load offset=4
+  local.get $8
+  i32x4.extract_lane 3
+  i32.store offset=12
+  local.get $9
+ )
  (func $assembly/simd/Mat4#constructor (param $0 i32) (result i32)
   (local $1 i32)
   (local $2 i32)
@@ -533,7 +531,7 @@
   i32.eqz
   if
    i32.const 4
-   i32.const 4
+   i32.const 5
    call $~lib/rt/stub/__new
    local.set $0
   end
@@ -541,7 +539,7 @@
   i32.const 0
   i32.store
   i32.const 12
-  i32.const 5
+  i32.const 3
   call $~lib/rt/stub/__new
   i32.const 16
   i32.const 2
@@ -612,75 +610,73 @@
   local.get $2
   f32.store
  )
- (func $assembly/simd/Mat4#set (param $0 i32) (param $1 f32) (param $2 f32) (param $3 f32) (param $4 f32) (param $5 f32) (param $6 f32) (param $7 f32) (param $8 f32) (param $9 f32) (param $10 f32) (param $11 f32) (param $12 f32) (param $13 f32) (param $14 f32) (param $15 f32) (param $16 f32) (result i32)
-  (local $17 i32)
+ (func $assembly/simd/Mat4#set (param $0 i32) (param $1 f32) (param $2 f32) (param $3 f32) (param $4 f32) (param $5 f32) (param $6 f32) (param $7 f32) (param $8 f32) (param $9 f32) (param $10 f32) (param $11 f32) (param $12 f32) (param $13 f32) (param $14 f32) (param $15 f32) (param $16 f32)
   local.get $0
   i32.load
-  local.tee $17
+  local.tee $0
   i32.const 0
   local.get $1
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 4
   local.get $2
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 8
   local.get $3
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 12
   local.get $4
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 1
   local.get $5
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 5
   local.get $6
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 9
   local.get $7
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 13
   local.get $8
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 2
   local.get $9
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 6
   local.get $10
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 10
   local.get $11
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 14
   local.get $12
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 3
   local.get $13
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 7
   local.get $14
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 11
   local.get $15
   call $~lib/typedarray/Float32Array#__set
-  local.get $17
+  local.get $0
   i32.const 15
   local.get $16
   call $~lib/typedarray/Float32Array#__set
-  local.get $0
  )
  (func $~lib/typedarray/Float32Array#__get (param $0 i32) (param $1 i32) (result f32)
   local.get $1
@@ -704,6 +700,108 @@
   i32.shl
   i32.add
   f32.load
+ )
+ (func $assembly/simd/Mat4#fromArray (param $0 i32) (param $1 i32) (result i32)
+  (local $2 i32)
+  local.get $0
+  i32.load
+  local.tee $2
+  i32.const 0
+  local.get $1
+  i32.const 0
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 4
+  local.get $1
+  i32.const 1
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 8
+  local.get $1
+  i32.const 2
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 12
+  local.get $1
+  i32.const 3
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 1
+  local.get $1
+  i32.const 4
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 5
+  local.get $1
+  i32.const 5
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 9
+  local.get $1
+  i32.const 6
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 13
+  local.get $1
+  i32.const 7
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 2
+  local.get $1
+  i32.const 8
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 6
+  local.get $1
+  i32.const 9
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 10
+  local.get $1
+  i32.const 10
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 14
+  local.get $1
+  i32.const 11
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 3
+  local.get $1
+  i32.const 12
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 7
+  local.get $1
+  i32.const 13
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 11
+  local.get $1
+  i32.const 14
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 15
+  local.get $1
+  i32.const 15
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $0
  )
  (func $assembly/simd/Mat4#multiplyMatrices (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
@@ -1177,387 +1275,377 @@
   local.get $0
   call $assembly/simd/Mat4#multiplyMatrices
  )
- (func $assembly/simd/Mat4#multiplyMatricesSIMD (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
-  (local $3 i32)
+ (func $assembly/simd/Mat4#multiplyMatricesSIMD (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 v128)
   (local $4 i32)
   (local $5 v128)
   (local $6 v128)
   (local $7 v128)
   (local $8 v128)
-  (local $9 v128)
   local.get $1
   i32.load
-  local.set $3
-  local.get $2
-  i32.load
-  local.set $2
+  local.set $1
   local.get $0
   i32.load
-  local.set $4
-  i32.const 12
-  i32.const 5
-  call $~lib/rt/stub/__new
-  i32.const 4
-  i32.const 2
-  call $~lib/arraybuffer/ArrayBufferView#constructor
-  local.tee $1
+  local.set $0
+  global.get $assembly/simd/tmpInput
   i32.const 0
   local.get $2
+  i32.load
+  local.tee $2
   i32.const 0
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 1
   local.get $2
   i32.const 4
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 2
   local.get $2
   i32.const 8
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 3
   local.get $2
   i32.const 12
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
+  local.tee $4
   i32.load offset=4
   v128.load
-  local.set $5
-  local.get $1
+  local.set $3
+  local.get $4
   i32.const 0
   local.get $2
   i32.const 1
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 1
   local.get $2
   i32.const 5
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 2
   local.get $2
   i32.const 9
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 3
   local.get $2
   i32.const 13
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
+  local.tee $4
   i32.load offset=4
   v128.load
-  local.set $7
-  local.get $1
+  local.set $6
+  local.get $4
   i32.const 0
   local.get $2
   i32.const 2
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 1
   local.get $2
   i32.const 6
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 2
   local.get $2
   i32.const 10
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 3
   local.get $2
   i32.const 14
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $1
+  global.get $assembly/simd/tmpInput
+  local.tee $4
+  i32.load offset=4
+  v128.load
+  local.set $7
+  local.get $4
+  i32.const 0
+  local.get $2
+  i32.const 3
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  global.get $assembly/simd/tmpInput
+  i32.const 1
+  local.get $2
+  i32.const 7
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  global.get $assembly/simd/tmpInput
+  i32.const 2
+  local.get $2
+  i32.const 11
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  global.get $assembly/simd/tmpInput
+  i32.const 3
+  local.get $2
+  i32.const 15
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  global.get $assembly/simd/tmpInput
   i32.load offset=4
   v128.load
   local.set $8
   local.get $1
   i32.const 0
-  local.get $2
-  i32.const 3
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $1
-  i32.const 1
-  local.get $2
-  i32.const 7
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $1
-  i32.const 2
-  local.get $2
-  i32.const 11
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $1
-  i32.const 3
-  local.get $2
-  i32.const 15
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $1
-  i32.load offset=4
-  v128.load
-  local.set $9
-  local.get $3
-  i32.const 0
   call $~lib/typedarray/Float32Array#__get
   f32x4.splat
-  local.get $5
-  f32x4.mul
   local.get $3
+  f32x4.mul
+  local.get $1
   i32.const 4
   call $~lib/typedarray/Float32Array#__get
   f32x4.splat
-  local.get $7
+  local.get $6
   f32x4.mul
   f32x4.add
-  local.get $3
+  local.get $1
   i32.const 8
   call $~lib/typedarray/Float32Array#__get
   f32x4.splat
-  local.get $8
+  local.get $7
   f32x4.mul
   f32x4.add
-  local.get $3
+  local.get $1
   i32.const 12
   call $~lib/typedarray/Float32Array#__get
   f32x4.splat
-  local.get $9
-  f32x4.mul
-  f32x4.add
-  local.set $6
-  local.get $1
-  i32.load offset=4
-  local.get $6
-  v128.store
-  local.get $4
-  i32.const 0
-  local.get $1
-  i32.const 0
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $4
-  i32.const 4
-  local.get $1
-  i32.const 1
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $4
-  i32.const 8
-  local.get $1
-  i32.const 2
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $4
-  i32.const 12
-  local.get $1
-  i32.const 3
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $3
-  i32.const 1
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $5
-  f32x4.mul
-  local.get $3
-  i32.const 5
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $7
-  f32x4.mul
-  f32x4.add
-  local.get $3
-  i32.const 9
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
   local.get $8
-  f32x4.mul
-  f32x4.add
-  local.get $3
-  i32.const 13
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $9
-  f32x4.mul
-  f32x4.add
-  local.set $6
-  local.get $1
-  i32.load offset=4
-  local.get $6
-  v128.store
-  local.get $4
-  i32.const 1
-  local.get $1
-  i32.const 0
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $4
-  i32.const 5
-  local.get $1
-  i32.const 1
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $4
-  i32.const 9
-  local.get $1
-  i32.const 2
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $4
-  i32.const 13
-  local.get $1
-  i32.const 3
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $3
-  i32.const 2
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $5
-  f32x4.mul
-  local.get $3
-  i32.const 6
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $7
-  f32x4.mul
-  f32x4.add
-  local.get $3
-  i32.const 10
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $8
-  f32x4.mul
-  f32x4.add
-  local.get $3
-  i32.const 14
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $9
-  f32x4.mul
-  f32x4.add
-  local.set $6
-  local.get $1
-  i32.load offset=4
-  local.get $6
-  v128.store
-  local.get $4
-  i32.const 2
-  local.get $1
-  i32.const 0
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $4
-  i32.const 6
-  local.get $1
-  i32.const 1
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $4
-  i32.const 10
-  local.get $1
-  i32.const 2
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $4
-  i32.const 14
-  local.get $1
-  i32.const 3
-  call $~lib/typedarray/Float32Array#__get
-  call $~lib/typedarray/Float32Array#__set
-  local.get $3
-  i32.const 3
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $5
-  f32x4.mul
-  local.get $3
-  i32.const 7
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $7
-  f32x4.mul
-  f32x4.add
-  local.get $3
-  i32.const 11
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $8
-  f32x4.mul
-  f32x4.add
-  local.get $3
-  i32.const 15
-  call $~lib/typedarray/Float32Array#__get
-  f32x4.splat
-  local.get $9
   f32x4.mul
   f32x4.add
   local.set $5
-  local.get $1
+  global.get $assembly/simd/tmpInput
+  local.tee $2
   i32.load offset=4
   local.get $5
   v128.store
-  local.get $4
+  local.get $0
+  i32.const 0
+  local.get $2
+  i32.const 0
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $0
+  i32.const 4
+  global.get $assembly/simd/tmpInput
+  i32.const 1
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $0
+  i32.const 8
+  global.get $assembly/simd/tmpInput
+  i32.const 2
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $0
+  i32.const 12
+  global.get $assembly/simd/tmpInput
+  i32.const 3
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $1
+  i32.const 1
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $3
+  f32x4.mul
+  local.get $1
+  i32.const 5
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $6
+  f32x4.mul
+  f32x4.add
+  local.get $1
+  i32.const 9
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $7
+  f32x4.mul
+  f32x4.add
+  local.get $1
+  i32.const 13
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $8
+  f32x4.mul
+  f32x4.add
+  local.set $5
+  global.get $assembly/simd/tmpInput
+  local.tee $2
+  i32.load offset=4
+  local.get $5
+  v128.store
+  local.get $0
+  i32.const 1
+  local.get $2
+  i32.const 0
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $0
+  i32.const 5
+  global.get $assembly/simd/tmpInput
+  i32.const 1
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $0
+  i32.const 9
+  global.get $assembly/simd/tmpInput
+  i32.const 2
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $0
+  i32.const 13
+  global.get $assembly/simd/tmpInput
+  i32.const 3
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $1
+  i32.const 2
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $3
+  f32x4.mul
+  local.get $1
+  i32.const 6
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $6
+  f32x4.mul
+  f32x4.add
+  local.get $1
+  i32.const 10
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $7
+  f32x4.mul
+  f32x4.add
+  local.get $1
+  i32.const 14
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $8
+  f32x4.mul
+  f32x4.add
+  local.set $5
+  global.get $assembly/simd/tmpInput
+  local.tee $2
+  i32.load offset=4
+  local.get $5
+  v128.store
+  local.get $0
+  i32.const 2
+  local.get $2
+  i32.const 0
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $0
+  i32.const 6
+  global.get $assembly/simd/tmpInput
+  i32.const 1
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $0
+  i32.const 10
+  global.get $assembly/simd/tmpInput
+  i32.const 2
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $0
+  i32.const 14
+  global.get $assembly/simd/tmpInput
+  i32.const 3
+  call $~lib/typedarray/Float32Array#__get
+  call $~lib/typedarray/Float32Array#__set
+  local.get $1
+  i32.const 3
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $3
+  f32x4.mul
+  local.get $1
+  i32.const 7
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $6
+  f32x4.mul
+  f32x4.add
+  local.get $1
+  i32.const 11
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $7
+  f32x4.mul
+  f32x4.add
+  local.get $1
+  i32.const 15
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $8
+  f32x4.mul
+  f32x4.add
+  local.set $3
+  global.get $assembly/simd/tmpInput
+  local.tee $1
+  i32.load offset=4
+  local.get $3
+  v128.store
+  local.get $0
   i32.const 3
   local.get $1
   i32.const 0
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $4
+  local.get $0
   i32.const 7
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 1
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $4
+  local.get $0
   i32.const 11
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 2
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $4
+  local.get $0
   i32.const 15
-  local.get $1
+  global.get $assembly/simd/tmpInput
   i32.const 3
   call $~lib/typedarray/Float32Array#__get
   call $~lib/typedarray/Float32Array#__set
-  local.get $0
  )
  (func $assembly/simd/Mat4#multiplyMatricesSIMDWithLoop (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
   (local $5 v128)
   (local $6 i32)
-  (local $7 i32)
-  (local $8 v128)
+  (local $7 v128)
   local.get $1
   i32.load
-  local.set $7
+  local.set $6
   local.get $2
   i32.load
-  local.set $3
-  i32.const 12
-  i32.const 5
-  call $~lib/rt/stub/__new
-  i32.const 4
-  i32.const 2
-  call $~lib/arraybuffer/ArrayBufferView#constructor
-  local.set $1
+  local.set $2
   loop $for-loop|3
    local.get $4
    i32.const 255
@@ -1569,17 +1657,17 @@
     f32x4.splat
     local.set $5
     i32.const 0
-    local.set $2
+    local.set $1
     loop $for-loop|5
-     local.get $2
+     local.get $1
      i32.const 255
      i32.and
      i32.const 4
      i32.lt_u
      if
-      local.get $7
+      local.get $6
       local.get $4
-      local.get $2
+      local.get $1
       i32.const 2
       i32.shl
       i32.add
@@ -1587,56 +1675,57 @@
       i32.and
       call $~lib/typedarray/Float32Array#__get
       f32x4.splat
-      local.set $8
-      local.get $1
+      local.set $7
+      global.get $assembly/simd/tmpInput
       i32.const 0
-      local.get $3
       local.get $2
+      local.get $1
       i32.const 255
       i32.and
-      local.tee $6
+      local.tee $3
       call $~lib/typedarray/Float32Array#__get
       call $~lib/typedarray/Float32Array#__set
-      local.get $1
+      global.get $assembly/simd/tmpInput
       i32.const 1
+      local.get $2
       local.get $3
-      local.get $6
       i32.const 4
       i32.add
       call $~lib/typedarray/Float32Array#__get
       call $~lib/typedarray/Float32Array#__set
-      local.get $1
+      global.get $assembly/simd/tmpInput
       i32.const 2
+      local.get $2
       local.get $3
-      local.get $6
       i32.const 8
       i32.add
       call $~lib/typedarray/Float32Array#__get
       call $~lib/typedarray/Float32Array#__set
-      local.get $1
+      global.get $assembly/simd/tmpInput
       i32.const 3
+      local.get $2
       local.get $3
-      local.get $6
       i32.const 12
       i32.add
       call $~lib/typedarray/Float32Array#__get
       call $~lib/typedarray/Float32Array#__set
       local.get $5
-      local.get $8
-      local.get $1
+      local.get $7
+      global.get $assembly/simd/tmpInput
       i32.load offset=4
       v128.load
       f32x4.mul
       f32x4.add
       local.set $5
-      local.get $2
+      local.get $1
       i32.const 1
       i32.add
-      local.set $2
+      local.set $1
       br $for-loop|5
      end
     end
-    local.get $1
+    global.get $assembly/simd/tmpInput
+    local.tee $3
     i32.load offset=4
     local.get $5
     v128.store
@@ -1645,35 +1734,35 @@
     local.get $4
     i32.const 255
     i32.and
-    local.tee $2
-    local.get $1
+    local.tee $1
+    local.get $3
     i32.const 0
     call $~lib/typedarray/Float32Array#__get
     call $~lib/typedarray/Float32Array#__set
     local.get $0
     i32.load
-    local.get $2
+    local.get $1
     i32.const 4
     i32.add
-    local.get $1
+    global.get $assembly/simd/tmpInput
     i32.const 1
     call $~lib/typedarray/Float32Array#__get
     call $~lib/typedarray/Float32Array#__set
     local.get $0
     i32.load
-    local.get $2
+    local.get $1
     i32.const 8
     i32.add
-    local.get $1
+    global.get $assembly/simd/tmpInput
     i32.const 2
     call $~lib/typedarray/Float32Array#__get
     call $~lib/typedarray/Float32Array#__set
     local.get $0
     i32.load
-    local.get $2
+    local.get $1
     i32.const 12
     i32.add
-    local.get $1
+    global.get $assembly/simd/tmpInput
     i32.const 3
     call $~lib/typedarray/Float32Array#__get
     call $~lib/typedarray/Float32Array#__set
@@ -1685,6 +1774,64 @@
    end
   end
   local.get $0
+ )
+ (func $assembly/simd/Mat4#multiplyMatricesSIMD_VOID (param $0 i32)
+  nop
+ )
+ (func $assembly/simd/Mat4#test_loop_in_wasm (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 i32)
+  loop $for-loop|0
+   local.get $2
+   local.get $3
+   i32.gt_u
+   if
+    local.get $1
+    f32.const 1
+    f32.const 2
+    f32.const 3
+    f32.const 4
+    f32.const 5
+    f32.const 6
+    f32.const 7
+    f32.const 8
+    f32.const 9
+    f32.const 10
+    f32.const 11
+    f32.const 12
+    f32.const 13
+    f32.const 14
+    f32.const 15
+    f32.const 16
+    call $assembly/simd/Mat4#set
+    local.get $0
+    f32.const 1
+    f32.const 2
+    f32.const 3
+    f32.const 4
+    f32.const 5
+    f32.const 6
+    f32.const 7
+    f32.const 8
+    f32.const 9
+    f32.const 10
+    f32.const 11
+    f32.const 12
+    f32.const 13
+    f32.const 14
+    f32.const 15
+    f32.const 16
+    call $assembly/simd/Mat4#set
+    local.get $0
+    local.get $0
+    local.get $1
+    call $assembly/simd/Mat4#multiplyMatricesSIMD
+    local.get $3
+    i32.const 1
+    i32.add
+    local.set $3
+    br $for-loop|0
+   end
+  end
  )
  (func $~lib/typedarray/Uint8Array#__set (param $0 i32) (param $1 i32) (param $2 i32)
   local.get $1
@@ -1870,15 +2017,19 @@
  (func $~lib/rt/stub/__pin (param $0 i32) (result i32)
   local.get $0
  )
- (func $~lib/rt/stub/__unpin (param $0 i32)
-  nop
- )
  (func $~lib/rt/stub/__collect
   nop
  )
  (func $~start
   i32.const 1468
   global.set $~lib/rt/stub/offset
+  i32.const 12
+  i32.const 3
+  call $~lib/rt/stub/__new
+  i32.const 4
+  i32.const 2
+  call $~lib/arraybuffer/ArrayBufferView#constructor
+  global.set $assembly/simd/tmpInput
  )
- ;; custom section "as-bind_bindings", size 461, contents: "{\"typeIds\":{\"~lib/array/Array<i32>\":{\"id\":3,\"byteSize\":16},\"~lib/typedarray/Uint8Array\":{\"id\":6,\"byteSize\":12}},\"importedFunctions\":{},\"exportedFunctions\":{\"SIMD_ADD\":{\"returnType\":\"~lib/array/Array<i32>\",\"parameters\":[\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\"]},\"SIMD_CALC\":{\"returnType\":\"~lib/array/Array<i32>\",\"parameters\":[\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\"]},\"test_v128_load\":{\"returnType\":\"~lib/typedarray/Uint8Array\",\"parameters\":[]}}}"
+ ;; custom section "as-bind_bindings", size 461, contents: "{\"typeIds\":{\"~lib/array/Array<i32>\":{\"id\":4,\"byteSize\":16},\"~lib/typedarray/Uint8Array\":{\"id\":6,\"byteSize\":12}},\"importedFunctions\":{},\"exportedFunctions\":{\"SIMD_ADD\":{\"returnType\":\"~lib/array/Array<i32>\",\"parameters\":[\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\"]},\"SIMD_CALC\":{\"returnType\":\"~lib/array/Array<i32>\",\"parameters\":[\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\"]},\"test_v128_load\":{\"returnType\":\"~lib/typedarray/Uint8Array\",\"parameters\":[]}}}"
 )

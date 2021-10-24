@@ -521,7 +521,7 @@ WebGLRenderTarget 没有 antialias, webgl2 则支持[webgl-framebuffer-multisamp
 ## 2021-10-23
 
 0. 发现测试写得也太随意了, 整理了下
-1. ftb-matrix 有点出人意料的慢, 手写 wat 的 wasm, 还以为有很好的性能表现, 在10000内wasm+simd有优势, 之后还是js有优势
+1. ftb-matrix 有点出人意料的慢, 手写 wat 的 wasm, 还以为有很好的性能表现, 在 10000 内 wasm+simd 有优势, 之后还是 js 有优势
 
 > 非固定的矩阵乘法运算, Node 16.8.0
 
@@ -562,5 +562,36 @@ WebGLRenderTarget 没有 antialias, webgl2 则支持[webgl-framebuffer-multisamp
     "WASM_SIMD_LOOP": "81.05ms (x5.792)",
     "FTB_WASM_SIMD": "600.51ms (x42.909)"
   }
+}
+```
+
+## 2021-10-24
+
+虽然 ftb-matrix 性能不咋地,但是实现方式确实可以借鉴下,并非完整的类都是 wasm 提供,wasm 仅仅提供对某个 Float32Array 的操作
+比如设置 Float32Array 其实可以 js 里操作,这样 set 函数就能降低到和 js 一样下消耗,目前 wasm 的 set 方法都 100_000 循环下耗时 10ms,2 个就是 20ms,乘法 30ms 左右
+传递 16 个参数到 wasm 比传递一个指针慢多了
+当然,如果 js 和 wasm 通信频率较低,那么 simd 应该是非常有优势的
+
+0. 如果循环放在 wasm 里, 则循环次数在 27000 之前都有性能优势, 比循环在外层调wasm稳定快1倍
+
+```json
+{
+  "benchmark_1000": {
+    "JS": "2.12ms (x2.124)",
+    "WASM": "2.30ms (x2.305)",
+    "WASM_SIMD": "1.18ms (x1.184)",
+    "WASM_SIMD_LOOP": "1.00ms (x1.000)",
+    "FTB_WASM_SIMD": "7.79ms (x7.809)"
+  },
+  "benchmark_1": { "LOOP_IN_WASM": "0.51ms (x1.000)" },
+
+  "benchmark_27000": {
+    "JS": "8.16ms (x1.000)",
+    "WASM": "14.31ms (x1.754)",
+    "WASM_SIMD": "13.89ms (x1.702)",
+    "WASM_SIMD_LOOP": "21.99ms (x2.695)",
+    "FTB_WASM_SIMD": "152.53ms (x18.688)"
+  },
+  "benchmark_1": { "LOOP_IN_WASM": "7.88ms (x1.000)" }
 }
 ```

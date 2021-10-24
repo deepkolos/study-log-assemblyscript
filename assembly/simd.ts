@@ -5,6 +5,8 @@
 //   export declare function log(t: i64): void;
 // }
 
+export const Float32Array_ID = idof<Float32Array>();
+
 export function SIMD_ADD(
   l1: i32,
   l2: i32,
@@ -92,6 +94,8 @@ export function SIMD_CALC(
   return [o1, o2, o3, o4];
 }
 
+const tmpInput = new Float32Array(4);
+
 export class Mat4 {
   elements: Float32Array;
 
@@ -116,7 +120,7 @@ export class Mat4 {
     n42: f32,
     n43: f32,
     n44: f32,
-  ): Mat4 {
+  ): void {
     const te = this.elements;
 
     te[0] = n11;
@@ -135,6 +139,29 @@ export class Mat4 {
     te[7] = n42;
     te[11] = n43;
     te[15] = n44;
+
+    // return this;
+  }
+
+  fromArray(arr: Float32Array): Mat4 {
+    const te = this.elements;
+
+    te[0] = arr[0];
+    te[4] = arr[1];
+    te[8] = arr[2];
+    te[12] = arr[3];
+    te[1] = arr[4];
+    te[5] = arr[5];
+    te[9] = arr[6];
+    te[13] = arr[7];
+    te[2] = arr[8];
+    te[6] = arr[9];
+    te[10] = arr[10];
+    te[14] = arr[11];
+    te[3] = arr[12];
+    te[7] = arr[13];
+    te[11] = arr[14];
+    te[15] = arr[15];
 
     return this;
   }
@@ -209,15 +236,12 @@ export class Mat4 {
     return this;
   }
 
-  multiplyMatricesSIMD(a: Mat4, b: Mat4): Mat4 {
+  multiplyMatricesSIMD(a: Mat4, b: Mat4): void {
     const ae = a.elements;
     const be = b.elements;
     const te = this.elements;
 
-    // 一次可以运算4个f32 不想用replace_lane
     //#region simd start 最初版
-    const tmpInput = new Float32Array(4);
-
     tmpInput[0] = be[0];
     tmpInput[1] = be[4];
     tmpInput[2] = be[8];
@@ -247,19 +271,12 @@ export class Mat4 {
     o = f32x4.add(o, f32x4.mul(l, r2));
     l = f32x4.splat(ae[12]);
     o = f32x4.add(o, f32x4.mul(l, r3));
-
     v128.store(tmpInput.dataStart, o);
-
     te[0] = tmpInput[0];
     te[4] = tmpInput[1];
     te[8] = tmpInput[2];
     te[12] = tmpInput[3];
     //#endregion
-
-    // te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
-    // te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
-    // te[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
-    // te[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
 
     //#region
     l = f32x4.splat(ae[1]);
@@ -270,19 +287,12 @@ export class Mat4 {
     o = f32x4.add(o, f32x4.mul(l, r2));
     l = f32x4.splat(ae[13]);
     o = f32x4.add(o, f32x4.mul(l, r3));
-
     v128.store(tmpInput.dataStart, o);
-
     te[1] = tmpInput[0];
     te[5] = tmpInput[1];
     te[9] = tmpInput[2];
     te[13] = tmpInput[3];
     //#endregion
-
-    // te[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
-    // te[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
-    // te[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
-    // te[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
 
     //#region
     l = f32x4.splat(ae[2]);
@@ -293,19 +303,12 @@ export class Mat4 {
     o = f32x4.add(o, f32x4.mul(l, r2));
     l = f32x4.splat(ae[14]);
     o = f32x4.add(o, f32x4.mul(l, r3));
-
     v128.store(tmpInput.dataStart, o);
-
     te[2] = tmpInput[0];
     te[6] = tmpInput[1];
     te[10] = tmpInput[2];
     te[14] = tmpInput[3];
     //#endregion
-
-    // te[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
-    // te[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
-    // te[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
-    // te[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
 
     //#region
     l = f32x4.splat(ae[3]);
@@ -316,28 +319,18 @@ export class Mat4 {
     o = f32x4.add(o, f32x4.mul(l, r2));
     l = f32x4.splat(ae[15]);
     o = f32x4.add(o, f32x4.mul(l, r3));
-
     v128.store(tmpInput.dataStart, o);
-
     te[3] = tmpInput[0];
     te[7] = tmpInput[1];
     te[11] = tmpInput[2];
     te[15] = tmpInput[3];
     //#endregion
-
-    // te[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
-    // te[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
-    // te[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
-    // te[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
-
-    return this;
+    // return this;
   }
 
   multiplyMatricesSIMDWithLoop(a: Mat4, b: Mat4): Mat4 {
     const ae = a.elements;
     const be = b.elements;
-
-    const tmpInput = new Float32Array(4);
 
     let l: v128;
     let r: v128;
@@ -365,6 +358,16 @@ export class Mat4 {
     }
 
     return this;
+  }
+
+  multiplyMatricesSIMD_VOID(): void {}
+
+  test_loop_in_wasm(mat: Mat4, loopCount: u32): void {
+    for (let i: u32 = 0; i < loopCount; i++) {
+      mat.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      this.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      this.multiplyMatricesSIMD(this, mat);
+    }
   }
 }
 
