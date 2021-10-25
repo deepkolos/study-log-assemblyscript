@@ -572,7 +572,7 @@ WebGLRenderTarget 没有 antialias, webgl2 则支持[webgl-framebuffer-multisamp
 传递 16 个参数到 wasm 比传递一个指针慢多了
 当然,如果 js 和 wasm 通信频率较低,那么 simd 应该是非常有优势的
 
-0. 如果循环放在 wasm 里, 则循环次数在 27000 之前都有性能优势, 比循环在外层调wasm稳定快1倍
+0. 如果循环放在 wasm 里, 则循环次数在 27000 之前都有性能优势, 比循环在外层调 wasm 稳定快 1 倍
 
 ```json
 {
@@ -593,5 +593,35 @@ WebGLRenderTarget 没有 antialias, webgl2 则支持[webgl-framebuffer-multisamp
     "FTB_WASM_SIMD": "152.53ms (x18.688)"
   },
   "benchmark_1": { "LOOP_IN_WASM": "7.88ms (x1.000)" }
+}
+```
+
+## 2021-10-25
+
+唠叨: 参考 ftb-matrix, 由比较多数据传递函数也就是 set 方法, 这个适合 js 里实现
+但是 gc 应该怎么实现呢, 如果类全部在 as 里, 应该能有 gc, 但是 set 函数的性能就变慢很多
+内存管理确实是个问题,如果不想管理内存,就每次计算之前复制一份都 wasm 的内存,但是存 js 里也是存,存 wasm 里也是存
+还是存 wasm,js 能读,wasm 也能读,如果为了避免 set 方法又希望有垃圾回收,只需要 overwrite 掉 set 方法就好了
+或者就是完全拆解,主要是生命周期是在 js 里,感觉 as 的 gc 也照顾不到,wasm+js 的交互内存管理还是需要学一下
+ftb-matrix 的垃圾回收是手动触发一次 gc,只需要外部确定 gc 时机即可
+再看了下 assemblyscript 文档,也是提供了 gc 的方法\_\_collect
+感觉无论如何都需要手动管理内存,那么就是和 ftb-matrix 类似胶水方案吧, 类是 js 负责, 函数实现由 wasm 实现, 内存也是放在 wasm 里面
+可以考虑下之前的想法了,一个类部分是 js 实现,部分是 as 实现, 还是算了
+
+```ts
+class Matrix4 {
+  @TS
+  set(): void {}
+
+  @TS
+  multiply(m: Matrix4): Matrix4 {
+    return this.multiplyMatrices(this, m);
+  }
+
+  @AS
+  multiplyMatrices() {
+    // ts编译时把这个带有特定注释的交给as编译,并注入wasm加载逻辑
+    // 不过也只适合as和ts的这两种,要想实现其他语言的混用,vscode代码提示上面估计就够呛了,算了
+  }
 }
 ```
