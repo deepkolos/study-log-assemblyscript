@@ -402,3 +402,25 @@ export function test_v128_load(): Uint8Array {
 
   return out;
 }
+
+// 验证v128.store的参数
+export function test_v128_store(): Float32Array {
+  const arr = new Float32Array(16);
+
+  for (let i: u8 = 0; i < 16; i++) arr[i] = i;
+
+  // 列主序, 读取第一行和第二行存储结果到第三行
+  const row0 = v128.load(arr.dataStart, 0);
+  const row1 = v128.load(arr.dataStart, 4);
+  const result = f32x4.add(row0, row1);
+
+  v128.store(arr.dataStart, row0); // immAlign 的参数貌似不太理解
+  // v128.store(arr.dataStart, result, 8, 4 * 4);
+
+  return arr;
+}
+
+// 0 1 2 3
+// 4 5 6 7
+// 8 9 10 11
+// 12 13 14 15

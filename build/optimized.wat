@@ -1,9 +1,9 @@
 (module
  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
+ (type $none_=>_i32 (func (result i32)))
  (type $i32_=>_i32 (func (param i32) (result i32)))
  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
- (type $none_=>_i32 (func (result i32)))
  (type $i32_i32_i32_i32_i32_i32_i32_i32_=>_i32 (func (param i32 i32 i32 i32 i32 i32 i32 i32) (result i32)))
  (type $none_=>_none (func))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
@@ -43,6 +43,7 @@
  (export "Mat4#multiplyMatricesSIMD_VOID" (func $assembly/simd/Mat4#multiplyMatricesSIMD_VOID))
  (export "Mat4#test_loop_in_wasm" (func $assembly/simd/Mat4#test_loop_in_wasm))
  (export "test_v128_load" (func $assembly/simd/test_v128_load))
+ (export "test_v128_store" (func $assembly/simd/test_v128_store))
  (export "__new" (func $~lib/rt/stub/__new))
  (export "__pin" (func $~lib/rt/stub/__pin))
  (export "__unpin" (func $assembly/simd/Mat4#multiplyMatricesSIMD_VOID))
@@ -2014,6 +2015,49 @@
   call $~lib/typedarray/Uint8Array#__set
   local.get $0
  )
+ (func $assembly/simd/test_v128_store (result i32)
+  (local $0 i32)
+  (local $1 i32)
+  i32.const 12
+  i32.const 3
+  call $~lib/rt/stub/__new
+  i32.const 16
+  i32.const 2
+  call $~lib/arraybuffer/ArrayBufferView#constructor
+  local.set $0
+  loop $for-loop|1
+   local.get $1
+   i32.const 255
+   i32.and
+   i32.const 16
+   i32.lt_u
+   if
+    local.get $0
+    local.get $1
+    i32.const 255
+    i32.and
+    local.get $1
+    f32.convert_i32_u
+    call $~lib/typedarray/Float32Array#__set
+    local.get $1
+    i32.const 1
+    i32.add
+    local.set $1
+    br $for-loop|1
+   end
+  end
+  local.get $0
+  i32.load offset=4
+  v128.load offset=4 align=1
+  drop
+  local.get $0
+  i32.load offset=4
+  local.get $0
+  i32.load offset=4
+  v128.load align=1
+  v128.store
+  local.get $0
+ )
  (func $~lib/rt/stub/__pin (param $0 i32) (result i32)
   local.get $0
  )
@@ -2031,5 +2075,5 @@
   call $~lib/arraybuffer/ArrayBufferView#constructor
   global.set $assembly/simd/tmpInput
  )
- ;; custom section "as-bind_bindings", size 461, contents: "{\"typeIds\":{\"~lib/array/Array<i32>\":{\"id\":4,\"byteSize\":16},\"~lib/typedarray/Uint8Array\":{\"id\":6,\"byteSize\":12}},\"importedFunctions\":{},\"exportedFunctions\":{\"SIMD_ADD\":{\"returnType\":\"~lib/array/Array<i32>\",\"parameters\":[\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\"]},\"SIMD_CALC\":{\"returnType\":\"~lib/array/Array<i32>\",\"parameters\":[\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\"]},\"test_v128_load\":{\"returnType\":\"~lib/typedarray/Uint8Array\",\"parameters\":[]}}}"
+ ;; custom section "as-bind_bindings", size 595, contents: "{\"typeIds\":{\"~lib/array/Array<i32>\":{\"id\":4,\"byteSize\":16},\"~lib/typedarray/Uint8Array\":{\"id\":6,\"byteSize\":12},\"~lib/typedarray/Float32Array\":{\"id\":3,\"byteSize\":12}},\"importedFunctions\":{},\"exportedFunctions\":{\"SIMD_ADD\":{\"returnType\":\"~lib/array/Array<i32>\",\"parameters\":[\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\"]},\"SIMD_CALC\":{\"returnType\":\"~lib/array/Array<i32>\",\"parameters\":[\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\",\"i32\"]},\"test_v128_load\":{\"returnType\":\"~lib/typedarray/Uint8Array\",\"parameters\":[]},\"test_v128_store\":{\"returnType\":\"~lib/typedarray/Float32Array\",\"parameters\":[]}}}"
 )

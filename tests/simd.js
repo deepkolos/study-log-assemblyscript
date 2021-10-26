@@ -56,6 +56,13 @@ test('v128 load output', () => {
   expect(u8Arr(wasmExport.test_v128_load())).toBe([
     16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
   ]);
+  // prettier-ignore
+  expect(f32Arr(wasmExport.test_v128_store())).toBe([
+    0, 1, 1, 3,
+    4, 5, 9, 7,
+    8, 9, 17, 11,
+    12, 13, 25, 15,
+  ])
 });
 
 test('matrix multiply', () => {
