@@ -630,7 +630,29 @@ class Matrix4 {
 
 唠叨总结, 都实现下, 差别也没有那么大
 
-0. AS export类, AS正常的写法(应该也需要手动释放内存__collect)
-1. JS AS混合组装成类, 类似ftb-matrix, AS提供具体操作的函数实现, 并且数据是存储再wasm里两边都能直接操作(手动释放内存)
+0. AS export 类, AS 正常的写法(应该也需要手动释放内存\_\_collect)
+1. JS AS 混合组装成类, 类似 ftb-matrix, AS 提供具体操作的函数实现, 并且数据是存储再 wasm 里两边都能直接操作(手动释放内存)
 
-翻译了一个determinant到simd, 不复杂但是需要提取公因式调整执行顺序便于后面的运算, 然后写了debug极其困难的代码hhh
+翻译了一个 determinant 到 simd, 不复杂但是需要提取公因式调整执行顺序便于后面的运算, 然后写了 debug 极其困难的代码 hhh
+
+## 2021-10-27
+
+赋值运算耗时这么低么 [编程语言中运算符的运算效率](https://blog.csdn.net/morgerton/article/details/64918560) 不过 simd 不知道是否如此
+感觉写 simd 和汇编差不多,可能我操作不对\[dog\], 先翻译到这里吧, 剩下的 API 运算不多, 先跑测试\[搓手.jpg\]
+
+出人意料了, invert比no simd慢
+
+```json
+{
+  "Matrix4_determinant_benchmark_5000": {
+    "JS": "3.88ms (x1.873)",
+    "WASM": "5.66ms (x2.735)",
+    "WASM_SIMD": "2.07ms (x1.000)"
+  },
+  "Matrix4_invert_benchmark_5000": {
+    "JS": "5.19ms (x2.554)",
+    "WASM": "2.03ms (x1.000)",
+    "WASM_SIMD": "3.26ms (x1.606)"
+  }
+}
+```

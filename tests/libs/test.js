@@ -28,8 +28,8 @@ const API = {
     return {
       toBe(targetValue) {
         function unpass(index) {
-          console.log('inputValue:', inputValue);
-          console.log('targetValue:', targetValue);
+          console.log(`[${myExpectIndex}]inputValue:`, inputValue);
+          console.log(`[${myExpectIndex}]targetValue:`, targetValue);
           pass = false;
           if (errorIndex === -1) errorIndex = index;
         }
@@ -65,7 +65,7 @@ const API = {
       resultFormatted[key] = `${ms}ms (x${ratio})`;
     });
 
-    console.log(`\nbenchmark_${loopCount}:`, resultFormatted);
+    console.log(`\n${currTestName}_benchmark_${loopCount}:`, resultFormatted);
   },
 };
 
