@@ -42,18 +42,19 @@ test('Matrix4_determinant', async () => {
   expect(m4LeftJs.determinant()).toBe(76);
   expect(m4LeftWasm.determinant()).toBe(76);
 
+  m4LeftJs.set(2, 3, 4, 5, -1, -21, -3, -4, 6, 7, 8, 10, -8, -9, -10, -12);
+  m4LeftWasm.set(2, 3, 4, 5, -1, -21, -3, -4, 6, 7, 8, 10, -8, -9, -10, -12);
+  m4LeftWasm.set(2, 3, 4, 5, -1, -21, -3, -4, 6, 7, 8, 10, -8, -9, -10, -12);
+
   // prettier-ignore
   const benchCfg = {
     JS() {
-      m4LeftJs.set(2, 3, 4, 5, -1, -21, -3, -4, 6, 7, 8, 10, -8, -9, -10, -12);
       m4LeftJs.determinant()
     },
     WASM() {
-      m4LeftWasm.set(2, 3, 4, 5, -1, -21, -3, -4, 6, 7, 8, 10, -8, -9, -10, -12);
       m4LeftWasm.determinant_no_simd();
     },
     WASM_SIMD() {
-      m4LeftWasm.set(2, 3, 4, 5, -1, -21, -3, -4, 6, 7, 8, 10, -8, -9, -10, -12);
       m4LeftWasm.determinant();
     },
   };
@@ -61,26 +62,27 @@ test('Matrix4_determinant', async () => {
   // benchmark(benchCfg, 1);
   // benchmark(benchCfg, 100);
   // benchmark(benchCfg, 1000);
-  benchmark(benchCfg, 5000);
+  // benchmark(benchCfg, 5000);
   // benchmark(benchCfg, 27_000);
-  // benchmark(benchCfg, 100_000);
+  benchmark(benchCfg, 100_000);
 });
 
 test('Matrix4_invert', async () => {
   const m4LeftJs = new Matrix4();
   const m4LeftWasm = new wasmExport.Matrix4();
 
+  m4LeftJs.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+  m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+  m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+
   const benchCfg = {
     JS() {
-      m4LeftJs.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       m4LeftJs.invert();
     },
     WASM() {
-      m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       m4LeftWasm.invert_no_simd();
     },
     WASM_SIMD() {
-      m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       m4LeftWasm.invert();
     },
   };
@@ -88,7 +90,7 @@ test('Matrix4_invert', async () => {
   // benchmark(benchCfg, 1);
   // benchmark(benchCfg, 100);
   // benchmark(benchCfg, 1000);
-  benchmark(benchCfg, 5000);
+  // benchmark(benchCfg, 5000);
   // benchmark(benchCfg, 27_000);
-  // benchmark(benchCfg, 100_000);
+  benchmark(benchCfg, 100_000);
 });

@@ -640,19 +640,60 @@ class Matrix4 {
 赋值运算耗时这么低么 [编程语言中运算符的运算效率](https://blog.csdn.net/morgerton/article/details/64918560) 不过 simd 不知道是否如此
 感觉写 simd 和汇编差不多,可能我操作不对\[dog\], 先翻译到这里吧, 剩下的 API 运算不多, 先跑测试\[搓手.jpg\]
 
-出人意料了, invert比no simd慢
+还是那个问题只有循环次数少simd才有优势, 循环次数多no simd比simd好, 真是个奇怪的事情
 
 ```json
 {
+  "Matrix4_determinant_benchmark_100": {
+    "JS": "0.14ms (x2.142)",
+    "WASM": "0.07ms (x1.010)",
+    "WASM_SIMD": "0.07ms (x1.000)"
+  },
+  "Matrix4_determinant_benchmark_1000": {
+    "JS": "1.04ms (x2.937)",
+    "WASM": "0.52ms (x1.458)",
+    "WASM_SIMD": "0.36ms (x1.000)"
+  },
   "Matrix4_determinant_benchmark_5000": {
-    "JS": "3.88ms (x1.873)",
-    "WASM": "5.66ms (x2.735)",
-    "WASM_SIMD": "2.07ms (x1.000)"
+    "JS": "2.75ms (x2.186)",
+    "WASM": "1.26ms (x1.000)",
+    "WASM_SIMD": "1.87ms (x1.481)"
+  },
+  "Matrix4_determinant_benchmark_27000": {
+    "JS": "5.09ms (x1.000)",
+    "WASM": "5.38ms (x1.056)",
+    "WASM_SIMD": "6.38ms (x1.253)"
+  },
+  "Matrix4_determinant_benchmark_100000": {
+    "JS": "7.00ms (x1.000)",
+    "WASM": "10.59ms (x1.514)",
+    "WASM_SIMD": "21.43ms (x3.063)"
+  },
+
+  "Matrix4_invert_benchmark_100": {
+    "JS": "0.28ms (x6.652)",
+    "WASM": "0.06ms (x1.471)",
+    "WASM_SIMD": "0.04ms (x1.000)"
+  },
+  "Matrix4_invert_benchmark_1000": {
+    "JS": "1.54ms (x2.603)",
+    "WASM": "0.92ms (x1.552)",
+    "WASM_SIMD": "0.59ms (x1.000)"
   },
   "Matrix4_invert_benchmark_5000": {
-    "JS": "5.19ms (x2.554)",
-    "WASM": "2.03ms (x1.000)",
-    "WASM_SIMD": "3.26ms (x1.606)"
+    "JS": "4.78ms (x4.411)",
+    "WASM": "1.08ms (x1.000)",
+    "WASM_SIMD": "1.15ms (x1.061)"
+  },
+  "Matrix4_invert_benchmark_27000": {
+    "JS": "7.97ms (x1.832)",
+    "WASM": "4.35ms (x1.000)",
+    "WASM_SIMD": "5.27ms (x1.213)"
+  },
+  "Matrix4_invert_benchmark_100000": {
+    "JS": "10.82ms (x1.000)",
+    "WASM": "12.10ms (x1.118)",
+    "WASM_SIMD": "17.16ms (x1.585)"
   }
 }
 ```
