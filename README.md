@@ -640,7 +640,7 @@ class Matrix4 {
 赋值运算耗时这么低么 [编程语言中运算符的运算效率](https://blog.csdn.net/morgerton/article/details/64918560) 不过 simd 不知道是否如此
 感觉写 simd 和汇编差不多,可能我操作不对\[dog\], 先翻译到这里吧, 剩下的 API 运算不多, 先跑测试\[搓手.jpg\]
 
-还是那个问题只有循环次数少simd才有优势, 循环次数多no simd比simd好, 真是个奇怪的事情
+还是那个问题只有循环次数少 simd 才有优势, 循环次数多 no simd 比 simd 好, 真是个奇怪的事情, 还是感觉 v128 的使用不太对, 需要新增赋值的测试
 
 ```json
 {
@@ -694,6 +694,34 @@ class Matrix4 {
     "JS": "10.82ms (x1.000)",
     "WASM": "12.10ms (x1.118)",
     "WASM_SIMD": "17.16ms (x1.585)"
+  }
+}
+```
+
+## 2021-10-28
+
+0. 猜测是大数据量内存分配导致, 否, node wasm 有 memory 大小限制? 65535 待确认
+1. 增加两种初始化 v128 耗时测试, 发现还是 splat+replace_lane 更快, 如果 loop in wasm 则能快 10 多倍
+2. invert 有 16 个 load 指令, 耗时 16ms, 估计替换为 splat+replace_lane 速度就快起来了\[搓手.jpg\], 确实降下来了, 但是 store 还是耗时较大, 和 no simd 没有拉开差距
+3. 修改为splat+replace_lane确实加快了, 目前循环次数100000以内都比js有优势, 但是计算结果有问题, 非常奇怪的问题, 有点难debug
+
+```json
+{
+  "v128 load store benchmark_benchmark_100000": {
+    "load": "5.24ms (x1.695)",
+    "store": "3.40ms (x1.100)",
+    "splat": "3.25ms (x1.052)",
+    "replace_lane": "3.09ms (x1.000)",
+    "splat_replace_lane": "3.26ms (x1.055)",
+    "load_f32arr": "4.99ms (x1.613)",
+    "extract_lane": "3.95ms (x1.280)",
+    "store_f32arr": "4.76ms (x1.539)"
+  },
+  "v128 load store benchmark_benchmark_1": {
+    "splat_replace_lane_loop_100000": "0.14ms (x1.000)",
+    "load_f32arr_loop_100000": "1.92ms (x14.067)",
+    "extract_lane_loop_100000": "0.98ms (x7.182)",
+    "store_f32arr_loop_100000": "2.51ms (x18.375)"
   }
 }
 ```

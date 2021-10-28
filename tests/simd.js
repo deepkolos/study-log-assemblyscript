@@ -231,3 +231,54 @@ test('matrix multiply benchmark', async () => {
     1,
   );
 });
+
+test('v128 load store benchmark', () => {
+  const cfg = {
+    load() {
+      wasmExport.test_v128_load_cost();
+    },
+    store() {
+      wasmExport.test_v128_store_cost();
+    },
+    splat() {
+      wasmExport.test_v128_splat_cost();
+    },
+    replace_lane() {
+      wasmExport.test_v128_replace_lane_cost();
+    },
+    splat_replace_lane() {
+      wasmExport.test_v128_splat_replace_lane_cost();
+    },
+    load_f32arr() {
+      wasmExport.test_v128_load_f32arr_cost();
+    },
+    extract_lane() {
+      wasmExport.test_v128_extract_lane_cost();
+    },
+    store_f32arr() {
+      wasmExport.test_v128_store_f32arr_cost();
+    },
+    f32_cache() {
+      wasmExport.test_f32_cache();
+    },
+  };
+  benchmark(cfg, 100_000);
+
+  benchmark(
+    {
+      splat_replace_lane_loop_100000() {
+        wasmExport.test_v128_splat_replace_lane_cost_loop();
+      },
+      load_f32arr_loop_100000() {
+        wasmExport.test_v128_load_f32arr_cost_loop();
+      },
+      extract_lane_loop_100000() {
+        wasmExport.test_v128_extract_lane_cost_loop();
+      },
+      store_f32arr_loop_100000() {
+        wasmExport.test_v128_store_f32arr_cost_loop();
+      },
+    },
+    1,
+  );
+});

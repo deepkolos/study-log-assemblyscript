@@ -95,6 +95,7 @@ export function SIMD_CALC(
 }
 
 const tmpInput = new Float32Array(4);
+const tmpInput2 = new Float32Array(4);
 
 export class Mat4 {
   elements: Float32Array;
@@ -418,6 +419,107 @@ export function test_v128_store(): Float32Array {
   // v128.store(arr.dataStart, result, 8, 4 * 4);
 
   return arr;
+}
+
+export function test_v128_load_cost(): void {
+  v128.load(tmpInput.dataStart);
+}
+
+const tmpv128 = v128.load(tmpInput.dataStart);
+export function test_v128_store_cost(): void {
+  v128.store(tmpInput.dataStart, tmpv128);
+}
+
+export function test_v128_splat_cost(): void {
+  f32x4.splat(0);
+}
+
+export function test_v128_replace_lane_cost(): void {
+  f32x4.replace_lane(tmpv128, 0, 0);
+}
+
+export function test_v128_splat_replace_lane_cost(): void {
+  const v = f32x4.splat(3);
+  f32x4.replace_lane(v, 0, 0);
+  f32x4.replace_lane(v, 1, 1);
+  f32x4.replace_lane(v, 2, 2);
+}
+
+export function test_v128_load_f32arr_cost(): void {
+  tmpInput[0] = 0;
+  tmpInput[1] = 1;
+  tmpInput[2] = 2;
+  tmpInput[3] = 3;
+  v128.load(tmpInput.dataStart);
+}
+
+export function test_v128_splat_replace_lane_cost_loop(): void {
+  for (let i: u32 = 0; i < 100_000; i++) {
+    let v = f32x4.splat(3);
+    f32x4.replace_lane(v, 0, 0);
+    f32x4.replace_lane(v, 1, 1);
+    f32x4.replace_lane(v, 2, 2);
+    // v = f32x4.splat(3);
+    // f32x4.replace_lane(v, 0, 0);
+    // f32x4.replace_lane(v, 1, 1);
+    // f32x4.replace_lane(v, 2, 2);// 耗时正比
+  }
+}
+
+export function test_v128_load_f32arr_cost_loop(): void {
+  for (let i: u32 = 0; i < 100_000; i++) {
+    tmpInput[0] = 0;
+    tmpInput[1] = 1;
+    tmpInput[2] = 2;
+    tmpInput[3] = 3;
+    v128.load(tmpInput.dataStart);
+    // tmpInput[0] = 0;
+    // tmpInput[1] = 1;
+    // tmpInput[2] = 2;
+    // tmpInput[3] = 3;
+    // v128.load(tmpInput.dataStart); // 耗时正比
+  }
+}
+
+export function test_v128_extract_lane_cost(): void {
+  tmpInput2[0] = f32x4.extract_lane(tmpv128, 0);
+  tmpInput2[1] = f32x4.extract_lane(tmpv128, 1);
+  tmpInput2[2] = f32x4.extract_lane(tmpv128, 2);
+  tmpInput2[3] = f32x4.extract_lane(tmpv128, 3);
+}
+
+export function test_v128_store_f32arr_cost(): void {
+  v128.store(tmpInput.dataStart, tmpv128);
+  tmpInput2[0] = tmpInput[0];
+  tmpInput2[1] = tmpInput[1];
+  tmpInput2[2] = tmpInput[2];
+  tmpInput2[3] = tmpInput[3];
+}
+
+export function test_v128_extract_lane_cost_loop(): void {
+  for (let i: u32 = 0; i < 100_000; i++) {
+    tmpInput2[0] = f32x4.extract_lane(tmpv128, 0);
+    tmpInput2[1] = f32x4.extract_lane(tmpv128, 1);
+    tmpInput2[2] = f32x4.extract_lane(tmpv128, 2);
+    tmpInput2[3] = f32x4.extract_lane(tmpv128, 3);
+  }
+}
+
+export function test_v128_store_f32arr_cost_loop(): void {
+  for (let i: u32 = 0; i < 100_000; i++) {
+    v128.store(tmpInput.dataStart, tmpv128);
+    tmpInput2[0] = tmpInput[0];
+    tmpInput2[1] = tmpInput[1];
+    tmpInput2[2] = tmpInput[2];
+    tmpInput2[3] = tmpInput[3];
+  }
+}
+
+export function test_f32_cache(): void {
+  const a0 = tmpInput[0];
+  const a1 = tmpInput[1];
+  const a2 = tmpInput[2];
+  const a3 = tmpInput[3];
 }
 
 // 0 1 2 3
