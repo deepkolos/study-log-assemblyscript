@@ -703,7 +703,7 @@ class Matrix4 {
 0. 猜测是大数据量内存分配导致, 否, node wasm 有 memory 大小限制? 65535 待确认
 1. 增加两种初始化 v128 耗时测试, 发现还是 splat+replace_lane 更快, 如果 loop in wasm 则能快 10 多倍
 2. invert 有 16 个 load 指令, 耗时 16ms, 估计替换为 splat+replace_lane 速度就快起来了\[搓手.jpg\], 确实降下来了, 但是 store 还是耗时较大, 和 no simd 没有拉开差距
-3. 修改为splat+replace_lane确实加快了, 目前循环次数100000以内都比js有优势, 但是计算结果有问题, 非常奇怪的问题, 有点难debug
+3. 修改为 splat+replace_lane 确实加快了, 目前循环次数 100000 以内都比 js 有优势, 但是计算结果有问题, 非常奇怪的问题, 有点难 debug
 
 ```json
 {
@@ -722,6 +722,51 @@ class Matrix4 {
     "load_f32arr_loop_100000": "1.92ms (x14.067)",
     "extract_lane_loop_100000": "0.98ms (x7.182)",
     "store_f32arr_loop_100000": "2.51ms (x18.375)"
+  }
+}
+```
+
+## 2021-10-29
+
+0. 计算出错是因为`replace_lane`返回了一个新的`v128`, 非修改原有的
+1. `setTimeout`模拟每次`renderLoop`的计算量, 观察`wasm simd`不连续累积计算是否会不断变慢, 如果是累积的话, 有点致命, 意味着会越来越慢
+2. 为什么测试同样乘法逻辑, 但是`matrix.js`的比`simd.js`稳定慢 5ms?
+
+把 100000 拆成 5 份, 间隔 500ms 执行一份, 可以发现 js 一开始稍微劣势, 后面就直线追赶, 第 4 次是 simd 的 6 倍, `wasm simd`则是稳定 8ms 左右, v8 的 jit 还是太强了, 瞬间觉得 wasm 优势也不是很大... 还是得看看浏览器上的情况吧
+
+难道是 node 的 v8 太强了, 还是 assemblyscript 编译出来的 wasm 性能太差, 不过刚发现 rust 对 gl-matrix 的 port 看起来是稳定优于 js [gl-matrix-wasm](http://gl-matrix-wasm.dtysky.moe/), 还是得浏览器测试下
+
+```json
+{
+  "Matrix4_multiply_benchmark_20000": {
+    "JS": "11.74ms (x1.270)",
+    "WASM": "14.08ms (x1.522)",
+    "WASM_SIMD": "9.25ms (x1.000)",
+    "WASM_SIMD_LOAD_F32": "11.05ms (x1.195)"
+  },
+  "Matrix4_multiply_benchmark_20000": {
+    "JS": "3.52ms (x1.000)",
+    "WASM": "8.35ms (x2.371)",
+    "WASM_SIMD": "8.54ms (x2.424)",
+    "WASM_SIMD_LOAD_F32": "9.59ms (x2.724)"
+  },
+  "Matrix4_multiply_benchmark_20000": {
+    "JS": "1.55ms (x1.000)",
+    "WASM": "8.72ms (x5.632)",
+    "WASM_SIMD": "8.09ms (x5.226)",
+    "WASM_SIMD_LOAD_F32": "9.55ms (x6.165)"
+  },
+  "Matrix4_multiply_benchmark_20000": {
+    "JS": "1.32ms (x1.000)",
+    "WASM": "8.36ms (x6.316)",
+    "WASM_SIMD": "8.19ms (x6.188)",
+    "WASM_SIMD_LOAD_F32": "9.50ms (x7.180)"
+  },
+  "Matrix4_multiply_benchmark_20000": {
+    "JS": "1.35ms (x1.000)",
+    "WASM": "8.53ms (x6.313)",
+    "WASM_SIMD": "8.09ms (x5.985)",
+    "WASM_SIMD_LOAD_F32": "9.51ms (x7.033)"
   }
 }
 ```

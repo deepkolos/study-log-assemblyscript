@@ -103,6 +103,123 @@ export class Matrix4 {
     const be = b.elements;
     const te = this.elements;
 
+    //#region
+    // let r0 = f32x4.splat(be[0]);
+    // r0 = f32x4.replace_lane(r0, 1, be[4]);
+    // r0 = f32x4.replace_lane(r0, 2, be[8]);
+    // r0 = f32x4.replace_lane(r0, 3, be[12]);
+    // let r1 = f32x4.splat(be[1]);
+    // r1 = f32x4.replace_lane(r1, 1, be[5]);
+    // r1 = f32x4.replace_lane(r1, 2, be[9]);
+    // r1 = f32x4.replace_lane(r1, 3, be[13]);
+    // let r2 = f32x4.splat(be[2]);
+    // r2 = f32x4.replace_lane(r2, 1, be[6]);
+    // r2 = f32x4.replace_lane(r2, 2, be[10]);
+    // r2 = f32x4.replace_lane(r2, 3, be[14]);
+    // let r3 = f32x4.splat(be[3]);
+    // r3 = f32x4.replace_lane(r3, 1, be[7]);
+    // r3 = f32x4.replace_lane(r3, 2, be[11]);
+    // r3 = f32x4.replace_lane(r3, 3, be[15]);
+    // 貌似性能没啥变化
+    const r0 = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(
+      f32x4.splat(be[0]),
+         1, be[4]), 
+         2, be[8]), 
+         3, be[12]);
+    const r1 = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(
+      f32x4.splat(be[1]),
+        1, be[5]), 
+        2, be[9]), 
+        3, be[13]);
+    const r2 = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(
+      f32x4.splat(be[2]),
+          1, be[6]), 
+          2, be[10]), 
+          3, be[14]);
+    const r3 = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(
+      f32x4.splat(be[3]),
+          1, be[7]), 
+          2, be[11]), 
+          3, be[15]);
+
+    // let o = f32x4.mul(f32x4.splat(ae[0]), r0);
+    // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[4]), r1));
+    // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[8]), r2));
+    // const o0 = f32x4.add(o, f32x4.mul(f32x4.splat(ae[12]), r3));
+
+    // o = f32x4.mul(f32x4.splat(ae[1]), r0);
+    // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[5]), r1));
+    // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[9]), r2));
+    // const o1 = f32x4.add(o, f32x4.mul(f32x4.splat(ae[13]), r3));
+
+    // o = f32x4.mul(f32x4.splat(ae[2]), r0);
+    // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[6]), r1));
+    // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[10]), r2));
+    // const o2 = f32x4.add(o, f32x4.mul(f32x4.splat(ae[14]), r3));
+
+    // o = f32x4.mul(f32x4.splat(ae[3]), r0);
+    // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[7]), r1));
+    // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[11]), r2));
+    // const o3 = f32x4.add(o, f32x4.mul(f32x4.splat(ae[15]), r3));
+
+    // 还挺有规律的, 不过对性能没有明显变化, 不过方便检查输入
+    const o0 = f32x4.add(
+      f32x4.add(
+        f32x4.add(
+          f32x4.mul(f32x4.splat(ae[0]), r0), 
+          f32x4.mul(f32x4.splat(ae[4]), r1)), 
+        f32x4.mul(f32x4.splat(ae[8]), r2)), 
+      f32x4.mul(f32x4.splat(ae[12]), r3));
+    const o1 = f32x4.add(
+      f32x4.add(
+        f32x4.add(
+          f32x4.mul(f32x4.splat(ae[1]), r0), 
+          f32x4.mul(f32x4.splat(ae[5]), r1)), 
+        f32x4.mul(f32x4.splat(ae[9]), r2)), 
+      f32x4.mul(f32x4.splat(ae[13]), r3));
+    const o2 = f32x4.add(
+      f32x4.add(
+        f32x4.add(
+          f32x4.mul(f32x4.splat(ae[2]), r0), 
+          f32x4.mul(f32x4.splat(ae[6]), r1)), 
+        f32x4.mul(f32x4.splat(ae[10]), r2)), 
+      f32x4.mul(f32x4.splat(ae[14]), r3));
+    const o3 = f32x4.add(
+      f32x4.add(
+        f32x4.add(
+          f32x4.mul(f32x4.splat(ae[3]), r0), 
+          f32x4.mul(f32x4.splat(ae[7]), r1)), 
+        f32x4.mul(f32x4.splat(ae[11]), r2)), 
+      f32x4.mul(f32x4.splat(ae[15]), r3));
+
+    te[0] = f32x4.extract_lane(o0, 0);
+    te[4] = f32x4.extract_lane(o0, 1);
+    te[8] = f32x4.extract_lane(o0, 2);
+    te[12] = f32x4.extract_lane(o0, 3);
+
+    te[1] = f32x4.extract_lane(o1, 0);
+    te[5] = f32x4.extract_lane(o1, 1);
+    te[9] = f32x4.extract_lane(o1, 2);
+    te[13] = f32x4.extract_lane(o1, 3);
+
+    te[2] = f32x4.extract_lane(o2, 0);
+    te[6] = f32x4.extract_lane(o2, 1);
+    te[10] = f32x4.extract_lane(o2, 2);
+    te[14] = f32x4.extract_lane(o2, 3);
+
+    te[3] = f32x4.extract_lane(o3, 0);
+    te[7] = f32x4.extract_lane(o3, 1);
+    te[11] = f32x4.extract_lane(o3, 2);
+    te[15] = f32x4.extract_lane(o3, 3);
+
+		return this;
+	}
+
+  multiplyMatrices_load_f32(a: Matrix4, b: Matrix4): Matrix4 {
+    const ae = a.elements;
+    const be = b.elements;
+    const te = this.elements;
+
     //#region simd start 最初版
     tmpF32x4[0] = be[0];
     tmpF32x4[1] = be[4];
@@ -127,9 +244,12 @@ export class Matrix4 {
 
     let l = f32x4.splat(ae[0]);
     let o = f32x4.mul(l, r0);
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[4]), r1));
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[8]), r2));
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[12]), r3));
+    l = f32x4.splat(ae[4]);
+    o = f32x4.add(o, f32x4.mul(l, r1));
+    l = f32x4.splat(ae[8]);
+    o = f32x4.add(o, f32x4.mul(l, r2));
+    l = f32x4.splat(ae[12]);
+    o = f32x4.add(o, f32x4.mul(l, r3));
     v128.store(tmpF32x4Ptr, o);
     te[0] = tmpF32x4[0];
     te[4] = tmpF32x4[1];
@@ -138,10 +258,14 @@ export class Matrix4 {
     //#endregion
 
     //#region
-    o = f32x4.mul(f32x4.splat(ae[1]), r0);
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[5]), r1));
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[9]), r2));
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[13]), r3));
+    l = f32x4.splat(ae[1]);
+    o = f32x4.mul(l, r0);
+    l = f32x4.splat(ae[5]);
+    o = f32x4.add(o, f32x4.mul(l, r1));
+    l = f32x4.splat(ae[9]);
+    o = f32x4.add(o, f32x4.mul(l, r2));
+    l = f32x4.splat(ae[13]);
+    o = f32x4.add(o, f32x4.mul(l, r3));
     v128.store(tmpF32x4Ptr, o);
     te[1] = tmpF32x4[0];
     te[5] = tmpF32x4[1];
@@ -150,10 +274,14 @@ export class Matrix4 {
     //#endregion
 
     //#region
-    o = f32x4.mul(f32x4.splat(ae[2]), r0);
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[6]), r1));
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[10]), r2));
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[14]), r3));
+    l = f32x4.splat(ae[2]);
+    o = f32x4.mul(l, r0);
+    l = f32x4.splat(ae[6]);
+    o = f32x4.add(o, f32x4.mul(l, r1));
+    l = f32x4.splat(ae[10]);
+    o = f32x4.add(o, f32x4.mul(l, r2));
+    l = f32x4.splat(ae[14]);
+    o = f32x4.add(o, f32x4.mul(l, r3));
     v128.store(tmpF32x4Ptr, o);
     te[2] = tmpF32x4[0];
     te[6] = tmpF32x4[1];
@@ -162,19 +290,84 @@ export class Matrix4 {
     //#endregion
 
     //#region
-    o = f32x4.mul(f32x4.splat(ae[3]), r0);
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[7]), r1));
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[11]), r2));
-    o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[15]), r3));
+    l = f32x4.splat(ae[3]);
+    o = f32x4.mul(l, r0);
+    l = f32x4.splat(ae[7]);
+    o = f32x4.add(o, f32x4.mul(l, r1));
+    l = f32x4.splat(ae[11]);
+    o = f32x4.add(o, f32x4.mul(l, r2));
+    l = f32x4.splat(ae[15]);
+    o = f32x4.add(o, f32x4.mul(l, r3));
     v128.store(tmpF32x4Ptr, o);
     te[3] = tmpF32x4[0];
     te[7] = tmpF32x4[1];
     te[11] = tmpF32x4[2];
     te[15] = tmpF32x4[3];
     //#endregion
+    return this;
+  }
 
-		return this;
-	}
+  multiplyMatrices_no_simd(a: Matrix4, b: Matrix4): Matrix4 {
+    const ae = a.elements;
+    const be = b.elements;
+    const te = this.elements;
+
+    const a11 = ae[0],
+      a12 = ae[4],
+      a13 = ae[8],
+      a14 = ae[12];
+    const a21 = ae[1],
+      a22 = ae[5],
+      a23 = ae[9],
+      a24 = ae[13];
+    const a31 = ae[2],
+      a32 = ae[6],
+      a33 = ae[10],
+      a34 = ae[14];
+    const a41 = ae[3],
+      a42 = ae[7],
+      a43 = ae[11],
+      a44 = ae[15];
+
+    const b11 = be[0],
+      b12 = be[4],
+      b13 = be[8],
+      b14 = be[12];
+    const b21 = be[1],
+      b22 = be[5],
+      b23 = be[9],
+      b24 = be[13];
+    const b31 = be[2],
+      b32 = be[6],
+      b33 = be[10],
+      b34 = be[14];
+    const b41 = be[3],
+      b42 = be[7],
+      b43 = be[11],
+      b44 = be[15];
+
+    te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+    te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+    te[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+    te[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+
+    te[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+    te[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+    te[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+    te[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+
+    te[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+    te[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+    te[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+    te[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+
+    te[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+    te[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+    te[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+    te[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+
+    return this;
+  }
 
 	multiplyScalar( s: f32 ): Matrix4 {
 		const ptr = this.elements.dataStart;
@@ -708,70 +901,78 @@ export class Matrix4 {
     
     //#region 
     let l: v128, r: v128, m0: v128, m1: v128, m2: v128, m3: v128, m4: v128, m5: v128, m6: v128, m7: v128, s0: v128, s1: v128;
-    l = f32x4.splat(n14);
-    f32x4.replace_lane(l, 1, n12);
-    f32x4.replace_lane(l, 2, n13);
-    f32x4.replace_lane(l, 3, n11);
-    r = f32x4.splat(n23);
-    f32x4.replace_lane(r, 1, n24);
-    f32x4.replace_lane(r, 2, n22);
+
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n14),
+      1, n12),
+      2, n13),
+      3, n11);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n23), 
+      1, n24), 
+      2, n22);
     m0 = f32x4.mul(l, r);
 
-    l = f32x4.splat(n13);
-    f32x4.replace_lane(l, 1, n14);
-    f32x4.replace_lane(l, 2, n12);
-    r = f32x4.splat(n24);
-    f32x4.replace_lane(r, 1, n22);
-    f32x4.replace_lane(r, 2, n23);
-    f32x4.replace_lane(r, 3, n21);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n13), 
+      1, n14),
+      2, n12);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n24), 
+      1, n22),
+      2, n23), 
+      3, n21);
     m1 = f32x4.mul(l, r);
 
-    f32x4.replace_lane(l, 0, n14);
-    f32x4.replace_lane(l, 1, n12);
+    l = f32x4.replace_lane(f32x4.splat(
+                 n14),
+      1, n12);
     r = f32x4.splat(n21);
     m2 = f32x4.mul(l, r);
 
     // 这里有奇怪的问题 老是算不对
     l = f32x4.splat(n11);
-    r = f32x4.splat(n22);
-    f32x4.replace_lane(r, 0, n24);
+    r = f32x4.replace_lane(f32x4.splat(
+                 n22),
+      0, n24);
     m3 = f32x4.mul(l, r);
-    // tmpF32x4[0] = n11 * n24;
-    // tmpF32x4[1] = n11 * n22;
-    // m3 = v128.load(tmpF32x4Ptr);
 
     s0 = f32x4.sub(m0, m1);
     s1 = f32x4.sub(m2, m3);
 
-    r = f32x4.splat(n34);
-    f32x4.replace_lane(r, 0, n32);
-    f32x4.replace_lane(r, 1, n33);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n34), 
+      0, n32), 
+      1, n33);
     m4 = f32x4.mul(s0, r);
   
-    r = f32x4.splat(n31);
-    f32x4.replace_lane(r, 3, n32);
+    r = f32x4.replace_lane( f32x4.splat(
+                 n31),
+      3, n32);
     m5 = f32x4.mul(s0, r);
   
-    r = f32x4.splat(n33);
-    f32x4.replace_lane(r, 1, n34);
+    r = f32x4.replace_lane(f32x4.splat(
+                 n33),
+      1, n34);
     m6 = f32x4.mul(s1, r);
     
-    r = f32x4.splat(n32);
-    f32x4.replace_lane(r, 1, n33);
+    r = f32x4.replace_lane(f32x4.splat(
+                 n32), 
+      1, n33);
     m7 = f32x4.mul(s1, r);
+
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+               n41),
+    1, n42),
+    2, n43),
+    3, n44);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+               f32x4.extract_lane(m4, 0) + f32x4.extract_lane(m4, 1) + f32x4.extract_lane(m4, 2)),
+    1, f32x4.extract_lane(m4, 3) + f32x4.extract_lane(m6, 0) - f32x4.extract_lane(m5, 0)),
+    2, -f32x4.extract_lane(m7, 0) + f32x4.extract_lane(m6, 1) - f32x4.extract_lane(m5, 1)),
+    3, -f32x4.extract_lane(m7, 1) - f32x4.extract_lane(m5, 3) - f32x4.extract_lane(m5, 2));
     //#endregion
 
-    f32x4.replace_lane(l, 0, n41);
-    f32x4.replace_lane(l, 1, n42);
-    f32x4.replace_lane(l, 2, n43);
-    f32x4.replace_lane(l, 3, n44);
-    f32x4.replace_lane(r, 0, f32x4.extract_lane(m4, 0) + f32x4.extract_lane(m4, 1) + f32x4.extract_lane(m4, 2));
-    f32x4.replace_lane(r, 1, f32x4.extract_lane(m4, 3) + f32x4.extract_lane(m6, 0) - f32x4.extract_lane(m5, 0));
-    f32x4.replace_lane(r, 2, -f32x4.extract_lane(m7, 0) + f32x4.extract_lane(m6, 1) - f32x4.extract_lane(m5, 1));
-    f32x4.replace_lane(r, 3, -f32x4.extract_lane(m7, 1) - f32x4.extract_lane(m5, 3) - f32x4.extract_lane(m5, 2));
-    //#endregion
-
-    // return f32x4.extract_lane(m3, 0);
     l = f32x4.mul(l, r);
     return f32x4.extract_lane(l, 0) + f32x4.extract_lane(l, 1) + f32x4.extract_lane(l, 2) + f32x4.extract_lane(l, 3);
 
@@ -952,76 +1153,89 @@ export class Matrix4 {
 			// t13 = n13 * n24 * n42 - n14 * n23 * n42 + n14 * n22 * n43 - n12 * n24 * n43 - n13 * n22 * n44 + n12 * n23 * n44,
 			// t14 = n14 * n23 * n32 - n13 * n24 * n32 - n14 * n22 * n33 + n12 * n24 * n33 + n13 * n22 * n34 - n12 * n23 * n34;
 
-    // 这次就不做局部小乘法复用了有点蛋疼,并且这次复用程度不高
     let l: v128, r: v128, p: v128, c0: v128, c1: v128, c2: v128, c3: v128, c4: v128;
 
     //#region 
-    c0 = f32x4.splat(n42);
-    f32x4.replace_lane(c0, 3, n32);
-    c1 = f32x4.splat(n32);
-    f32x4.replace_lane(c1, 2, n22);
-    f32x4.replace_lane(c1, 3, n22);
-    c2 = f32x4.splat(n43);
-    f32x4.replace_lane(c2, 3, n33);
-    c3 = f32x4.splat(n12);
-    f32x4.replace_lane(c0, 0, n22);
-    c4 = f32x4.splat(n44);
-    f32x4.replace_lane(c0, 3, n34);
+    c0 = f32x4.replace_lane(f32x4.splat(
+                 n42), 
+      3, n32);
+    c1 = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n32), 
+      2, n22), 
+      3, n22);
+    c2 = f32x4.replace_lane(f32x4.splat(
+                n43), 
+      3, n33);
+    c3 = f32x4.replace_lane(f32x4.splat(
+                 n12), 
+      0, n22);
+    c4 = f32x4.replace_lane(f32x4.splat(
+                n44),
+      3, n34);
 
-    l = f32x4.splat(n14)
-    f32x4.replace_lane(l, 0, n23);
-    f32x4.replace_lane(l, 2, n13);
-    r = f32x4.splat(n34);
-    f32x4.replace_lane(r, 1, n33);
-    f32x4.replace_lane(r, 2, n24);
-    f32x4.replace_lane(r, 3, n23);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n14), 
+      0, n23), 
+      2, n13);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n34), 
+      1, n33), 
+      2, n24), 
+      3, n23);
     p = f32x4.mul(f32x4.mul(l, r), c0);
 
-    l = f32x4.splat(n13);
-    f32x4.replace_lane(l, 0, n24);
-    f32x4.replace_lane(l, 2, n14);
-    r = f32x4.splat(n33);
-    f32x4.replace_lane(r, 1, n34);
-    f32x4.replace_lane(r, 2, n23);
-    f32x4.replace_lane(r, 3, n24);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n13), 
+      0, n24),
+      2, n14);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n33), 
+      1, n34), 
+      2, n23), 
+      3, n24);
 
     p = f32x4.sub(p, f32x4.mul(f32x4.mul(l, r), c0));
 
-    l = f32x4.splat(-n14);
-    f32x4.replace_lane(l, 0, n24);
-    f32x4.replace_lane(l, 2, n14);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                -n14), 
+      0, n24), 
+      2, n14);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(l, r), c2));
 
-    l = f32x4.splat(-n34);
-    f32x4.replace_lane(l, 1, n34);
-    f32x4.replace_lane(l, 2, -n24);
-    f32x4.replace_lane(l, 3, n24);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                -n34), 
+      1, n34), 
+      2, -n24), 
+      3, n24);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(c2, l), c2));
 
-    l = f32x4.splat(n13);
-    f32x4.replace_lane(l, 0, -n23);
-    f32x4.replace_lane(l, 2, -n13);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                  n13), 
+      0, -n23), 
+      2, -n13);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(l, c1), c4));
 
-    l = f32x4.splat(n33);
-    f32x4.replace_lane(l, 1, -n33);
-    f32x4.replace_lane(l, 2, n23);
-    f32x4.replace_lane(l, 3, -n23);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                  n33), 
+      1, -n33), 
+      2, n23), 
+      3, -n23);
     r = f32x4.add(p, f32x4.mul(f32x4.mul(c3, l), c4));
 
     //#endregion
 
-    l = f32x4.splat(n11);
-    f32x4.replace_lane(l, 1, n21);
-    f32x4.replace_lane(l, 2, n31);
-    f32x4.replace_lane(l, 3, n41);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n11), 
+      1, n21), 
+      2, n31), 
+      3, n41);
     p = f32x4.mul(l, r);
 
 		// const det = n11 * t11 + n21 * t12 + n31 * t13 + n41 * t14;
     const det: f32 = f32x4.extract_lane(p, 0) 
-                    + f32x4.extract_lane(p, 1) 
-                    + f32x4.extract_lane(p, 2) 
-                    + f32x4.extract_lane(p, 3);
+                   + f32x4.extract_lane(p, 1) 
+                   + f32x4.extract_lane(p, 2) 
+                   + f32x4.extract_lane(p, 3);
 
 		if ( det === 0 ) return this.set( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
 
@@ -1042,53 +1256,64 @@ export class Matrix4 {
 
     //#region 
     c1 = f32x4.splat(n41);
-    l = f32x4.splat(n24);
-    f32x4.replace_lane(l, 1, n22);
-    f32x4.replace_lane(l, 2, n23);
-    f32x4.replace_lane(l, 3, n13);
-    r = f32x4.splat(n34);
-    f32x4.replace_lane(r, 0, n33);
-    f32x4.replace_lane(r, 2, n32);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n24), 
+      1, n22), 
+      2, n23), 
+      3, n13);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n34), 
+      0, n33), 
+      2, n32);
     p = f32x4.mul(f32x4.mul(l, r), c1);
 
-    l = f32x4.splat(n23);
-    f32x4.replace_lane(l, 1, n24);
-    f32x4.replace_lane(l, 2, n22);
-    f32x4.replace_lane(l, 3, n14);
-    r = f32x4.splat(n34);
-    f32x4.replace_lane(r, 0, n34);
-    f32x4.replace_lane(r, 1, n32);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n23), 
+      1, n24), 
+      2, n22), 
+      3, n14);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n34), 
+      0, n34), 
+      1, n32);
     p = f32x4.sub(p, f32x4.mul(f32x4.mul(l, r), c1));
 
-    l = f32x4.splat(-n24);
-    f32x4.replace_lane(l, 1, n24);
-    f32x4.replace_lane(l, 2, -n23);
-    f32x4.replace_lane(l, 3, n14);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                -n24), 
+      1, n24), 
+      2, -n23), 
+      3, n14);
     c2 = f32x4.splat(n31);
-    c3 = f32x4.splat(n42);
-    f32x4.replace_lane(c3, 0, n43);
-    f32x4.replace_lane(c3, 3, n43);
+    c3 = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n42), 
+      0, n43), 
+      3, n43);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(l, c2), c3));
 
-    c4 = f32x4.splat(n21);
-    f32x4.replace_lane(c4, 3, n11);
-    l = f32x4.splat(-n34);
-    f32x4.replace_lane(l, 0, n34);
-    f32x4.replace_lane(l, 2, n33);
+    c4 = f32x4.replace_lane(f32x4.splat(
+                 n21), 
+      3, n11);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                -n34), 
+      0, n34), 
+      2, n33);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(c4, l), c3));
 
-    c3 = f32x4.splat(n44);
-    f32x4.replace_lane(c3, 2, n43);
-    l = f32x4.splat(n23);
-    f32x4.replace_lane(l, 1, -n22);
-    f32x4.replace_lane(l, 2, n22);
-    f32x4.replace_lane(l, 3, -n13);
+    c3 = f32x4.replace_lane(f32x4.splat(
+                 n44), 
+      2, n43);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n23), 
+      1, -n22), 
+      2, n22), 
+      3, -n13);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(l, c2), c3));
 
-    l = f32x4.splat(-n33);
-    f32x4.replace_lane(l, 1, n32);
-    f32x4.replace_lane(l, 2, -n32);
-    f32x4.replace_lane(l, 3, n33);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                -n33), 
+      1, n32), 
+      2, -n32), 
+      3, n33);
     // p = f32x4.mul(f32x4.add(p, f32x4.mul(f32x4.mul(c4, l), c3)), c0);
     const p0 = f32x4.mul(f32x4.add(p, f32x4.mul(f32x4.mul(c4, l), c3)), c0);
 
@@ -1107,53 +1332,64 @@ export class Matrix4 {
 		// te[ 5 ] =  ( n13 * n34 * n41 - n14 * n33 * n41 + n14 * n31 * n43 - n11 * n34 * n43 - n13 * n31 * n44 + n11 * n33 * n44 ) * detInv;
 
     //#region 
-    l = f32x4.splat(n12);
-    f32x4.replace_lane(l, 0, n14);
-    f32x4.replace_lane(l, 2, n14);
-    r = f32x4.splat(n32);
-    f32x4.replace_lane(r, 1, n33);
-    f32x4.replace_lane(r, 2, n23);
-    f32x4.replace_lane(r, 3, n24);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n12), 
+      0, n14), 
+      2, n14);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n32), 
+      1, n33), 
+      2, n23), 
+      3, n24);
     p = f32x4.mul(f32x4.mul(l, r), c1);
 
    
-    l = f32x4.splat(n13);
-    f32x4.replace_lane(l, 0, n12);
-    f32x4.replace_lane(l, 3, n14);
-    r = f32x4.splat(n34);
-    f32x4.replace_lane(r, 1, n32);
-    f32x4.replace_lane(r, 2, n24);
-    f32x4.replace_lane(r, 3, n22);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n13), 
+      0, n12), 
+      3, n14);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n34), 
+      1, n32), 
+      2, n24), 
+      3, n22);
     p = f32x4.sub(p, f32x4.mul(f32x4.mul(l, r), c1));
 
-    l = f32x4.splat(-n14);
-    f32x4.replace_lane(l, 1, n13);
-    f32x4.replace_lane(l, 3, n14);
-    c2 = f32x4.splat(n31);
-    f32x4.replace_lane(c2, 2, n21);
-    f32x4.replace_lane(c2, 3, n21);
-    c3 = f32x4.splat(n42);
-    f32x4.replace_lane(c3, 2, n43);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                -n14), 
+      1, n13), 
+      3, n14);
+    c2 = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n31), 
+      2, n21), 
+      3, n21);
+    c3 = f32x4.replace_lane(f32x4.splat(
+                 n42), 
+      2, n43);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(l, c2), c3));
 
     c4 = f32x4.splat(n11);
-    l = f32x4.splat(n34);
-    f32x4.replace_lane(l, 1, -n33);
-    f32x4.replace_lane(l, 2, n24);
-    f32x4.replace_lane(l, 3, -n24);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n34), 
+      1, -n33), 
+      2, n24), 
+      3, -n24);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(c4, l), c3));
 
-    c3 = f32x4.splat(n44);
-    f32x4.replace_lane(c3, 1, n43);
-    l = f32x4.splat(-n12);
-    f32x4.replace_lane(l, 0, n12);
-    f32x4.replace_lane(l, 2, n13);
+    c3 = f32x4.replace_lane(f32x4.splat(
+                 n44), 
+      1, n43);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 -n12), 
+      0, n12), 
+      2, n13);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(l, c2), c3));
 
-    l = f32x4.splat(-n32);
-    f32x4.replace_lane(l, 1, n32);
-    f32x4.replace_lane(l, 2, -n23);
-    f32x4.replace_lane(l, 3, n22);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 -n32), 
+      1, n32), 
+      2, -n23), 
+      3, n22);
     // p = f32x4.mul(f32x4.add(p, f32x4.mul(f32x4.mul(c4, l), c3)), c0);
     const p1 = f32x4.mul(f32x4.add(p, f32x4.mul(f32x4.mul(c4, l), c3)), c0);
 
@@ -1172,52 +1408,63 @@ export class Matrix4 {
 		// te[ 10 ] = ( n12 * n24 * n41 - n14 * n22 * n41 + n14 * n21 * n42 - n11 * n24 * n42 - n12 * n21 * n44 + n11 * n22 * n44 ) * detInv;
 
     //#region 
-    c1 = f32x4.splat(n31);
-    f32x4.replace_lane(c1, 0, n41);
-    l = f32x4.splat(n13);
-    f32x4.replace_lane(l, 2, n14);
-    f32x4.replace_lane(l, 3, n12);
-    r = f32x4.splat(n22);
-    f32x4.replace_lane(r, 1, n24);
-    f32x4.replace_lane(r, 3, n23);
+    c1 = f32x4.replace_lane(f32x4.splat(
+                 n31), 
+      0, n41);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n13), 
+      2, n14), 
+      3, n12);
+    r = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n22), 
+      1, n24), 
+      3, n23);
     p = f32x4.mul(f32x4.mul(l, r), c1);
 
-    l = f32x4.splat(n12);
-    f32x4.replace_lane(l, 1, n14);
-    f32x4.replace_lane(l, 3, n13);
-    r = f32x4.splat(n13);
-    f32x4.replace_lane(r, 2, n24);
-    f32x4.replace_lane(r, 3, n22);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n12), 
+      1, n14), 
+      3, n13);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n13), 
+      2, n24), 
+      3, n22);
     p = f32x4.sub(p, f32x4.mul(f32x4.mul(l, r), c1));
 
-    l = f32x4.splat(-n13);
-    f32x4.replace_lane(l, 1, n14);
-    f32x4.replace_lane(l, 2, -n14);
-    f32x4.replace_lane(l, 3, n13);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                -n13), 
+      1, n14), 
+      2, -n14), 
+      3, n13);
     c2 = f32x4.splat(n21);
-    c3 = f32x4.splat(n32);
-    f32x4.replace_lane(c3, 0, n42);
-    f32x4.replace_lane(c3, 1, n33);
+    c3 = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n32), 
+      0, n42), 
+      1, n33);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(l, c2), c3));
 
     c4 = f32x4.splat(n11);
-    l = f32x4.splat(n23);
-    f32x4.replace_lane(l, 1, -n24);
-    f32x4.replace_lane(l, 2, n24);
-    f32x4.replace_lane(l, 3, -n23);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n23), 
+      1, -n24), 
+      2, n24), 
+      3, -n23);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(c4, l), c3));
 
-    c3 = f32x4.splat(n34);
-    f32x4.replace_lane(c3, 0, n43);
-    f32x4.replace_lane(c3, 3, n33);
-    l = f32x4.splat(n12);
-    f32x4.replace_lane(l, 1, -n13);
-    f32x4.replace_lane(l, 3, -n12);
+    c3 = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n34), 
+      0, n43), 
+      3, n33);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 n12), 
+      1, -n13), 
+      3, -n12);
     p = f32x4.add(p, f32x4.mul(f32x4.mul(l, c2), c3));
 
-    l = f32x4.splat(-n22);
-    f32x4.replace_lane(l, 1, n23);
-    f32x4.replace_lane(l, 3, n22);
+    l = f32x4.replace_lane(f32x4.replace_lane(f32x4.splat(
+                 -n22), 
+      1, n23), 
+      3, n22);
     // p = f32x4.mul(f32x4.add(p, f32x4.mul(f32x4.mul(c4, l), c3)), c0);
     const p2 = f32x4.mul(f32x4.add(p, f32x4.mul(f32x4.mul(c4, l), c3)), c0);
 

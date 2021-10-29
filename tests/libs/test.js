@@ -2,11 +2,11 @@ let pass;
 let currTestName;
 let expectIndex;
 let errorIndex;
-const taskChain = Promise.resolve();
+let taskChain = Promise.resolve();
 
 const API = {
   test(name, cb) {
-    taskChain.then(() => {
+    taskChain = taskChain.then(() => {
       const t = performance.now();
       pass = true;
       currTestName = name;
@@ -28,8 +28,8 @@ const API = {
     return {
       toBe(targetValue) {
         function unpass(index) {
-          console.log(`[${myExpectIndex}]inputValue:`, inputValue);
-          console.log(`[${myExpectIndex}]targetValue:`, targetValue);
+          console.log(`${currTestName}[${myExpectIndex}]inputValue:`, inputValue);
+          console.log(`${currTestName}[${myExpectIndex}]targetValue:`, targetValue);
           pass = false;
           if (errorIndex === -1) errorIndex = index;
         }
@@ -71,7 +71,7 @@ const API = {
 
 function arrayEqual(m0, m1) {
   for (let i = 0; i < m0.length; i++) {
-    if (m0[i] !== m1[i]) return false;
+    if (Math.abs(m0[i] - m1[i]) <  0.0001) return false;
   }
   return true;
 }

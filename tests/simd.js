@@ -19,6 +19,8 @@ const i32Arr = wasmExport.__getInt32ArrayView.bind(wasmExport);
 const f32Arr = wasmExport.__getFloat32ArrayView.bind(wasmExport);
 const u8Arr = wasmExport.__getUint8ArrayView.bind(wasmExport);
 
+const sleep = t => new Promise(r => setTimeout(r, t));
+
 test('add benchmark', () => {
   function JS_ADD(l1, l2, l3, l4, r1, r2, r3, r4) {
     return [l1 + r1, l2 + r2, l3 + r3, l4 + r4];
@@ -141,64 +143,64 @@ test('matrix multiply benchmark', async () => {
     JS(i) {
       // m4LeftJs.set(...intputLeft);
       // m4RightJs.set(...intputRight);
-      m4LeftJs.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      m4RightJs.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4LeftJs.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4RightJs.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       // m4LeftJs.fromArray(intputLeft);
       // m4RightJs.fromArray(intputLeft);
 
-      // const a = i || (Math.random() * 10) | 0;
-      // m4LeftJs.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // m4RightJs.set(1, 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      const a = i || (Math.random() * 10) | 0;
+      m4LeftJs.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      m4RightJs.set(1, 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       m4LeftJs.multiplyMatrices(m4LeftJs, m4RightJs);
     },
     WASM(i) {
       // m4LeftWasm.set(...intputLeft);
       // m4RightWasm.set(...intputRight);
-      m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       // m4LeftWasm.fromArray(intputLeftPtr);
       // m4RightWasm.fromArray(intputLeftPtr);
 
-      // const a = i || (Math.random() * 10) | 0;
-      // m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // // prettier-ignore
-      // m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      const a = i || (Math.random() * 10) | 0;
+      m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // prettier-ignore
+      m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       m4LeftWasm.multiplyMatrices(m4LeftWasm, m4RightWasm);
     },
     WASM_SIMD(i) {
       // m4LeftWasm.set(...intputLeft);
       // m4RightWasm.set(...intputRight);
-      m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // const a = i || (Math.random() * 10) | 0;
-      // m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // // prettier-ignore
-      // m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      const a = i || (Math.random() * 10) | 0;
+      m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // prettier-ignore
+      m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 
       m4LeftWasm.multiplyMatricesSIMD(m4LeftWasm, m4RightWasm);
     },
     WASM_SIMD_LOOP(i) {
       // m4LeftWasm.set(...intputLeft);
       // m4RightWasm.set(...intputRight);
-      m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // const a = i || (Math.random() * 10) | 0;
-      // m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // // prettier-ignore
-      // m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4LeftWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4RightWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      const a = i || (Math.random() * 10) | 0;
+      m4LeftWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // prettier-ignore
+      m4RightWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 
       m4LeftWasm.multiplyMatricesSIMDWithLoop(m4LeftWasm, m4RightWasm);
     },
     FTB_WASM_SIMD(i) {
       // m4LeftFtbWasm.set(...intputLeft);
       // m4RightFtbWasm.set(...intputRight);
-      m4LeftFtbWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      m4RightFtbWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // const a = i || (Math.random() * 10) | 0;
-      // // prettier-ignore
-      // m4LeftFtbWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-      // // prettier-ignore
-      // m4RightFtbWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4LeftFtbWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // m4RightFtbWasm.set(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      const a = i || (Math.random() * 10) | 0;
+      // prettier-ignore
+      m4LeftFtbWasm.set(1 + a, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+      // prettier-ignore
+      m4RightFtbWasm.set(1 , 2 + a, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
       m4LeftFtbWasm.multiplyMatrices(m4LeftFtbWasm, m4RightFtbWasm);
     },
   };
@@ -215,10 +217,10 @@ test('matrix multiply benchmark', async () => {
 
   // benchmark(benchCfg, 1);
   // benchmark(benchCfg, 100);
-  // benchmark(benchCfg, 1000);
+  benchmark(benchCfg, 1000);
   // benchmark(benchCfg, 5000);
   // benchmark(benchCfg, 27_000);
-  benchmark(benchCfg, 100_000);
+  // benchmark(benchCfg, 100_000);
 
   benchmark(
     {
@@ -230,6 +232,11 @@ test('matrix multiply benchmark', async () => {
     },
     1,
   );
+
+  // for (let i = 0; i < 5; i++) {
+  //   await sleep(500);
+  //   benchmark(benchCfg, 5_000 / 5);
+  // }
 });
 
 test('v128 load store benchmark', () => {
@@ -266,6 +273,9 @@ test('v128 load store benchmark', () => {
 
   benchmark(
     {
+      replace_lane_cost_loop_100000() {
+        wasmExport.test_v128_replace_lane_cost_loop()
+      },
       splat_replace_lane_loop_100000() {
         wasmExport.test_v128_splat_replace_lane_cost_loop();
       },
