@@ -21,7 +21,7 @@
     "base64:wasm": "asc assembly/base64.ts --target release --transform as-bind --runtime stub -b build/base64.wasm --exportRuntime",
     "gltf-renderer:wasm": "asc assembly/gltf-renderer.ts --target debug --transform as-bind --runtime minimal -b build/gltf-renderer.wasm --exportRuntime",
     "simd:wasm": "asc assembly/simd.ts --target release --transform as-bind --runtime stub -b build/simd.wasm --exportRuntime --enable simd --importMemory",
-    "matrix:wasm": "asc assembly/matrix.ts --target release --transform as-bind --runtime stub -b build/matrix.wasm --exportRuntime --enable simd --importMemory",
+    "matrix:wasm": "asc assembly/matrix.ts --target release --runtime stub -b build/matrix.wasm --exportRuntime --enable simd --importMemory",
     "asbuild:untouched": "asc assembly/index.ts --target debug",
     "asbuild:optimized": "asc assembly/index.ts --target release -d ./build/types.d.ts",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized"
@@ -33,7 +33,10 @@
     "@assemblyscript/loader": "^0.19.11",
     "as-bind": "^0.8.0",
     "as-string-sink": "^0.4.2",
-    "ftb-matrix": "^0.0.9"
+    "ftb-matrix": "^0.0.9",
+    "gl-matrix": "^3.4.3",
+    "gl-matrix-wasm": "^0.8.0",
+    "three": "^0.134.0"
   },
   "devDependencies": {
     "assemblyscript": "^0.19.11",

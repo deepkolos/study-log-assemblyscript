@@ -770,3 +770,51 @@ class Matrix4 {
   }
 }
 ```
+
+## 2021-10-30
+
+0. 完了, v8的优化太强了, 浏览器和node下差不多, 难道说是gl-matrix太慢了导致的, 完了, gl-martix-wasm性能确实够快...as出来的wasm性能太烂了
+1. 准备换语言了, as的性能有点惨不忍睹, 不过换之前尝试下换写法看看能不能稍微挽下救性能
+
+看了`optimized.wat`一堆`$~lib/typedarray/Float32Array#__get`函数调用, 不慢才怪
+
+```wat
+(func $assembly/matrix/Matrix4#multiplyMatrices (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
+  ...
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $2
+  i32.const 4
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.replace_lane 1
+  local.get $2
+  i32.const 8
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.replace_lane 2
+  local.get $2
+  i32.const 12
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.replace_lane 3
+  local.set $4
+  local.get $2
+  i32.const 1
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.splat
+  local.get $2
+  i32.const 5
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.replace_lane 1
+  local.get $2
+  i32.const 9
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.replace_lane 2
+  local.get $2
+  i32.const 13
+  call $~lib/typedarray/Float32Array#__get
+  f32x4.replace_lane 3
+  local.set $5
+  local.get $2
+  i32.const 2
+  ...
+ )
+```

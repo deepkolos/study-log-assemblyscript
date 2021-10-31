@@ -930,7 +930,6 @@ export class Matrix4 {
     r = f32x4.splat(n21);
     m2 = f32x4.mul(l, r);
 
-    // 这里有奇怪的问题 老是算不对
     l = f32x4.splat(n11);
     r = f32x4.replace_lane(f32x4.splat(
                  n22),

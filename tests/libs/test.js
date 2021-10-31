@@ -1,11 +1,30 @@
-let pass;
-let currTestName;
-let expectIndex;
-let errorIndex;
-let taskChain = Promise.resolve();
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined'
+    ? factory(exports)
+    : typeof define === 'function' && define.amd
+    ? define(['exports'], factory)
+    : ((global = global || self), factory((global.TEST = {})));
+})(this, function (exports) {
+  'use strict';
 
-const API = {
-  test(name, cb) {
+  let pass;
+  let currTestName;
+  let expectIndex;
+  let errorIndex;
+  let taskChain = Promise.resolve();
+
+  function arrayEqual(m0, m1) {
+    for (let i = 0; i < m0.length; i++) {
+      if (Math.abs(m0[i] - m1[i]) < 0.0001) return false;
+    }
+    return true;
+  }
+
+  function isArray(arr) {
+    return Array.isArray(arr) || arr.forEach;
+  }
+
+  exports.test = (name, cb) => {
     taskChain = taskChain.then(() => {
       const t = performance.now();
       pass = true;
@@ -21,15 +40,21 @@ const API = {
       });
       return promise;
     });
-  },
+  };
 
-  expect(inputValue) {
+  exports.expect = inputValue => {
     const myExpectIndex = expectIndex++;
     return {
       toBe(targetValue) {
         function unpass(index) {
-          console.log(`${currTestName}[${myExpectIndex}]inputValue:`, inputValue);
-          console.log(`${currTestName}[${myExpectIndex}]targetValue:`, targetValue);
+          console.log(
+            `${currTestName}[${myExpectIndex}]inputValue:`,
+            inputValue,
+          );
+          console.log(
+            `${currTestName}[${myExpectIndex}]targetValue:`,
+            targetValue,
+          );
           pass = false;
           if (errorIndex === -1) errorIndex = index;
         }
@@ -39,12 +64,12 @@ const API = {
         } else if (targetValue !== inputValue) unpass(myExpectIndex);
       },
     };
-  },
+  };
 
   /**
    * @param {{[name: string]: () => void | Promise<void>}} obj
    */
-  benchmark(obj, loopCount = 10000) {
+  exports.benchmark = (obj, loopCount = 10000) => {
     /**
      * @type {{[name: string]: number}}
      */
@@ -65,19 +90,9 @@ const API = {
       resultFormatted[key] = `${ms}ms (x${ratio})`;
     });
 
-    console.log(`\n${currTestName}_benchmark_${loopCount}:`, resultFormatted);
-  },
-};
+    console.log(`\n${currTestName}_benchmark_${loopCount}:`);
+    console.table(resultFormatted);
+  };
 
-function arrayEqual(m0, m1) {
-  for (let i = 0; i < m0.length; i++) {
-    if (Math.abs(m0[i] - m1[i]) <  0.0001) return false;
-  }
-  return true;
-}
-
-function isArray(arr) {
-  return Array.isArray(arr) || arr.forEach;
-}
-
-module.exports = API;
+  Object.defineProperty(exports, '__esModule', { value: true });
+});

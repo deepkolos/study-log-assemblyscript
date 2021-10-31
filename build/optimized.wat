@@ -5439,5 +5439,4 @@
   i32.load offset=4
   global.set $assembly/matrix/tmpF32x4Ptr
  )
- ;; custom section "as-bind_bindings", size 60, contents: "{\"typeIds\":{},\"importedFunctions\":{},\"exportedFunctions\":{}}"
 )
