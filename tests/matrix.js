@@ -62,12 +62,12 @@ test('Matrix4_multiply', async () => {
   // benchmark(benchCfg, 5000);
   // benchmark(benchCfg, 20000);
   // benchmark(benchCfg, 27_000);
-  // benchmark(benchCfg, 100_000);
+  benchmark(benchCfg, 100_000);
 
-  for (let i = 0; i < 5; i++) {
-    await sleep(500);
-    benchmark(benchCfg, 10_000 / 5);
-  }
+  // for (let i = 0; i < 5; i++) {
+  //   await sleep(500);
+  //   benchmark(benchCfg, 10_000 / 5);
+  // }
 });
 
 test('Matrix4_determinant', async () => {

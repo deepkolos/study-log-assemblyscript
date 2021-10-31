@@ -818,3 +818,13 @@ class Matrix4 {
   ...
  )
 ```
+
+## 2021-10-31
+
+0. 增加unchecked标记读数组下标确实没了call了, 快了几毫秒, 但是还是比js差
+
+AssemblyScript的优化是仅仅字节码层面的, 依赖binaryen的wasm-opt
+
+https://surma.dev/things/js-to-asc/index.html
+
+> To be fair, this is a David vs Goliath scenario: V8 is a long-standing JavaScript engine with a huge team of engineers implementing > > optimizations and other clever stuff, while AssemblyScript is a relatively young project with a small team around it. ASC’s compiler is single-pass and defers all optimization efforts to Binaryen (see also: wasm-opt). This means that optimization is done at the Wasm VM bytecode level, after most of the high-level semantics have been compiled away. V8 has a clear edge here. However, the blur code is so simple — just doing arithmetic with values from memory — that I was really expecting it to be closer. What’s going on here?

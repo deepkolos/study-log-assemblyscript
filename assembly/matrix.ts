@@ -68,9 +68,9 @@ export class Matrix4 {
   copyPosition( m: Matrix4 ): Matrix4 {
 		const te = this.elements, me = m.elements;
 
-		te[12] = me[12];
-		te[13] = me[13];
-		te[14] = me[14];
+		te[12] = unchecked(me[12]);
+		te[13] = unchecked(me[13]);
+		te[14] = unchecked(me[14]);
 
 		return this;
 	}
@@ -122,25 +122,25 @@ export class Matrix4 {
     // r3 = f32x4.replace_lane(r3, 3, be[15]);
     // 貌似性能没啥变化
     const r0 = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(
-      f32x4.splat(be[0]),
-         1, be[4]), 
-         2, be[8]), 
-         3, be[12]);
+      f32x4.splat(unchecked(be[0])),
+         1, unchecked(be[4])), 
+         2, unchecked(be[8])), 
+         3, unchecked(be[12]));
     const r1 = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(
-      f32x4.splat(be[1]),
-        1, be[5]), 
-        2, be[9]), 
-        3, be[13]);
+      f32x4.splat(unchecked(be[1])),
+        1, unchecked(be[5])), 
+        2, unchecked(be[9])), 
+        3, unchecked(be[13]));
     const r2 = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(
-      f32x4.splat(be[2]),
-          1, be[6]), 
-          2, be[10]), 
-          3, be[14]);
+      f32x4.splat(unchecked(be[2])),
+          1, unchecked(be[6])), 
+          2, unchecked(be[10])), 
+          3, unchecked(be[14]));
     const r3 = f32x4.replace_lane(f32x4.replace_lane(f32x4.replace_lane(
-      f32x4.splat(be[3]),
-          1, be[7]), 
-          2, be[11]), 
-          3, be[15]);
+      f32x4.splat(unchecked(be[3])),
+          1, unchecked(be[7])), 
+          2, unchecked(be[11])), 
+          3, unchecked(be[15]));
 
     // let o = f32x4.mul(f32x4.splat(ae[0]), r0);
     // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[4]), r1));
@@ -166,31 +166,31 @@ export class Matrix4 {
     const o0 = f32x4.add(
       f32x4.add(
         f32x4.add(
-          f32x4.mul(f32x4.splat(ae[0]), r0), 
-          f32x4.mul(f32x4.splat(ae[4]), r1)), 
-        f32x4.mul(f32x4.splat(ae[8]), r2)), 
-      f32x4.mul(f32x4.splat(ae[12]), r3));
+          f32x4.mul(f32x4.splat(unchecked(ae[0])), r0), 
+          f32x4.mul(f32x4.splat(unchecked(ae[4])), r1)), 
+        f32x4.mul(f32x4.splat(unchecked(ae[8])), r2)), 
+      f32x4.mul(f32x4.splat(unchecked(ae[12])), r3));
     const o1 = f32x4.add(
       f32x4.add(
         f32x4.add(
-          f32x4.mul(f32x4.splat(ae[1]), r0), 
-          f32x4.mul(f32x4.splat(ae[5]), r1)), 
-        f32x4.mul(f32x4.splat(ae[9]), r2)), 
-      f32x4.mul(f32x4.splat(ae[13]), r3));
+          f32x4.mul(f32x4.splat(unchecked(ae[1])), r0), 
+          f32x4.mul(f32x4.splat(unchecked(ae[5])), r1)), 
+        f32x4.mul(f32x4.splat(unchecked(ae[9])), r2)), 
+      f32x4.mul(f32x4.splat(unchecked(ae[13])), r3));
     const o2 = f32x4.add(
       f32x4.add(
         f32x4.add(
-          f32x4.mul(f32x4.splat(ae[2]), r0), 
-          f32x4.mul(f32x4.splat(ae[6]), r1)), 
-        f32x4.mul(f32x4.splat(ae[10]), r2)), 
-      f32x4.mul(f32x4.splat(ae[14]), r3));
+          f32x4.mul(f32x4.splat(unchecked(ae[2])), r0), 
+          f32x4.mul(f32x4.splat(unchecked(ae[6])), r1)), 
+        f32x4.mul(f32x4.splat(unchecked(ae[10])), r2)), 
+      f32x4.mul(f32x4.splat(unchecked(ae[14])), r3));
     const o3 = f32x4.add(
       f32x4.add(
         f32x4.add(
-          f32x4.mul(f32x4.splat(ae[3]), r0), 
-          f32x4.mul(f32x4.splat(ae[7]), r1)), 
-        f32x4.mul(f32x4.splat(ae[11]), r2)), 
-      f32x4.mul(f32x4.splat(ae[15]), r3));
+          f32x4.mul(f32x4.splat(unchecked(ae[3])), r0), 
+          f32x4.mul(f32x4.splat(unchecked(ae[7])), r1)), 
+        f32x4.mul(f32x4.splat(unchecked(ae[11])), r2)), 
+      f32x4.mul(f32x4.splat(unchecked(ae[15])), r3));
 
     te[0] = f32x4.extract_lane(o0, 0);
     te[4] = f32x4.extract_lane(o0, 1);
@@ -221,88 +221,88 @@ export class Matrix4 {
     const te = this.elements;
 
     //#region simd start 最初版
-    tmpF32x4[0] = be[0];
-    tmpF32x4[1] = be[4];
-    tmpF32x4[2] = be[8];
-    tmpF32x4[3] = be[12];
+    tmpF32x4[0] = unchecked(be[0]);
+    tmpF32x4[1] = unchecked(be[4]);
+    tmpF32x4[2] = unchecked(be[8]);
+    tmpF32x4[3] = unchecked(be[12]);
     const r0 = v128.load(tmpF32x4Ptr);
-    tmpF32x4[0] = be[1];
-    tmpF32x4[1] = be[5];
-    tmpF32x4[2] = be[9];
-    tmpF32x4[3] = be[13];
+    tmpF32x4[0] = unchecked(be[1]);
+    tmpF32x4[1] = unchecked(be[5]);
+    tmpF32x4[2] = unchecked(be[9]);
+    tmpF32x4[3] = unchecked(be[13]);
     const r1 = v128.load(tmpF32x4Ptr);
-    tmpF32x4[0] = be[2];
-    tmpF32x4[1] = be[6];
-    tmpF32x4[2] = be[10];
-    tmpF32x4[3] = be[14];
+    tmpF32x4[0] = unchecked(be[2]);
+    tmpF32x4[1] = unchecked(be[6]);
+    tmpF32x4[2] = unchecked(be[10]);
+    tmpF32x4[3] = unchecked(be[14]);
     const r2 = v128.load(tmpF32x4Ptr);
-    tmpF32x4[0] = be[3];
-    tmpF32x4[1] = be[7];
-    tmpF32x4[2] = be[11];
-    tmpF32x4[3] = be[15];
+    tmpF32x4[0] = unchecked(be[3]);
+    tmpF32x4[1] = unchecked(be[7]);
+    tmpF32x4[2] = unchecked(be[11]);
+    tmpF32x4[3] = unchecked(be[15]);
     const r3 = v128.load(tmpF32x4Ptr);
 
-    let l = f32x4.splat(ae[0]);
+    let l = f32x4.splat(unchecked(ae[0]));
     let o = f32x4.mul(l, r0);
-    l = f32x4.splat(ae[4]);
+    l = f32x4.splat(unchecked(ae[4]));
     o = f32x4.add(o, f32x4.mul(l, r1));
-    l = f32x4.splat(ae[8]);
+    l = f32x4.splat(unchecked(ae[8]));
     o = f32x4.add(o, f32x4.mul(l, r2));
-    l = f32x4.splat(ae[12]);
+    l = f32x4.splat(unchecked(ae[12]));
     o = f32x4.add(o, f32x4.mul(l, r3));
     v128.store(tmpF32x4Ptr, o);
-    te[0] = tmpF32x4[0];
-    te[4] = tmpF32x4[1];
-    te[8] = tmpF32x4[2];
-    te[12] = tmpF32x4[3];
+    te[0] = unchecked(tmpF32x4[0]);
+    te[4] = unchecked(tmpF32x4[1]);
+    te[8] = unchecked(tmpF32x4[2]);
+    te[12] = unchecked(tmpF32x4[3]);
     //#endregion
 
     //#region
-    l = f32x4.splat(ae[1]);
+    l = f32x4.splat(unchecked(ae[1]));
     o = f32x4.mul(l, r0);
-    l = f32x4.splat(ae[5]);
+    l = f32x4.splat(unchecked(ae[5]));
     o = f32x4.add(o, f32x4.mul(l, r1));
-    l = f32x4.splat(ae[9]);
+    l = f32x4.splat(unchecked(ae[9]));
     o = f32x4.add(o, f32x4.mul(l, r2));
-    l = f32x4.splat(ae[13]);
+    l = f32x4.splat(unchecked(ae[13]));
     o = f32x4.add(o, f32x4.mul(l, r3));
     v128.store(tmpF32x4Ptr, o);
-    te[1] = tmpF32x4[0];
-    te[5] = tmpF32x4[1];
-    te[9] = tmpF32x4[2];
-    te[13] = tmpF32x4[3];
+    te[1] = unchecked(tmpF32x4[0]);
+    te[5] = unchecked(tmpF32x4[1]);
+    te[9] = unchecked(tmpF32x4[2]);
+    te[13] = unchecked(tmpF32x4[3]);
     //#endregion
 
     //#region
-    l = f32x4.splat(ae[2]);
+    l = f32x4.splat(unchecked(ae[2]));
     o = f32x4.mul(l, r0);
-    l = f32x4.splat(ae[6]);
+    l = f32x4.splat(unchecked(ae[6]));
     o = f32x4.add(o, f32x4.mul(l, r1));
-    l = f32x4.splat(ae[10]);
+    l = f32x4.splat(unchecked(ae[10]));
     o = f32x4.add(o, f32x4.mul(l, r2));
-    l = f32x4.splat(ae[14]);
+    l = f32x4.splat(unchecked(ae[14]));
     o = f32x4.add(o, f32x4.mul(l, r3));
     v128.store(tmpF32x4Ptr, o);
-    te[2] = tmpF32x4[0];
-    te[6] = tmpF32x4[1];
-    te[10] = tmpF32x4[2];
-    te[14] = tmpF32x4[3];
+    te[2] = unchecked(tmpF32x4[0]);
+    te[6] = unchecked(tmpF32x4[1]);
+    te[10] = unchecked(tmpF32x4[2]);
+    te[14] = unchecked(tmpF32x4[3]);
     //#endregion
 
     //#region
-    l = f32x4.splat(ae[3]);
+    l = f32x4.splat(unchecked(ae[3]));
     o = f32x4.mul(l, r0);
-    l = f32x4.splat(ae[7]);
+    l = f32x4.splat(unchecked(ae[7]));
     o = f32x4.add(o, f32x4.mul(l, r1));
-    l = f32x4.splat(ae[11]);
+    l = f32x4.splat(unchecked(ae[11]));
     o = f32x4.add(o, f32x4.mul(l, r2));
-    l = f32x4.splat(ae[15]);
+    l = f32x4.splat(unchecked(ae[15]));
     o = f32x4.add(o, f32x4.mul(l, r3));
     v128.store(tmpF32x4Ptr, o);
-    te[3] = tmpF32x4[0];
-    te[7] = tmpF32x4[1];
-    te[11] = tmpF32x4[2];
-    te[15] = tmpF32x4[3];
+    te[3] = unchecked(tmpF32x4[0]);
+    te[7] = unchecked(tmpF32x4[1]);
+    te[11] = unchecked(tmpF32x4[2]);
+    te[15] = unchecked(tmpF32x4[3]);
     //#endregion
     return this;
   }
@@ -312,39 +312,39 @@ export class Matrix4 {
     const be = b.elements;
     const te = this.elements;
 
-    const a11 = ae[0],
-      a12 = ae[4],
-      a13 = ae[8],
-      a14 = ae[12];
-    const a21 = ae[1],
-      a22 = ae[5],
-      a23 = ae[9],
-      a24 = ae[13];
-    const a31 = ae[2],
-      a32 = ae[6],
-      a33 = ae[10],
-      a34 = ae[14];
-    const a41 = ae[3],
-      a42 = ae[7],
-      a43 = ae[11],
-      a44 = ae[15];
+    const a11 = unchecked(ae[0]),
+      a12 = unchecked(ae[4]),
+      a13 = unchecked(ae[8]),
+      a14 = unchecked(ae[12]);
+    const a21 = unchecked(ae[1]),
+      a22 = unchecked(ae[5]),
+      a23 = unchecked(ae[9]),
+      a24 = unchecked(ae[13]);
+    const a31 = unchecked(ae[2]),
+      a32 = unchecked(ae[6]),
+      a33 = unchecked(ae[10]),
+      a34 = unchecked(ae[14]);
+    const a41 = unchecked(ae[3]),
+      a42 = unchecked(ae[7]),
+      a43 = unchecked(ae[11]),
+      a44 = unchecked(ae[15]);
 
-    const b11 = be[0],
-      b12 = be[4],
-      b13 = be[8],
-      b14 = be[12];
-    const b21 = be[1],
-      b22 = be[5],
-      b23 = be[9],
-      b24 = be[13];
-    const b31 = be[2],
-      b32 = be[6],
-      b33 = be[10],
-      b34 = be[14];
-    const b41 = be[3],
-      b42 = be[7],
-      b43 = be[11],
-      b44 = be[15];
+    const b11 = unchecked(be[0]),
+      b12 = unchecked(be[4]),
+      b13 = unchecked(be[8]),
+      b14 = unchecked(be[12]);
+    const b21 = unchecked(be[1]),
+      b22 = unchecked(be[5]),
+      b23 = unchecked(be[9]),
+      b24 = unchecked(be[13]);
+    const b31 = unchecked(be[2]),
+      b32 = unchecked(be[6]),
+      b33 = unchecked(be[10]),
+      b34 = unchecked(be[14]);
+    const b41 = unchecked(be[3]),
+      b42 = unchecked(be[7]),
+      b43 = unchecked(be[11]),
+      b44 = unchecked(be[15]);
 
     te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
     te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
@@ -617,10 +617,10 @@ export class Matrix4 {
   determinant_opt(): f32 {
     const te = this.elements;
   
-    const n11 = te[ 0 ], n12 = te[ 4 ], n13 = te[ 8 ], n14 = te[ 12 ];
-    const n21 = te[ 1 ], n22 = te[ 5 ], n23 = te[ 9 ], n24 = te[ 13 ];
-    const n31 = te[ 2 ], n32 = te[ 6 ], n33 = te[ 10 ], n34 = te[ 14 ];
-    const n41 = te[ 3 ], n42 = te[ 7 ], n43 = te[ 11 ], n44 = te[ 15 ];
+    const n11 = unchecked(te[0]), n12 = unchecked(te[4]), n13 = unchecked(te[8]), n14 = unchecked(te[12]);
+    const n21 = unchecked(te[1]), n22 = unchecked(te[5]), n23 = unchecked(te[9]), n24 = unchecked(te[13]);
+    const n31 = unchecked(te[2]), n32 = unchecked(te[6]), n33 = unchecked(te[10]), n34 = unchecked(te[14]);
+    const n41 = unchecked(te[3]), n42 = unchecked(te[7]), n43 = unchecked(te[11]), n44 = unchecked(te[15]);
   
     // 复用部分乘法结果
     // // m0
@@ -677,10 +677,10 @@ export class Matrix4 {
   determinant_bak(): f32 {
     const te = this.elements;
   
-    const n11 = te[ 0 ], n12 = te[ 4 ], n13 = te[ 8 ], n14 = te[ 12 ];
-    const n21 = te[ 1 ], n22 = te[ 5 ], n23 = te[ 9 ], n24 = te[ 13 ];
-    const n31 = te[ 2 ], n32 = te[ 6 ], n33 = te[ 10 ], n34 = te[ 14 ];
-    const n41 = te[ 3 ], n42 = te[ 7 ], n43 = te[ 11 ], n44 = te[ 15 ];
+    const n11 = unchecked(te[0]), n12 = unchecked(te[4]), n13 = unchecked(te[8]), n14 = unchecked(te[12]);
+    const n21 = unchecked(te[1]), n22 = unchecked(te[5]), n23 = unchecked(te[9]), n24 = unchecked(te[13]);
+    const n31 = unchecked(te[2]), n32 = unchecked(te[6]), n33 = unchecked(te[10]), n34 = unchecked(te[14]);
+    const n41 = unchecked(te[3]), n42 = unchecked(te[7]), n43 = unchecked(te[11]), n44 = unchecked(te[15]);
   
     // //TODO: make this more efficient
     // //( based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm )
@@ -849,10 +849,10 @@ export class Matrix4 {
     //#region 
     const te = this.elements;
   
-    const n11 = te[ 0 ], n12 = te[ 4 ], n13 = te[ 8 ], n14 = te[ 12 ];
-    const n21 = te[ 1 ], n22 = te[ 5 ], n23 = te[ 9 ], n24 = te[ 13 ];
-    const n31 = te[ 2 ], n32 = te[ 6 ], n33 = te[ 10 ], n34 = te[ 14 ];
-    const n41 = te[ 3 ], n42 = te[ 7 ], n43 = te[ 11 ], n44 = te[ 15 ];
+    const n11 = unchecked(te[0]), n12 = unchecked(te[4]), n13 = unchecked(te[8]), n14 = unchecked(te[12]);
+    const n21 = unchecked(te[1]), n22 = unchecked(te[5]), n23 = unchecked(te[9]), n24 = unchecked(te[13]);
+    const n31 = unchecked(te[2]), n32 = unchecked(te[6]), n33 = unchecked(te[10]), n34 = unchecked(te[14]);
+    const n41 = unchecked(te[3]), n42 = unchecked(te[7]), n43 = unchecked(te[11]), n44 = unchecked(te[15]);
   
     // //TODO: make this more efficient
     // //( based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm )
@@ -1094,10 +1094,10 @@ export class Matrix4 {
 		// based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
 		const te = this.elements,
 
-			n11 = te[ 0 ], n21 = te[ 1 ], n31 = te[ 2 ], n41 = te[ 3 ],
-			n12 = te[ 4 ], n22 = te[ 5 ], n32 = te[ 6 ], n42 = te[ 7 ],
-			n13 = te[ 8 ], n23 = te[ 9 ], n33 = te[ 10 ], n43 = te[ 11 ],
-			n14 = te[ 12 ], n24 = te[ 13 ], n34 = te[ 14 ], n44 = te[ 15 ],
+			n11 = unchecked(te[ 0 ]), n21 = unchecked(te[ 1 ]), n31 = unchecked(te[ 2 ]), n41 = unchecked(te[ 3 ]),
+			n12 = unchecked(te[ 4 ]), n22 = unchecked(te[ 5 ]), n32 = unchecked(te[ 6 ]), n42 = unchecked(te[ 7 ]),
+			n13 = unchecked(te[ 8 ]), n23 = unchecked(te[ 9 ]), n33 = unchecked(te[ 10 ]), n43 = unchecked(te[ 11 ]),
+			n14 = unchecked(te[ 12 ]), n24 = unchecked(te[ 13 ]), n34 = unchecked(te[ 14 ]), n44 = unchecked(te[ 15 ]),
 
 			t11 = n23 * n34 * n42 - n24 * n33 * n42 + n24 * n32 * n43 - n22 * n34 * n43 - n23 * n32 * n44 + n22 * n33 * n44,
 			t12 = n14 * n33 * n42 - n13 * n34 * n42 - n14 * n32 * n43 + n12 * n34 * n43 + n13 * n32 * n44 - n12 * n33 * n44,
@@ -1135,12 +1135,12 @@ export class Matrix4 {
 
   invert(): Matrix4 {
 		// based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
-		const te = this.elements,
+    const te = this.elements,
 
-			n11 = te[ 0 ], n21 = te[ 1 ], n31 = te[ 2 ], n41 = te[ 3 ],
-			n12 = te[ 4 ], n22 = te[ 5 ], n32 = te[ 6 ], n42 = te[ 7 ],
-			n13 = te[ 8 ], n23 = te[ 9 ], n33 = te[ 10 ], n43 = te[ 11 ],
-			n14 = te[ 12 ], n24 = te[ 13 ], n34 = te[ 14 ], n44 = te[ 15 ];
+      n11 = unchecked(te[ 0 ]), n21 = unchecked(te[ 1 ]), n31 = unchecked(te[ 2 ]), n41 = unchecked(te[ 3 ]),
+      n12 = unchecked(te[ 4 ]), n22 = unchecked(te[ 5 ]), n32 = unchecked(te[ 6 ]), n42 = unchecked(te[ 7 ]),
+      n13 = unchecked(te[ 8 ]), n23 = unchecked(te[ 9 ]), n33 = unchecked(te[ 10 ]), n43 = unchecked(te[ 11 ]),
+      n14 = unchecked(te[ 12 ]), n24 = unchecked(te[ 13 ]), n34 = unchecked(te[ 14 ]), n44 = unchecked(te[ 15 ]);
 
       // n11: f32 = 0, n21: f32 = 1, n31: f32 = 2, n41: f32 = 3,
 			// n12: f32 = 4, n22: f32 = 5, n32: f32 = 6, n42: f32 = 7,
