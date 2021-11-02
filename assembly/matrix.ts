@@ -1798,3 +1798,206 @@ export class Matrix4 {
 }
 
 export class Vector4 {}
+
+export function multiplyMatrices(
+  ae: Float32Array,
+  be: Float32Array,
+  te: Float32Array,
+): void {
+  //#region
+  // let r0 = f32x4.splat(be[0]);
+  // r0 = f32x4.replace_lane(r0, 1, be[4]);
+  // r0 = f32x4.replace_lane(r0, 2, be[8]);
+  // r0 = f32x4.replace_lane(r0, 3, be[12]);
+  // let r1 = f32x4.splat(be[1]);
+  // r1 = f32x4.replace_lane(r1, 1, be[5]);
+  // r1 = f32x4.replace_lane(r1, 2, be[9]);
+  // r1 = f32x4.replace_lane(r1, 3, be[13]);
+  // let r2 = f32x4.splat(be[2]);
+  // r2 = f32x4.replace_lane(r2, 1, be[6]);
+  // r2 = f32x4.replace_lane(r2, 2, be[10]);
+  // r2 = f32x4.replace_lane(r2, 3, be[14]);
+  // let r3 = f32x4.splat(be[3]);
+  // r3 = f32x4.replace_lane(r3, 1, be[7]);
+  // r3 = f32x4.replace_lane(r3, 2, be[11]);
+  // r3 = f32x4.replace_lane(r3, 3, be[15]);
+  // 貌似性能没啥变化
+  const r0 = f32x4.replace_lane(
+    f32x4.replace_lane(
+      f32x4.replace_lane(f32x4.splat(unchecked(be[0])), 1, unchecked(be[4])),
+      2,
+      unchecked(be[8]),
+    ),
+    3,
+    unchecked(be[12]),
+  );
+  const r1 = f32x4.replace_lane(
+    f32x4.replace_lane(
+      f32x4.replace_lane(f32x4.splat(unchecked(be[1])), 1, unchecked(be[5])),
+      2,
+      unchecked(be[9]),
+    ),
+    3,
+    unchecked(be[13]),
+  );
+  const r2 = f32x4.replace_lane(
+    f32x4.replace_lane(
+      f32x4.replace_lane(f32x4.splat(unchecked(be[2])), 1, unchecked(be[6])),
+      2,
+      unchecked(be[10]),
+    ),
+    3,
+    unchecked(be[14]),
+  );
+  const r3 = f32x4.replace_lane(
+    f32x4.replace_lane(
+      f32x4.replace_lane(f32x4.splat(unchecked(be[3])), 1, unchecked(be[7])),
+      2,
+      unchecked(be[11]),
+    ),
+    3,
+    unchecked(be[15]),
+  );
+
+  // let o = f32x4.mul(f32x4.splat(ae[0]), r0);
+  // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[4]), r1));
+  // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[8]), r2));
+  // const o0 = f32x4.add(o, f32x4.mul(f32x4.splat(ae[12]), r3));
+
+  // o = f32x4.mul(f32x4.splat(ae[1]), r0);
+  // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[5]), r1));
+  // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[9]), r2));
+  // const o1 = f32x4.add(o, f32x4.mul(f32x4.splat(ae[13]), r3));
+
+  // o = f32x4.mul(f32x4.splat(ae[2]), r0);
+  // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[6]), r1));
+  // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[10]), r2));
+  // const o2 = f32x4.add(o, f32x4.mul(f32x4.splat(ae[14]), r3));
+
+  // o = f32x4.mul(f32x4.splat(ae[3]), r0);
+  // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[7]), r1));
+  // o = f32x4.add(o, f32x4.mul(f32x4.splat(ae[11]), r2));
+  // const o3 = f32x4.add(o, f32x4.mul(f32x4.splat(ae[15]), r3));
+
+  // 还挺有规律的, 不过对性能没有明显变化, 不过方便检查输入
+  const o0 = f32x4.add(
+    f32x4.add(
+      f32x4.add(
+        f32x4.mul(f32x4.splat(unchecked(ae[0])), r0),
+        f32x4.mul(f32x4.splat(unchecked(ae[4])), r1),
+      ),
+      f32x4.mul(f32x4.splat(unchecked(ae[8])), r2),
+    ),
+    f32x4.mul(f32x4.splat(unchecked(ae[12])), r3),
+  );
+  const o1 = f32x4.add(
+    f32x4.add(
+      f32x4.add(
+        f32x4.mul(f32x4.splat(unchecked(ae[1])), r0),
+        f32x4.mul(f32x4.splat(unchecked(ae[5])), r1),
+      ),
+      f32x4.mul(f32x4.splat(unchecked(ae[9])), r2),
+    ),
+    f32x4.mul(f32x4.splat(unchecked(ae[13])), r3),
+  );
+  const o2 = f32x4.add(
+    f32x4.add(
+      f32x4.add(
+        f32x4.mul(f32x4.splat(unchecked(ae[2])), r0),
+        f32x4.mul(f32x4.splat(unchecked(ae[6])), r1),
+      ),
+      f32x4.mul(f32x4.splat(unchecked(ae[10])), r2),
+    ),
+    f32x4.mul(f32x4.splat(unchecked(ae[14])), r3),
+  );
+  const o3 = f32x4.add(
+    f32x4.add(
+      f32x4.add(
+        f32x4.mul(f32x4.splat(unchecked(ae[3])), r0),
+        f32x4.mul(f32x4.splat(unchecked(ae[7])), r1),
+      ),
+      f32x4.mul(f32x4.splat(unchecked(ae[11])), r2),
+    ),
+    f32x4.mul(f32x4.splat(unchecked(ae[15])), r3),
+  );
+
+  te[0] = f32x4.extract_lane(o0, 0);
+  te[4] = f32x4.extract_lane(o0, 1);
+  te[8] = f32x4.extract_lane(o0, 2);
+  te[12] = f32x4.extract_lane(o0, 3);
+
+  te[1] = f32x4.extract_lane(o1, 0);
+  te[5] = f32x4.extract_lane(o1, 1);
+  te[9] = f32x4.extract_lane(o1, 2);
+  te[13] = f32x4.extract_lane(o1, 3);
+
+  te[2] = f32x4.extract_lane(o2, 0);
+  te[6] = f32x4.extract_lane(o2, 1);
+  te[10] = f32x4.extract_lane(o2, 2);
+  te[14] = f32x4.extract_lane(o2, 3);
+
+  te[3] = f32x4.extract_lane(o3, 0);
+  te[7] = f32x4.extract_lane(o3, 1);
+  te[11] = f32x4.extract_lane(o3, 2);
+  te[15] = f32x4.extract_lane(o3, 3);
+}
+
+export function multiplyMatrices_no_simd(
+  ae: Float32Array,
+  be: Float32Array,
+  te: Float32Array,
+): void {
+  const a11 = unchecked(ae[0]),
+    a12 = unchecked(ae[4]),
+    a13 = unchecked(ae[8]),
+    a14 = unchecked(ae[12]);
+  const a21 = unchecked(ae[1]),
+    a22 = unchecked(ae[5]),
+    a23 = unchecked(ae[9]),
+    a24 = unchecked(ae[13]);
+  const a31 = unchecked(ae[2]),
+    a32 = unchecked(ae[6]),
+    a33 = unchecked(ae[10]),
+    a34 = unchecked(ae[14]);
+  const a41 = unchecked(ae[3]),
+    a42 = unchecked(ae[7]),
+    a43 = unchecked(ae[11]),
+    a44 = unchecked(ae[15]);
+
+  const b11 = unchecked(be[0]),
+    b12 = unchecked(be[4]),
+    b13 = unchecked(be[8]),
+    b14 = unchecked(be[12]);
+  const b21 = unchecked(be[1]),
+    b22 = unchecked(be[5]),
+    b23 = unchecked(be[9]),
+    b24 = unchecked(be[13]);
+  const b31 = unchecked(be[2]),
+    b32 = unchecked(be[6]),
+    b33 = unchecked(be[10]),
+    b34 = unchecked(be[14]);
+  const b41 = unchecked(be[3]),
+    b42 = unchecked(be[7]),
+    b43 = unchecked(be[11]),
+    b44 = unchecked(be[15]);
+
+  te[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+  te[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+  te[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+  te[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+
+  te[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+  te[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+  te[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+  te[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+
+  te[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+  te[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+  te[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+  te[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+
+  te[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+  te[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+  te[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+  te[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+}

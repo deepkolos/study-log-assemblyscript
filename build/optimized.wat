@@ -3,6 +3,7 @@
  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
  (type $i32_=>_f32 (func (param i32) (result f32)))
+ (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
  (type $i32_=>_none (func (param i32)))
  (type $none_=>_none (func))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
@@ -56,6 +57,8 @@
  (export "Matrix4#invert_no_teN_cache" (func $assembly/matrix/Matrix4#invert_no_teN_cache))
  (export "Vector4" (global $assembly/matrix/Vector4))
  (export "Vector4#constructor" (func $assembly/matrix/Vector4#constructor))
+ (export "multiplyMatrices" (func $assembly/matrix/multiplyMatrices))
+ (export "multiplyMatrices_no_simd" (func $assembly/matrix/multiplyMatrices_no_simd))
  (export "__new" (func $~lib/rt/stub/__new))
  (export "__pin" (func $~lib/rt/stub/__pin))
  (export "__unpin" (func $~lib/rt/stub/__unpin))
@@ -5313,6 +5316,712 @@
    i32.const 5
    call $~lib/rt/stub/__new
   end
+ )
+ (func $assembly/matrix/multiplyMatrices (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 v128)
+  (local $4 v128)
+  (local $5 v128)
+  (local $6 v128)
+  (local $7 v128)
+  (local $8 v128)
+  (local $9 v128)
+  local.get $0
+  i32.load offset=4
+  f32.load offset=4
+  f32x4.splat
+  local.get $1
+  i32.load offset=4
+  f32.load
+  f32x4.splat
+  local.get $1
+  i32.load offset=4
+  f32.load offset=16
+  f32x4.replace_lane 1
+  local.get $1
+  i32.load offset=4
+  f32.load offset=32
+  f32x4.replace_lane 2
+  local.get $1
+  i32.load offset=4
+  f32.load offset=48
+  f32x4.replace_lane 3
+  local.tee $3
+  f32x4.mul
+  local.get $0
+  i32.load offset=4
+  f32.load offset=20
+  f32x4.splat
+  local.get $1
+  i32.load offset=4
+  f32.load offset=4
+  f32x4.splat
+  local.get $1
+  i32.load offset=4
+  f32.load offset=20
+  f32x4.replace_lane 1
+  local.get $1
+  i32.load offset=4
+  f32.load offset=36
+  f32x4.replace_lane 2
+  local.get $1
+  i32.load offset=4
+  f32.load offset=52
+  f32x4.replace_lane 3
+  local.tee $7
+  f32x4.mul
+  f32x4.add
+  local.get $0
+  i32.load offset=4
+  f32.load offset=36
+  f32x4.splat
+  local.get $1
+  i32.load offset=4
+  f32.load offset=8
+  f32x4.splat
+  local.get $1
+  i32.load offset=4
+  f32.load offset=24
+  f32x4.replace_lane 1
+  local.get $1
+  i32.load offset=4
+  f32.load offset=40
+  f32x4.replace_lane 2
+  local.get $1
+  i32.load offset=4
+  f32.load offset=56
+  f32x4.replace_lane 3
+  local.tee $8
+  f32x4.mul
+  f32x4.add
+  local.get $0
+  i32.load offset=4
+  f32.load offset=52
+  f32x4.splat
+  local.get $1
+  i32.load offset=4
+  f32.load offset=12
+  f32x4.splat
+  local.get $1
+  i32.load offset=4
+  f32.load offset=28
+  f32x4.replace_lane 1
+  local.get $1
+  i32.load offset=4
+  f32.load offset=44
+  f32x4.replace_lane 2
+  local.get $1
+  i32.load offset=4
+  f32.load offset=60
+  f32x4.replace_lane 3
+  local.tee $9
+  f32x4.mul
+  f32x4.add
+  local.set $4
+  local.get $0
+  i32.load offset=4
+  f32.load offset=8
+  f32x4.splat
+  local.get $3
+  f32x4.mul
+  local.get $0
+  i32.load offset=4
+  f32.load offset=24
+  f32x4.splat
+  local.get $7
+  f32x4.mul
+  f32x4.add
+  local.get $0
+  i32.load offset=4
+  f32.load offset=40
+  f32x4.splat
+  local.get $8
+  f32x4.mul
+  f32x4.add
+  local.get $0
+  i32.load offset=4
+  f32.load offset=56
+  f32x4.splat
+  local.get $9
+  f32x4.mul
+  f32x4.add
+  local.set $5
+  local.get $0
+  i32.load offset=4
+  f32.load offset=12
+  f32x4.splat
+  local.get $3
+  f32x4.mul
+  local.get $0
+  i32.load offset=4
+  f32.load offset=28
+  f32x4.splat
+  local.get $7
+  f32x4.mul
+  f32x4.add
+  local.get $0
+  i32.load offset=4
+  f32.load offset=44
+  f32x4.splat
+  local.get $8
+  f32x4.mul
+  f32x4.add
+  local.get $0
+  i32.load offset=4
+  f32.load offset=60
+  f32x4.splat
+  local.get $9
+  f32x4.mul
+  f32x4.add
+  local.set $6
+  local.get $2
+  i32.const 0
+  local.get $0
+  i32.load offset=4
+  f32.load
+  f32x4.splat
+  local.get $3
+  f32x4.mul
+  local.get $0
+  i32.load offset=4
+  f32.load offset=16
+  f32x4.splat
+  local.get $7
+  f32x4.mul
+  f32x4.add
+  local.get $0
+  i32.load offset=4
+  f32.load offset=32
+  f32x4.splat
+  local.get $8
+  f32x4.mul
+  f32x4.add
+  local.get $0
+  i32.load offset=4
+  f32.load offset=48
+  f32x4.splat
+  local.get $9
+  f32x4.mul
+  f32x4.add
+  local.tee $3
+  f32x4.extract_lane 0
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 4
+  local.get $3
+  f32x4.extract_lane 1
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 8
+  local.get $3
+  f32x4.extract_lane 2
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 12
+  local.get $3
+  f32x4.extract_lane 3
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 1
+  local.get $4
+  f32x4.extract_lane 0
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 5
+  local.get $4
+  f32x4.extract_lane 1
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 9
+  local.get $4
+  f32x4.extract_lane 2
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 13
+  local.get $4
+  f32x4.extract_lane 3
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 2
+  local.get $5
+  f32x4.extract_lane 0
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 6
+  local.get $5
+  f32x4.extract_lane 1
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 10
+  local.get $5
+  f32x4.extract_lane 2
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 14
+  local.get $5
+  f32x4.extract_lane 3
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 3
+  local.get $6
+  f32x4.extract_lane 0
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 7
+  local.get $6
+  f32x4.extract_lane 1
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 11
+  local.get $6
+  f32x4.extract_lane 2
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 15
+  local.get $6
+  f32x4.extract_lane 3
+  call $~lib/typedarray/Float32Array#__set
+ )
+ (func $assembly/matrix/multiplyMatrices_no_simd (param $0 i32) (param $1 i32) (param $2 i32)
+  (local $3 f32)
+  (local $4 f32)
+  (local $5 f32)
+  (local $6 f32)
+  (local $7 f32)
+  (local $8 f32)
+  (local $9 f32)
+  (local $10 f32)
+  (local $11 f32)
+  (local $12 f32)
+  (local $13 f32)
+  (local $14 f32)
+  (local $15 f32)
+  (local $16 f32)
+  (local $17 f32)
+  (local $18 f32)
+  (local $19 f32)
+  (local $20 f32)
+  (local $21 f32)
+  (local $22 f32)
+  (local $23 f32)
+  (local $24 f32)
+  (local $25 f32)
+  (local $26 f32)
+  (local $27 f32)
+  (local $28 f32)
+  (local $29 f32)
+  (local $30 f32)
+  (local $31 f32)
+  (local $32 f32)
+  (local $33 f32)
+  (local $34 f32)
+  local.get $0
+  i32.load offset=4
+  f32.load offset=4
+  local.set $3
+  local.get $0
+  i32.load offset=4
+  f32.load offset=20
+  local.set $4
+  local.get $0
+  i32.load offset=4
+  f32.load offset=36
+  local.set $5
+  local.get $0
+  i32.load offset=4
+  f32.load offset=52
+  local.set $6
+  local.get $0
+  i32.load offset=4
+  f32.load offset=8
+  local.set $7
+  local.get $0
+  i32.load offset=4
+  f32.load offset=24
+  local.set $8
+  local.get $0
+  i32.load offset=4
+  f32.load offset=40
+  local.set $9
+  local.get $0
+  i32.load offset=4
+  f32.load offset=56
+  local.set $10
+  local.get $0
+  i32.load offset=4
+  f32.load offset=12
+  local.set $11
+  local.get $0
+  i32.load offset=4
+  f32.load offset=28
+  local.set $12
+  local.get $0
+  i32.load offset=4
+  f32.load offset=44
+  local.set $13
+  local.get $0
+  i32.load offset=4
+  f32.load offset=60
+  local.set $14
+  local.get $1
+  i32.load offset=4
+  f32.load offset=16
+  local.set $15
+  local.get $1
+  i32.load offset=4
+  f32.load offset=32
+  local.set $16
+  local.get $1
+  i32.load offset=4
+  f32.load offset=48
+  local.set $17
+  local.get $1
+  i32.load offset=4
+  f32.load offset=20
+  local.set $18
+  local.get $1
+  i32.load offset=4
+  f32.load offset=36
+  local.set $19
+  local.get $1
+  i32.load offset=4
+  f32.load offset=52
+  local.set $20
+  local.get $1
+  i32.load offset=4
+  f32.load offset=24
+  local.set $21
+  local.get $1
+  i32.load offset=4
+  f32.load offset=40
+  local.set $22
+  local.get $1
+  i32.load offset=4
+  f32.load offset=56
+  local.set $23
+  local.get $1
+  i32.load offset=4
+  f32.load offset=28
+  local.set $24
+  local.get $1
+  i32.load offset=4
+  f32.load offset=44
+  local.set $25
+  local.get $1
+  i32.load offset=4
+  f32.load offset=60
+  local.set $26
+  local.get $2
+  i32.const 0
+  local.get $0
+  i32.load offset=4
+  f32.load
+  local.tee $27
+  local.get $1
+  i32.load offset=4
+  f32.load
+  local.tee $28
+  f32.mul
+  local.get $0
+  i32.load offset=4
+  f32.load offset=16
+  local.tee $29
+  local.get $1
+  i32.load offset=4
+  f32.load offset=4
+  local.tee $30
+  f32.mul
+  f32.add
+  local.get $0
+  i32.load offset=4
+  f32.load offset=32
+  local.tee $31
+  local.get $1
+  i32.load offset=4
+  f32.load offset=8
+  local.tee $32
+  f32.mul
+  f32.add
+  local.get $0
+  i32.load offset=4
+  f32.load offset=48
+  local.tee $33
+  local.get $1
+  i32.load offset=4
+  f32.load offset=12
+  local.tee $34
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 4
+  local.get $27
+  local.get $15
+  f32.mul
+  local.get $29
+  local.get $18
+  f32.mul
+  f32.add
+  local.get $31
+  local.get $21
+  f32.mul
+  f32.add
+  local.get $33
+  local.get $24
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 8
+  local.get $27
+  local.get $16
+  f32.mul
+  local.get $29
+  local.get $19
+  f32.mul
+  f32.add
+  local.get $31
+  local.get $22
+  f32.mul
+  f32.add
+  local.get $33
+  local.get $25
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 12
+  local.get $27
+  local.get $17
+  f32.mul
+  local.get $29
+  local.get $20
+  f32.mul
+  f32.add
+  local.get $31
+  local.get $23
+  f32.mul
+  f32.add
+  local.get $33
+  local.get $26
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 1
+  local.get $3
+  local.get $28
+  f32.mul
+  local.get $4
+  local.get $30
+  f32.mul
+  f32.add
+  local.get $5
+  local.get $32
+  f32.mul
+  f32.add
+  local.get $6
+  local.get $34
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 5
+  local.get $3
+  local.get $15
+  f32.mul
+  local.get $4
+  local.get $18
+  f32.mul
+  f32.add
+  local.get $5
+  local.get $21
+  f32.mul
+  f32.add
+  local.get $6
+  local.get $24
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 9
+  local.get $3
+  local.get $16
+  f32.mul
+  local.get $4
+  local.get $19
+  f32.mul
+  f32.add
+  local.get $5
+  local.get $22
+  f32.mul
+  f32.add
+  local.get $6
+  local.get $25
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 13
+  local.get $3
+  local.get $17
+  f32.mul
+  local.get $4
+  local.get $20
+  f32.mul
+  f32.add
+  local.get $5
+  local.get $23
+  f32.mul
+  f32.add
+  local.get $6
+  local.get $26
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 2
+  local.get $7
+  local.get $28
+  f32.mul
+  local.get $8
+  local.get $30
+  f32.mul
+  f32.add
+  local.get $9
+  local.get $32
+  f32.mul
+  f32.add
+  local.get $10
+  local.get $34
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 6
+  local.get $7
+  local.get $15
+  f32.mul
+  local.get $8
+  local.get $18
+  f32.mul
+  f32.add
+  local.get $9
+  local.get $21
+  f32.mul
+  f32.add
+  local.get $10
+  local.get $24
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 10
+  local.get $7
+  local.get $16
+  f32.mul
+  local.get $8
+  local.get $19
+  f32.mul
+  f32.add
+  local.get $9
+  local.get $22
+  f32.mul
+  f32.add
+  local.get $10
+  local.get $25
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 14
+  local.get $7
+  local.get $17
+  f32.mul
+  local.get $8
+  local.get $20
+  f32.mul
+  f32.add
+  local.get $9
+  local.get $23
+  f32.mul
+  f32.add
+  local.get $10
+  local.get $26
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 3
+  local.get $11
+  local.get $28
+  f32.mul
+  local.get $12
+  local.get $30
+  f32.mul
+  f32.add
+  local.get $13
+  local.get $32
+  f32.mul
+  f32.add
+  local.get $14
+  local.get $34
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 7
+  local.get $11
+  local.get $15
+  f32.mul
+  local.get $12
+  local.get $18
+  f32.mul
+  f32.add
+  local.get $13
+  local.get $21
+  f32.mul
+  f32.add
+  local.get $14
+  local.get $24
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 11
+  local.get $11
+  local.get $16
+  f32.mul
+  local.get $12
+  local.get $19
+  f32.mul
+  f32.add
+  local.get $13
+  local.get $22
+  f32.mul
+  f32.add
+  local.get $14
+  local.get $25
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
+  local.get $2
+  i32.const 15
+  local.get $11
+  local.get $17
+  f32.mul
+  local.get $12
+  local.get $20
+  f32.mul
+  f32.add
+  local.get $13
+  local.get $23
+  f32.mul
+  f32.add
+  local.get $14
+  local.get $26
+  f32.mul
+  f32.add
+  call $~lib/typedarray/Float32Array#__set
  )
  (func $assembly/matrix/Matrix4#fromArray@varargs (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   block $1of1

@@ -773,8 +773,8 @@ class Matrix4 {
 
 ## 2021-10-30
 
-0. 完了, v8的优化太强了, 浏览器和node下差不多, 难道说是gl-matrix太慢了导致的, 完了, gl-martix-wasm性能确实够快...as出来的wasm性能太烂了
-1. 准备换语言了, as的性能有点惨不忍睹, 不过换之前尝试下换写法看看能不能稍微挽下救性能
+0. 完了, v8 的优化太强了, 浏览器和 node 下差不多, 难道说是 gl-matrix 太慢了导致的, 完了, gl-martix-wasm 性能确实够快...as 出来的 wasm 性能太烂了
+1. 准备换语言了, as 的性能有点惨不忍睹, 不过换之前尝试下换写法看看能不能稍微挽下救性能
 
 看了`optimized.wat`一堆`$~lib/typedarray/Float32Array#__get`函数调用, 不慢才怪
 
@@ -821,9 +821,9 @@ class Matrix4 {
 
 ## 2021-10-31
 
-0. 增加unchecked标记读数组下标确实没了call了, 快了几毫秒, 但是还是比js差
+0. 增加 unchecked 标记读数组下标确实没了 call 了, 快了几毫秒, 但是还是比 js 差
 
-AssemblyScript的优化是仅仅字节码层面的, 依赖binaryen的wasm-opt
+AssemblyScript 的优化是仅仅字节码层面的, 依赖 binaryen 的 wasm-opt
 
 https://surma.dev/things/js-to-asc/index.html
 
@@ -832,3 +832,8 @@ https://surma.dev/things/js-to-asc/index.html
 https://gist.github.com/surma/40e632f57a1aec4439be6fa7db95bc88
 
 不得不佩服, 大佬的探索能力确实强, 值得学习
+
+## 2021-11-2
+
+0. 初步确定是 as-loader 包装的 getter setter 导致 js call 的额外开销, 若无缓存 call`instance.exports.wasmFN()`也会有额外开销
+1. as直接export出multiplyMatrices_no_simd和multiplyMatrices, 也只能和js持平(100_000下)

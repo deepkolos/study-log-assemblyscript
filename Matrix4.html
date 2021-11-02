@@ -1,6 +1,6 @@
 <script src="./tests/libs/test.js"></script>
 <script src="./node_modules/gl-matrix-wasm/pkg/gl_matrix_wasm.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@assemblyscript/loader/umd/index.js"></script>
+<script src="./tests/libs/as-loader.js"></script>
 <script type="module">
   // import * as AsBind from './node_modules/as-bind/dist/as-bind.esm.js';
   import { Matrix4 } from './node_modules/three/src/math/Matrix4.js';
@@ -8,16 +8,24 @@
   const { test, benchmark, expect } = window.TEST;
   const glMatrixWasm = window.glMatrixWasm;
 
-  loader.instantiate(
-    fetch('./build/matrix.wasm').then(i => i.arrayBuffer()),
-    { env: { memory: new WebAssembly.Memory({ initial: 1 }) } },
-  ).then(({ exports }) => main(exports));
+  loader
+    .instantiate(
+      fetch('./build/matrix.wasm').then(i => i.arrayBuffer()),
+      { env: { memory: new WebAssembly.Memory({ initial: 1 }) } },
+    )
+    .then(res => {
+      console.log(res);
+      main(res.exports, res.instance);
+    });
 
-  function main(wasmExport) {
+  function main(wasmExport, wasmInstance) {
     const i32Arr = wasmExport.__getInt32ArrayView.bind(wasmExport);
     const f32Arr = wasmExport.__getFloat32ArrayView.bind(wasmExport);
     const u8Arr = wasmExport.__getUint8ArrayView.bind(wasmExport);
     const sleep = t => new Promise(r => setTimeout(r, t));
+
+    const wasmInstanceExport = wasmInstance.exports;
+    console.log(wasmInstanceExport);
 
     test('Matrix4_multiply', async () => {
       await glMatrixWasm.init();
@@ -26,6 +34,7 @@
       const m4RightJs = new Matrix4();
       const m4LeftWasm = new wasmExport.Matrix4();
       const m4RightWasm = new wasmExport.Matrix4();
+      // prettier-ignore
       const ms = [
         glMatrixWasm.Matrix4.fromValues(7, 3, 6, 9, 2, 3, 2, 5, 1, 9, 5, 8, 3, 7, 2, 2),
         glMatrixWasm.Matrix4.fromValues(2, 5, 7, 8, 4, 8, 3, 9, 2, 5, 4, 9, 5, 6, 3, 1),
@@ -56,6 +65,15 @@
         },
         WASM_RUST() {
           glMatrixWasm.Matrix4.multiply(ms[2], ms[0], ms[1])
+        },
+        // WASM_RAW_EXPORT() {
+        //   wasmInstanceExport['Matrix4#multiply']()
+        // },
+        WASM_RAW_EXPORT_FN_SIMD() {
+          wasmInstanceExport.multiplyMatrices(m4LeftWasm.elements, m4RightWasm.elements, m4LeftWasm.elements,)
+        },
+        WASM_RAW_EXPORT_FN_NO_SIMD() {
+          wasmInstanceExport.multiplyMatrices_no_simd(m4LeftWasm.elements, m4RightWasm.elements, m4LeftWasm.elements,)
         }
       };
 
@@ -72,6 +90,7 @@
       // benchmark(benchCfg, 20000);
       // benchmark(benchCfg, 27_000);
       benchmark(benchCfg, 100_000);
+      // benchmark(benchCfg, 1000_000);
 
       // for (let i = 0; i < 5; i++) {
       //   await sleep(500);
